@@ -1201,8 +1201,8 @@ class Auth with ChangeNotifier {
     request.fields['city'] = user.city.toString();
     request.fields['zip_code'] = user.zip_code!;
     request.fields['phone_number'] = user.phone_number!;
-    request.fields['address_1'] = user.address_1;
-    request.fields['address_2'] = user.address_2;
+    request.fields['address_1'] = user.address_1!;
+    request.fields['address_2'] = user.address_2!;
     request.fields['is_us_citizen'] = user.is_us_citizen.toString();
     request.fields['id_type'] = _type;
     request.fields['id_number'] = user.id_number ?? '000000000';
@@ -1377,9 +1377,9 @@ class Auth with ChangeNotifier {
     request.fields['zip_code'] =
         (user.zip_code != null ? user.zip_code.toString() : user1.zip_code)!;
     request.fields['address_1'] =
-        user.address_1 != null ? user.address_1.toString() : user1.address_1;
+        (user.address_1 != null ? user.address_1.toString() : user1.address_1)!;
     request.fields['address_2'] =
-        user.address_2 != null ? user.address_2.toString() : user1.address_2;
+        (user.address_2 != null ? user.address_2.toString() : user1.address_2)!;
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
     print(response.statusCode);

@@ -14,6 +14,7 @@ import '../../providers/notifications.dart';
 
 import 'dart:async';
 
+import '../my-profile/index.dart';
 import 'badge_icon.dart';
 import 'showqr.dart';
 
@@ -49,13 +50,14 @@ class _AppBarButtonState extends State<AppBarButton> {
   //bool noti = false;
   // ignore: unused_field
   late int _selectedIndex = 0;
-  late Config config;
+  late Config config = Config(
+      0, '', '', '', '', '', '', '', '', 'btn_id', '', '', '', '', '', '', '');
   late Color myColor = Color(0xff00bfa5);
   late StreamController<int> _countController = StreamController<int>();
 
   //int _currentIndex = 0;
   late int _tabBarCount = 0;
-  late int _chats;
+  late int _chats = 0;
   late ValueNotifier<int> notificationCounterValueNotifer = ValueNotifier(0);
   getTodo(int id) async {
     final sql = '''SELECT * FROM ${DatabaseCreator.todoTable}
@@ -216,14 +218,14 @@ class _AppBarButtonState extends State<AppBarButton> {
         _showBank();
         break;
       case 4:
-        /* Navigator.push(
+        Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => MyProfile(
-                    user: this.widget.user,
+                    user: widget.user,
                     config: config,
                   )),
-        );*/
+        );
         break;
     }
 

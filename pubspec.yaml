@@ -51,7 +51,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   provider: ^6.1.2
-  camera: ^0.11.0+1
+  #camera: ^0.11.0+1
   package_info: ^2.0.2
   carousel_slider: ^4.2.1
   qr_flutter: ^4.1.0
@@ -86,6 +86,15 @@ flutter:
   generate: true
   assets:
     - assets/
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+    - family: MontserratB
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:

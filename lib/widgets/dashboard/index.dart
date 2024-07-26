@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:package_info/package_info.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -188,10 +187,10 @@ class _DashboardHomeState extends State<DashboardHome> {
   late String url = 'www.google.com';
   // ignore: unused_field
   late int _selectedIndex = 0;
-  late Map<String, dynamic> hours;
-  late Map<String, dynamic> travel_detail;
-  late Map<String, dynamic> contract;
-  late Map<String, dynamic> info;
+  late Map<String, dynamic> hours = {};
+  late Map<String, dynamic> travel_detail = {};
+  late Map<String, dynamic> contract = {};
+  late Map<String, dynamic> info = {};
   late String num_offers =
       ApiWebServer.server_name + '/api/v-1/contract/joboffer/not-accepted';
 
@@ -207,11 +206,11 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   late int travel;
   late bool _isLoading = false;
-  late Config config;
-  late String token;
+  late Config config = Config(0, '', token, role, '', '', '', '', '', 'btn_id',
+      '', '', '', '', '', '', '');
+  late String token = '';
   late int _currentIndex = 0;
   late String se;
-  late List<CameraDescription> cameras;
   late File val;
   late var status;
   late bool _visibility = true;
@@ -1171,8 +1170,8 @@ class _DashboardHomeState extends State<DashboardHome> {
                         size: 25,
                         color: Colors.grey,
                       ),
-                      badgeCount: _notif ??
-                          0 //snapshot.data != 0 ? snapshot.data : _chats,
+                      badgeCount:
+                          _notif //snapshot.data != 0 ? snapshot.data : _chats,
                       ),
                   onPressed: () {
                     /* Navigator.push(

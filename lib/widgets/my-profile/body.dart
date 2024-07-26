@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:math';
-
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worker/providers/auth.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import '../../model/user.dart';
 import '../../model/config.dart';
 import 'package:http/http.dart' as http;
 import '../../local/database_creator.dart';
-import 'package:worker/providers/url_constants.dart';
 
 import 'config.dart';
 import 'data-request.dart';
@@ -34,7 +32,64 @@ class _BodyProfileState extends State<BodyProfile> {
   late User user;
   late Config config;
   _BodyProfileState(this.user, this.config);
-  late User _user;
+  late final User _user = User(
+      id: 0,
+      first_name: '',
+      email: '',
+      birth_date: DateTime.now(),
+      last_name: '',
+      password2: '',
+      gender: '',
+      country: 0,
+      state: 0,
+      city: 0,
+      address_1: 'address_1',
+      address_2: 'address_2',
+      birthplace: 'birthplace',
+      is_us_citizen: false,
+      id_type: '',
+      id_number: '',
+      doc_type: '',
+      doc_expire_date: DateTime.now(),
+      doc_image: File('file.txt'),
+      doc_number: '',
+      dependents_number: '',
+      contact_first_name: '',
+      contact_last_name: '',
+      contact_phone: '',
+      contact_email: '',
+      signature: File('file.txt'),
+      marital_status: '',
+      blood_type: 0,
+      rh_factor: 0,
+      phone_number: '',
+      zip_code: '',
+      profile_image: File('file.txt'),
+      degree_levels: '',
+      speciality_or_degree: '',
+      english_learning_method: '',
+      english_learning_level: '',
+      english_mastery: '',
+      spanish_mastery: '',
+      spanish_learning_method: '',
+      spanish_learning_level: '',
+      expertise_area: '',
+      cv_file: File('file.txt'),
+      btn_id: '',
+      referral_code: '',
+      doc_type_no: '',
+      expiration_date_no: DateTime.now(),
+      front_image_no: File('file.txt'),
+      rear_image_no: File('file.txt'),
+      i94_form_image: File('file.txt'),
+      uscis_number: '',
+      ssn_dependents_number: '',
+      other_income: '',
+      deduction_type: '',
+      deduction_amount: '',
+      tax_doc_file: File('file.txt'),
+      state_name: '',
+      city_name: '');
   late Map<String, dynamic> info = {};
   late Map<String, dynamic> data_business = {};
 
@@ -260,7 +315,7 @@ class _BodyProfileState extends State<BodyProfile> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    Text(this.widget.config.email,
+                    Text(widget.config.email,
                         style: TextStyle(
                             color: HexColor('707070'),
                             fontWeight: FontWeight.bold,
@@ -268,7 +323,7 @@ class _BodyProfileState extends State<BodyProfile> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    Text('ID#' + ' ' + this.widget.config.btn_id,
+                    Text('ID#' + ' ' + widget.config.btn_id,
                         style: TextStyle(
                           color: HexColor('707070'),
                           fontWeight: FontWeight.bold,
@@ -306,7 +361,7 @@ class _BodyProfileState extends State<BodyProfile> {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          /* Navigator.push(
+                                          /*Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
@@ -332,8 +387,8 @@ class _BodyProfileState extends State<BodyProfile> {
                                               child: Text(
                                                 l10n.certifications,
                                                 style: TextStyle(
-                                                  color: HexColor('707070'),
-                                                  //color: HexColor('EA6012'),
+                                                  //color: HexColor('707070'),
+                                                  color: HexColor('EA6012'),
                                                   //fontWeight: FontWeight.bold,
                                                   fontSize: 10,
                                                 ),
@@ -380,9 +435,7 @@ class _BodyProfileState extends State<BodyProfile> {
                                               onPressed: () {},
                                               child: Text(
                                                 l10n.warnings,
-                                                style: TextStyle(
-                                                  //color: HexColor('EA6012'),
-                                                  //fontWeight: FontWeight.bold,
+                                                style: const TextStyle(
                                                   fontSize: 10,
                                                 ),
                                               )))
@@ -393,10 +446,7 @@ class _BodyProfileState extends State<BodyProfile> {
                           Expanded(
                             flex: 1,
                             child: Container(
-                                //color: HexColor('009444'),
                                 alignment: Alignment.topCenter,
-                                //margin: EdgeInsets.only(left: 10),
-                                //height: MediaQuery.of(context).size.width * 0.1,
                                 width: MediaQuery.of(context).size.width * 0.28,
                                 child: Container(
                                   width:
@@ -443,9 +493,6 @@ class _BodyProfileState extends State<BodyProfile> {
                                                 l10n.taxes,
                                                 style: TextStyle(
                                                   color: HexColor('707070'),
-
-                                                  //color: HexColor('EA6012'),
-                                                  //fontWeight: FontWeight.bold,
                                                   fontSize: 10,
                                                 ),
                                               )))

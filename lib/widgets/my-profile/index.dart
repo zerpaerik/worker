@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:worker/model/config.dart';
 import 'package:worker/widgets/dashboard/index.dart';
 import 'package:worker/widgets/my-profile/body.dart';
@@ -26,13 +28,129 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
-  late User user;
-  late Config config;
+  late User user = User(
+      id: 0,
+      first_name: '',
+      email: '',
+      birth_date: DateTime.now(),
+      last_name: '',
+      password2: '',
+      gender: '',
+      country: 0,
+      state: 0,
+      city: 0,
+      address_1: 'address_1',
+      address_2: 'address_2',
+      birthplace: 'birthplace',
+      is_us_citizen: false,
+      id_type: '',
+      id_number: '',
+      doc_type: '',
+      doc_expire_date: DateTime.now(),
+      doc_image: File('file.txt'),
+      doc_number: '',
+      dependents_number: '',
+      contact_first_name: '',
+      contact_last_name: '',
+      contact_phone: '',
+      contact_email: '',
+      signature: File('file.txt'),
+      marital_status: '',
+      blood_type: 0,
+      rh_factor: 0,
+      phone_number: '',
+      zip_code: '',
+      profile_image: File('file.txt'),
+      degree_levels: '',
+      speciality_or_degree: '',
+      english_learning_method: '',
+      english_learning_level: '',
+      english_mastery: '',
+      spanish_mastery: '',
+      spanish_learning_method: '',
+      spanish_learning_level: '',
+      expertise_area: '',
+      cv_file: File('file.txt'),
+      btn_id: '',
+      referral_code: '',
+      doc_type_no: '',
+      expiration_date_no: DateTime.now(),
+      front_image_no: File('file.txt'),
+      rear_image_no: File('file.txt'),
+      i94_form_image: File('file.txt'),
+      uscis_number: '',
+      ssn_dependents_number: '',
+      other_income: '',
+      deduction_type: '',
+      deduction_amount: '',
+      tax_doc_file: File('file.txt'),
+      state_name: '',
+      city_name: '');
+  late Config config = Config(
+      0, '', '', '', '', '', '', '', '', 'btn_id', '', '', '', '', '', '', '');
   _MyProfileState(this.user, this.config);
-  late User _user;
+  late User _user = User(
+      id: 0,
+      first_name: '',
+      email: '',
+      birth_date: DateTime.now(),
+      last_name: '',
+      password2: '',
+      gender: '',
+      country: 0,
+      state: 0,
+      city: 0,
+      address_1: 'address_1',
+      address_2: 'address_2',
+      birthplace: 'birthplace',
+      is_us_citizen: false,
+      id_type: '',
+      id_number: '',
+      doc_type: '',
+      doc_expire_date: DateTime.now(),
+      doc_image: File('file.txt'),
+      doc_number: '',
+      dependents_number: '',
+      contact_first_name: '',
+      contact_last_name: '',
+      contact_phone: '',
+      contact_email: '',
+      signature: File('file.txt'),
+      marital_status: '',
+      blood_type: 0,
+      rh_factor: 0,
+      phone_number: '',
+      zip_code: '',
+      profile_image: File('file.txt'),
+      degree_levels: '',
+      speciality_or_degree: '',
+      english_learning_method: '',
+      english_learning_level: '',
+      english_mastery: '',
+      spanish_mastery: '',
+      spanish_learning_method: '',
+      spanish_learning_level: '',
+      expertise_area: '',
+      cv_file: File('file.txt'),
+      btn_id: '',
+      referral_code: '',
+      doc_type_no: '',
+      expiration_date_no: DateTime.now(),
+      front_image_no: File('file.txt'),
+      rear_image_no: File('file.txt'),
+      i94_form_image: File('file.txt'),
+      uscis_number: '',
+      ssn_dependents_number: '',
+      other_income: '',
+      deduction_type: '',
+      deduction_amount: '',
+      tax_doc_file: File('file.txt'),
+      state_name: '',
+      city_name: '');
   // ignore: unused_field
   late int _selectedIndex = 4;
-  late Config configr;
+  late Config configr = Config(
+      0, '', '', '', '', '', '', '', '', 'btn_id', '', '', '', '', '', '', '');
 
   getTodo(int id) async {
     final sql = '''SELECT * FROM ${DatabaseCreator.todoTable}

@@ -125,6 +125,9 @@ class MainApp extends StatelessWidget {
             locale: state.selectedLanguage.localeValue,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
+            theme: ThemeData(
+              fontFamily: 'Montserrat',
+            ),
             home: SelectLang(),
           );
         },

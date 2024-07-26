@@ -22,6 +22,7 @@ import '../../local/database_creator.dart';
 import '../../model/user.dart';
 import '../../model/workday.dart';
 import '../../model/modules.dart';
+import '../my-profile/config.dart';
 
 class MenuLateral extends StatefulWidget {
   final User user;
@@ -780,15 +781,15 @@ class _MenuLateralState extends State<MenuLateral> {
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
                         onPressed: () {
-                          /*Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ConfigPage(
-                                      user: this.widget.user,
+                                      user: widget.user,
                                     )),
-                          );*/
+                          );
                         },
-                        icon: ImageIcon(
+                        icon: const ImageIcon(
                           AssetImage('assets/005-gear.png'),
                           color: Colors.black,
                         ),

@@ -1,0 +1,340 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:worker/model/user.dart';
+import 'package:worker/model/workday.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:worker/providers/url_constants.dart';
+
+import 'detail.dart';
+import 'list.dart';
+
+const flash_on = "FLASH ON";
+const flash_off = "FLASH OFF";
+const front_camera = "FRONT CAMERA";
+const back_camera = "BACK CAMERA";
+
+class QRSCANOUT extends StatefulWidget {
+  final User? user;
+  final int? workday;
+  final DateTime? workdayDate;
+  Map<String, dynamic>? contract;
+  final Workday? work;
+  Map<String, dynamic>? wk;
+
+  QRSCANOUT(
+      {required this.user,
+      required this.workday,
+      this.workdayDate,
+      this.contract,
+      this.work,
+      this.wk});
+
+  @override
+  State<StatefulWidget> createState() =>
+      _QRSCANOUTState(user!, workday!, workdayDate!, contract!, work!, wk!);
+}
+
+class _QRSCANOUTState extends State<QRSCANOUT> {
+  User user;
+  int workday;
+  DateTime workdayDate;
+  Map<String, dynamic> contract;
+  Workday work;
+  Map<String, dynamic> wk;
+
+  _QRSCANOUTState(this.user, this.workday, this.workdayDate, this.contract,
+      this.work, this.wk);
+  bool Done_Button = false;
+  var qrText = "";
+  QRViewController? controller;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  bool? scanning = false;
+  Barcode? result;
+
+  Future<String?> getToken() async {
+    SharedPreferences token = await SharedPreferences.getInstance();
+    String? stringValue = token.getString('stringValue');
+    return stringValue;
+  }
+
+  void _showErrorDialogADD(String message, int worker) {
+    print(message);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        titleTextStyle: TextStyle(
+            color: HexColor('373737'),
+            fontFamily: 'OpenSansRegular',
+            fontWeight: FontWeight.bold,
+            fontSize: 20),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          ),
+          TextButton(
+              child: Text('Send offer'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                //_submitOffer(worker);
+              })
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    print(message);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        titleTextStyle: TextStyle(
+            color: HexColor('373737'),
+            fontFamily: 'OpenSansRegular',
+            fontWeight: FontWeight.bold,
+            fontSize: 20),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<bool?> scanQRWorkerOut(
+      String? identification, String lat, String long) async {
+    String? token = await getToken();
+    String contract = widget.contract!['contract_id'].toString();
+
+    setState(() {
+      scanning = true;
+    });
+    final response = await http.get(
+        Uri.parse(
+            '$urlServices/api/v-1/user/get-registered-user/$identification/$contract/out'),
+        headers: {"Authorization": "Token $token"});
+    setState(() {});
+    //print(response.statusCode);
+    //print(response.body);
+    var resBody = json.decode(response.body);
+    if (response.statusCode == 200 && resBody['first_name'] != null) {
+      print('dio 200 scan list');
+      setState(() {
+        scanning = false;
+      });
+      User _user = User.fromJson(resBody);
+      setState(() {
+        qrText = "";
+        controller?.stopCamera();
+        Done_Button = false;
+      });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => DetailClockOut(
+                  user: _user,
+                  workday: this.widget.work,
+                  lat: lat,
+                  long: long,
+                  contract: this.widget.contract,
+                  wk: this.widget.wk,
+                  datas: resBody,
+                )),
+      );
+    } else {
+      print('dio error');
+      setState(() {
+        scanning = false;
+      });
+      //The worker has already clocked-in
+      String error = resBody['detail'];
+      if (error == 'worker not belongs to a project') {
+        _showErrorDialogADD('Error', resBody['worker']);
+        setState(() {
+          qrText = "";
+          controller?.pauseCamera();
+          Done_Button = false;
+        });
+        //Navigator.pop(context);
+        controller?.pauseCamera();
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ListClockOut(
+                    user: this.widget.user,
+                    workday: this.widget.workday,
+                    contract: this.widget.contract,
+                    work: this.widget.work,
+                    wk: this.widget.wk,
+                  )),
+        );
+      }
+      if (error == 'The worker has already clocked out') {
+        _showErrorDialog('This QR has already been scanned today');
+        setState(() {
+          qrText = "";
+          controller?.pauseCamera();
+          Done_Button = false;
+        });
+        //Navigator.pop(context);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ListClockOut(
+                    user: this.widget.user,
+                    workday: this.widget.workday,
+                    contract: this.widget.contract,
+                    work: this.widget.work,
+                    wk: this.widget.wk,
+                  )),
+        );
+      }
+      /*else {
+        _showErrorDialog('Verifique la información.');
+      }*/
+    }
+  }
+
+  void resumeCamera() {
+    if (Platform.isAndroid) {
+      controller?.pauseCamera();
+    }
+    controller?.resumeCamera();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          l10n.focus_qr,
+          style: TextStyle(color: HexColor('EA6012')),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.close, color: HexColor('EA6012')),
+          onPressed: () {
+            setState(() {
+              qrText = "";
+              controller?.stopCamera();
+              Done_Button = false;
+            });
+            //Navigator.pop(context);
+            controller?.pauseCamera();
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ListClockOut(
+                        user: this.widget.user,
+                        workday: this.widget.workday,
+                        contract: this.widget.contract,
+                        work: this.widget.work,
+                        wk: this.widget.wk,
+                      )),
+            );
+          },
+        ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(
+                Icons.flash_on,
+                color: Colors.yellow,
+              ),
+              onPressed: () {
+                setState(() {
+                  controller?.toggleFlash();
+                });
+              })
+        ],
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+                child: QRView(
+              key: qrKey,
+              onQRViewCreated: /* _onQRViewCreatedOut*/
+                  (controller) {
+                setState(() {
+                  this.controller = controller;
+                });
+                resumeCamera();
+
+                controller.scannedDataStream.listen((scanData) {
+                  setState(() {
+                    result = scanData;
+                  });
+                  controller.dispose();
+                  print('result code scaner');
+                  scanQRWorkerOut(result!.code, '1111', '1111');
+
+                  // Navigator.pop(context);
+                });
+              },
+              overlayMargin: EdgeInsets.only(left: 10, right: 10),
+              overlay: QrScannerOverlayShape(
+                borderColor: HexColor('EA6012'),
+                borderRadius: 2,
+                borderLength: 130,
+                borderWidth: 5,
+                overlayColor: Colors.black.withOpacity(0.9),
+              ),
+            )),
+            flex: 4,
+          ),
+        ],
+      ),
+    );
+  }
+
+  _isFlashOn(String current) {
+    return flash_on == current;
+  }
+
+  _isBackCamera(String current) {
+    return back_camera == current;
+  }
+
+  void _onQRViewCreatedOut(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      setState(() {
+        qrText = scanData as String;
+        controller?.pauseCamera();
+        //Done_Button = true;
+      });
+      scanQRWorkerOut(qrText, '1111', '1111');
+
+      print(qrText);
+    });
+  }
+
+  @override
+  void dispose() {
+    controller!.dispose();
+    super.dispose();
+  }
+}

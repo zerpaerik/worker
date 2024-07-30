@@ -202,6 +202,17 @@ class User with ChangeNotifier {
       required this.state_name,
       required this.city_name});
 
+  factory User.fromJson1(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      first_name: json['first_name'],
+      last_name: json['last_name'],
+      btn_id: json['btn_id'],
+      profile_image:
+          json['profile_image'] != null ? File(json['profile_image']) : null,
+    );
+  }
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],

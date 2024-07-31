@@ -7,10 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worker/model/workday.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../model/user.dart';
 import '../../providers/workday.dart';
 import '../widgets.dart';
+import 'list.dart';
 
 // ignore: must_be_immutable
 class DetailExtClockOut extends StatefulWidget {
@@ -24,14 +25,14 @@ class DetailExtClockOut extends StatefulWidget {
   DetailExtClockOut(
       {required this.user,
       this.workday,
-      this.lat,
-      this.long,
+      required this.lat,
+      required this.long,
       this.contract,
       this.wk});
 
   @override
   _DetailExtClockOutState createState() =>
-      _DetailExtClockOutState(user, workday, lat, long, contract, wk);
+      _DetailExtClockOutState(user!, workday!, lat, long, contract!, wk!);
 }
 
 class _DetailExtClockOutState extends State<DetailExtClockOut> {
@@ -49,22 +50,22 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
       this.user, this.workday, this.lat, this.long, this.contract, this.wk);
   Geolocator geolocator = Geolocator();
 
-  Position userLocation;
-  Workday _wd;
+  Position? userLocation;
+  Workday? _wd;
   //DateFormat format = DateFormat("yyyy-MM-dd");
   bool isLoading = false;
   // DateTime hour = DateFormat('HH:mm').format(DateTime.now()) as DateTime;
-  final hour = new DateTime.now();
-  DateFormat dateFormat = DateFormat("HH:mm:ss");
-  String _time = "S/H";
-  DateTime hourClock;
-  String qrCodeResult = "Not Yet Scanned";
-  String temp = '';
-  int tm;
-  String blood = '';
+  final hour = DateTime.now();
+  DateFormat? dateFormat = DateFormat("HH:mm:ss");
+  String? _time = "S/H";
+  DateTime? hourClock;
+  String? qrCodeResult = "Not Yet Scanned";
+  String? temp = '';
+  int? tm;
+  String? blood = '';
 
-  String _locationMessage = "";
-  String comments;
+  String? _locationMessage = "";
+  String? comments;
 
   // String formatter = DateFormat('yMd').format(hour);
   //int time = DateTime.now().millisecondsSinceEpoch;
@@ -77,7 +78,7 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
   }
 
   todayDateTimeWork() {
-    var now = this.widget.workday.clock_in_start;
+    var now = widget.workday!.clock_in_start;
     String formattedTime = DateFormat('hh:mm:aa').format(now);
     return formattedTime;
   }
@@ -96,7 +97,7 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
   getContract() async {
     SharedPreferences contract = await SharedPreferences.getInstance();
     //Return String
-    int intValue = contract.getInt('intValue');
+    int? intValue = contract.getInt('intValue');
     return intValue;
   }
 
@@ -105,7 +106,7 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(AppTranslations.of(context).text("error")),
+        title: Text('Error'),
         content: Text(message),
         titleTextStyle: TextStyle(
             color: HexColor('373737'),
@@ -113,9 +114,8 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
             fontWeight: FontWeight.bold,
             fontSize: 20),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             child: Text('Ok'),
-            textColor: HexColor('EA6012'),
             onPressed: () {
               Navigator.of(ctx).pop();
             },
@@ -133,17 +133,15 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
     String geo;
 
     if (userLocation != null) {
-      geo = userLocation.latitude.toString() +
-          ' ' +
-          userLocation.longitude.toString();
+      geo = '${userLocation!.latitude} ${userLocation!.longitude}';
     } else {
       geo = '--- ---';
     }
 
     try {
       Provider.of<WorkDay>(context, listen: false)
-          .addClockOutM(this.widget.user['id'], hourClock, comments,
-              this.widget.wk, blood, geo)
+          .addClockOutM(
+              widget.user!['id'], hourClock, comments, widget.wk, blood, geo)
           .then((response) {
         setState(() {
           isLoading = false;
@@ -155,10 +153,10 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
             MaterialPageRoute(
                 builder: (context) => ListClockOut(
                       // user: user,
-                      workday: this.widget.workday.id,
-                      work: this.widget.workday,
-                      contract: this.widget.contract,
-                      wk: this.widget.wk,
+                      workday: widget.workday!.id,
+                      work: widget.workday,
+                      contract: widget.contract,
+                      wk: widget.wk,
                     )),
           );
         } else {
@@ -189,16 +187,12 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    AppTranslations.of(context).text("picture_of") +
-                        ' ' +
-                        user['first_name'] +
-                        ' ' +
+                    '${'Picture of' + ' ' + user['first_name']} ' +
                         user['last_name'],
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black),
                   ),
                 ],
               ),
@@ -237,7 +231,7 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                         bottomLeft: Radius.circular(32.0),
                         bottomRight: Radius.circular(32.0)),
                   ),
-                  child: FlatButton(
+                  child: TextButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
                     },
@@ -268,7 +262,7 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
 
   @override
   Widget build(BuildContext context) {
-    print(this.widget.workday);
+    final l10n = AppLocalizations.of(context)!;
     List _listDocI = [
       'Ausente con permiso de trabajo',
       'Ausente por enfermedad',
@@ -277,7 +271,7 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
       'Ausente sin justificación',
     ];
 
-    return new Scaffold(
+    return Scaffold(
       body: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -320,12 +314,11 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              AppTranslations.of(context).text("co_ext"),
-                              style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                      color: Colors.black)),
+                              l10n.co_ext,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25,
+                                  color: Colors.black),
                             ),
                           ),
                         ),
@@ -340,12 +333,11 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text(this.widget.contract['contract_name'],
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: HexColor('EA6012')))),
+                child: Text(widget.contract!['contract_name'],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: HexColor('EA6012'))),
               ),
             ),
             Container(
@@ -353,10 +345,9 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Text('BTN',
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    style: TextStyle(
                       fontSize: 17,
-                    ))),
+                    )),
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
@@ -364,12 +355,11 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text(AppTranslations.of(context).text("worker_data"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: HexColor('EA6012')))),
+                child: Text(l10n.worker_data,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: HexColor('EA6012'))),
               ),
             ),
             Container(
@@ -377,12 +367,11 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Text('Emplooy ID:' + user['btn_id'],
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    ))),
+                    )),
               ),
             ),
             GestureDetector(
@@ -394,11 +383,10 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(user['first_name'],
-                      style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 36,
-                      ))),
+                      )),
                 ),
               ),
             ),
@@ -411,11 +399,10 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(user['last_name'],
-                      style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 36,
-                      ))),
+                      )),
                 ),
               ),
             ),
@@ -424,12 +411,11 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text(AppTranslations.of(context).text("co_detail"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: HexColor('EA6012')))),
+                child: Text(l10n.co_detail,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: HexColor('EA6012'))),
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -446,13 +432,12 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                 Container(
                   margin: EdgeInsets.only(left: 10, top: 12),
                   child: Text(
-                    AppTranslations.of(context).text("clockin_26"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    l10n.clockin_26,
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    )),
+                    ),
                   ),
                 ),
               ],
@@ -463,11 +448,10 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                   alignment: Alignment.topLeft,
                   child: Text(
                     todayDateTime(),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontSize: 25,
-                            color: HexColor('EA6012'),
-                            fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: HexColor('EA6012'),
+                        fontWeight: FontWeight.bold),
                   )),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -484,13 +468,12 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                 Container(
                   margin: EdgeInsets.only(left: 10, top: 12),
                   child: Text(
-                    AppTranslations.of(context).text("clockout_21") + ': ',
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    '${l10n.clockout_21}: ',
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    )),
+                    ),
                   ),
                 ),
               ],
@@ -501,23 +484,18 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                   margin: EdgeInsets.only(left: 60),
                   child: Text(
                     " $_time",
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontSize: 25,
-                            color: HexColor('EA6012'),
-                            fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: HexColor('EA6012'),
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 //SizedBox(height: 5),
                 SizedBox(
                   height: 20,
-                  child: FlatButton(
+                  child: TextButton(
                       onPressed: () {
                         DatePicker.showTimePicker(context,
-                            theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                                doneStyle:
-                                    TextStyle(color: HexColor('EA6012'))),
                             showTitleActions: true, onConfirm: (time) {
                           print('confirm $time');
                           hourClock = time;
@@ -546,13 +524,12 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                 Container(
                   margin: EdgeInsets.only(left: 10),
                   child: Text(
-                    AppTranslations.of(context).text("comments"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    l10n.comments,
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    )),
+                    ),
                   ),
                 ),
               ],
@@ -565,8 +542,7 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                 enableSuggestions: true,
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
-                decoration: InputDecoration(
-                    labelText: AppTranslations.of(context).text("description")),
+                decoration: InputDecoration(labelText: l10n.description),
                 onChanged: (value) {
                   setState(() {
                     comments = value;
@@ -585,29 +561,19 @@ class _DetailExtClockOutState extends State<DetailExtClockOut> {
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
-                  : RaisedButton(
-                      elevation: 5.0,
+                  : ElevatedButton(
                       onPressed: () {
                         print(blood);
                         print(hourClock);
                         if (hourClock == null) {
-                          _showErrorDialog(
-                              AppTranslations.of(context).text("specify_hour"));
+                          _showErrorDialog(l10n.specify_hour);
                         } else {
                           _submit();
                         }
                       },
-                      padding: EdgeInsets.only(
-                          left: 40, right: 40, top: 10, bottom: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      color: HexColor('EA6012'),
                       child: Text(
-                        AppTranslations.of(context).text("accept"),
-                        style: GoogleFonts.montserrat(
-                            textStyle:
-                                TextStyle(fontSize: 20, color: Colors.white)),
+                        l10n.accept,
+                        style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ),
             ),

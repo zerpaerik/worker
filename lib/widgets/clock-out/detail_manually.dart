@@ -4,14 +4,15 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:worker/model/workday.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 
 import '../../model/user.dart';
 import '../../providers/workday.dart';
-import '../widgets.dart';
 import 'detail_manually_in.dart';
+import 'list.dart';
 
 // ignore: must_be_immutable
 class DetailManuallyClockOut extends StatefulWidget {
@@ -33,42 +34,42 @@ class DetailManuallyClockOut extends StatefulWidget {
       this.us});
 
   @override
-  _DetailManuallyClockOutState createState() =>
-      _DetailManuallyClockOutState(user, workday, lat, long, contract, wk, us);
+  _DetailManuallyClockOutState createState() => _DetailManuallyClockOutState(
+      user!, workday!, lat!, long!, contract!, wk!, us!);
 }
 
 class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  Map<String, dynamic> user;
-  Workday workday;
-  String lat;
-  String long;
-  Map<String, dynamic> wk;
-  User us;
+  Map<String, dynamic>? user;
+  Workday? workday;
+  String? lat;
+  String? long;
+  Map<String, dynamic>? wk;
+  User? us;
 
-  Map<String, dynamic> contract;
+  Map<String, dynamic>? contract;
 
   _DetailManuallyClockOutState(this.user, this.workday, this.lat, this.long,
       this.contract, this.wk, this.us);
-  Geolocator geolocator = Geolocator();
+  Geolocator? geolocator = Geolocator();
 
-  Position userLocation;
-  Workday _wd;
+  Position? userLocation;
+  Workday? _wd;
   //DateFormat format = DateFormat("yyyy-MM-dd");
   bool isLoading = false;
   // DateTime hour = DateFormat('HH:mm').format(DateTime.now()) as DateTime;
-  final hour = new DateTime.now();
-  DateFormat dateFormat = DateFormat("HH:mm:ss");
-  String _time = "S/H";
-  DateTime hourClock;
-  String qrCodeResult = "Not Yet Scanned";
-  String temp = '';
-  int tm;
-  String blood = '';
+  final hour = DateTime.now();
+  DateFormat? dateFormat = DateFormat("HH:mm:ss");
+  String? _time = "S/H";
+  DateTime? hourClock;
+  String? qrCodeResult = "Not Yet Scanned";
+  String? temp = '';
+  int? tm;
+  String? blood = '';
 
-  String _locationMessage = "";
-  String comments;
+  String? _locationMessage = "";
+  String? comments;
 
   // String formatter = DateFormat('yMd').format(hour);
   //int time = DateTime.now().millisecondsSinceEpoch;
@@ -81,7 +82,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
   }
 
   todayDateTimeWork() {
-    var now = this.widget.workday.clock_in_start;
+    var now = widget.workday!.clock_in_start;
     String formattedTime = DateFormat('hh:mm:aa').format(now);
     return formattedTime;
   }
@@ -100,7 +101,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
   getContract() async {
     SharedPreferences contract = await SharedPreferences.getInstance();
     //Return String
-    int intValue = contract.getInt('intValue');
+    int? intValue = contract.getInt('intValue');
     return intValue;
   }
 
@@ -109,7 +110,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(AppTranslations.of(context).text("error")),
+        title: Text('Error'),
         content: Text(message),
         titleTextStyle: TextStyle(
             color: HexColor('373737'),
@@ -117,9 +118,8 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
             fontWeight: FontWeight.bold,
             fontSize: 20),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             child: Text('Ok'),
-            textColor: HexColor('EA6012'),
             onPressed: () {
               Navigator.of(ctx).pop();
             },
@@ -145,11 +145,10 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
               Container(
                 margin: EdgeInsets.only(left: 10, right: 10),
                 child: Text(title,
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    style: TextStyle(
                       // fontWeight: FontWeight.bold,
                       fontSize: 18,
-                    )),
+                    ),
                     textAlign: TextAlign.center),
               ),
               SizedBox(
@@ -183,12 +182,12 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                                     builder: (context) =>
                                         DetailManuallyClockOutIn(
                                           // user: user,
-                                          workday: this.widget.workday,
+                                          workday: widget.workday,
                                           //  work: this.widget.workday,
-                                          contract: this.widget.contract,
-                                          wk: this.widget.wk,
-                                          us: this.widget.us,
-                                          user: this.widget.user,
+                                          contract: widget.contract,
+                                          wk: widget.wk,
+                                          us: widget.us,
+                                          user: widget.user,
                                         )),
                               );
                             },
@@ -200,11 +199,10 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                             ),
                             child: Text(
                               'Hacer clock-in',
-                              style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17,
-                                      color: HexColor('EA6012'))),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                  color: HexColor('EA6012')),
                             ),
                           ),
                         )),
@@ -227,17 +225,15 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
     String geo;
 
     if (userLocation != null) {
-      geo = userLocation.latitude.toString() +
-          ' ' +
-          userLocation.longitude.toString();
+      geo = '${userLocation!.latitude} ${userLocation!.longitude}';
     } else {
       geo = '--- ---';
     }
 
     try {
       Provider.of<WorkDay>(context, listen: false)
-          .addClockOutM(this.widget.user['id'], hourClock, comments,
-              this.widget.wk, blood, geo)
+          .addClockOutM(
+              widget.user!['id'], hourClock, comments, widget.wk, blood, geo)
           .then((response) {
         setState(() {
           isLoading = false;
@@ -250,20 +246,16 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
               MaterialPageRoute(
                   builder: (context) => ListClockOut(
                         // user: user,
-                        workday: this.widget.workday.id,
-                        work: this.widget.workday,
-                        contract: this.widget.contract,
-                        wk: this.widget.wk,
-                        user: this.widget.us,
+                        workday: widget.workday!.id,
+                        work: widget.workday,
+                        contract: widget.contract,
+                        wk: widget.wk,
+                        user: widget.us,
                       )),
             );
           } else {
-            _showInputDialog('El trabajador ' +
-                ' ' +
-                this.widget.user['last_name'] +
-                ' ' +
-                this.widget.user['first_name'] +
-                ' no ha hecho clock-in en la jornada');
+            _showInputDialog(
+                '${'${'El trabajador ' + ' ' + widget.user!['last_name']} ' + widget.user!['first_name']} no ha hecho clock-in en la jornada');
           }
         } else {
           _showErrorDialog('Error');
@@ -273,7 +265,6 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
   }
 
   void _showWorker() {
-    print(user['profile_image'].toString().replaceAll('File: ', ''));
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -293,16 +284,15 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    AppTranslations.of(context).text("picture_of") +
+                    'Picture of' +
                         ' ' +
-                        user['first_name'] +
+                        user!['first_name'] +
                         ' ' +
-                        user['last_name'],
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black)),
+                        user!['last_name'],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black),
                   ),
                 ],
               ),
@@ -319,7 +309,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                     Container(
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/cargando.gif',
-                        image: user['profile_image']
+                        image: user!['profile_image']
                             .toString()
                             .replaceAll('File: ', '')
                             .replaceAll("'", ""),
@@ -337,7 +327,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                         bottomLeft: Radius.circular(32.0),
                         bottomRight: Radius.circular(32.0)),
                   ),
-                  child: FlatButton(
+                  child: TextButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
                     },
@@ -368,10 +358,8 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
 
   @override
   Widget build(BuildContext context) {
-    print(this.widget.workday);
-    print(this.widget.contract);
-    print(this.widget.user);
-    print(this.widget.us);
+    final l10n = AppLocalizations.of(context)!;
+
     List _listDocI = [
       'Ausente con permiso de trabajo',
       'Ausente por enfermedad',
@@ -381,7 +369,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
       'Se retiro sin clock-in',
     ];
 
-    return new Scaffold(
+    return Scaffold(
       body: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -424,12 +412,11 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              AppTranslations.of(context).text("clockout_20"),
-                              style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                      color: Colors.black)),
+                              l10n.clockout_20,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25,
+                                  color: Colors.black),
                             ),
                           ),
                         ),
@@ -444,23 +431,21 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text(this.widget.contract['contract_name'],
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: HexColor('EA6012')))),
+                child: Text(widget.contract!['contract_name'],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: HexColor('EA6012'))),
               ),
             ),
             Container(
               margin: EdgeInsets.only(left: 20),
-              child: Align(
+              child: const Align(
                 alignment: Alignment.topLeft,
                 child: Text('BTN',
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    style: TextStyle(
                       fontSize: 17,
-                    ))),
+                    )),
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
@@ -468,25 +453,24 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text(AppTranslations.of(context).text("worker_data"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: HexColor('EA6012')))),
+                child: Text(l10n.worker_data,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: HexColor('EA6012'))),
               ),
             ),
             Container(
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text('Emplooy ID:' + user['btn_id'],
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                // ignore: prefer_interpolation_to_compose_strings
+                child: Text('Emplooy ID:' + user!['btn_id'],
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    ))),
+                    )),
               ),
             ),
             GestureDetector(
@@ -497,12 +481,11 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                 margin: EdgeInsets.only(left: 20),
                 child: Align(
                   alignment: Alignment.topLeft,
-                  child: Text(user['first_name'],
-                      style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
+                  child: Text(user!['first_name'],
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 36,
-                      ))),
+                      )),
                 ),
               ),
             ),
@@ -514,12 +497,11 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                 margin: EdgeInsets.only(left: 20),
                 child: Align(
                   alignment: Alignment.topLeft,
-                  child: Text(user['last_name'],
-                      style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
+                  child: Text(user!['last_name'],
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 36,
-                      ))),
+                      )),
                 ),
               ),
             ),
@@ -528,12 +510,11 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text(AppTranslations.of(context).text("warnings_3"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: HexColor('EA6012')))),
+                child: Text(l10n.warnings_3,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: HexColor('EA6012'))),
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -550,13 +531,12 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                 Container(
                   margin: EdgeInsets.only(left: 10, top: 12),
                   child: Text(
-                    AppTranslations.of(context).text("clockin_26"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    l10n.clockin_26,
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    )),
+                    ),
                   ),
                 ),
               ],
@@ -567,11 +547,10 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                   alignment: Alignment.topLeft,
                   child: Text(
                     todayDateTime(),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontSize: 25,
-                            color: HexColor('EA6012'),
-                            fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: HexColor('EA6012'),
+                        fontWeight: FontWeight.bold),
                   )),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -588,13 +567,12 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                 Container(
                   margin: EdgeInsets.only(left: 10, top: 12),
                   child: Text(
-                    AppTranslations.of(context).text("clockout_21"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    l10n.clockout_21,
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    )),
+                    ),
                   ),
                 ),
               ],
@@ -605,23 +583,18 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                   margin: EdgeInsets.only(left: 60),
                   child: Text(
                     " $_time",
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontSize: 25,
-                            color: HexColor('EA6012'),
-                            fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: HexColor('EA6012'),
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 //SizedBox(height: 5),
                 SizedBox(
                   height: 20,
-                  child: FlatButton(
+                  child: TextButton(
                       onPressed: () {
                         DatePicker.showTimePicker(context,
-                            theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                                doneStyle:
-                                    TextStyle(color: HexColor('EA6012'))),
                             showTitleActions: true, onConfirm: (time) {
                           print('confirm $time');
                           hourClock = time;
@@ -650,13 +623,12 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                 Container(
                   margin: EdgeInsets.only(left: 10),
                   child: Text(
-                    AppTranslations.of(context).text("clockout_22"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    l10n.clockout_22,
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    )),
+                    ),
                   ),
                 ),
               ],
@@ -672,7 +644,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                     isExpanded: true,
                     iconEnabledColor: HexColor('EA6012'),
                     hint: Text(
-                      AppTranslations.of(context).text("select"),
+                      l10n.select,
                     ),
                     underline: Container(
                       height: 1,
@@ -686,10 +658,10 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                         value: value,
                       );
                     }).toList(),
-                    value: blood.isNotEmpty ? blood : null,
+                    value: blood!.isNotEmpty ? blood : null,
                     onChanged: (value) {
                       setState(() {
-                        blood = value;
+                        blood = value as String?;
                         print(blood);
 
                         //state.didChange(value);
@@ -713,13 +685,12 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                 Container(
                   margin: EdgeInsets.only(left: 10),
                   child: Text(
-                    AppTranslations.of(context).text("clockout_19"),
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                    l10n.clockout_19,
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
-                    )),
+                    ),
                   ),
                 ),
               ],
@@ -732,8 +703,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                 enableSuggestions: true,
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
-                decoration: InputDecoration(
-                    labelText: AppTranslations.of(context).text("description")),
+                decoration: InputDecoration(labelText: l10n.description),
                 onChanged: (value) {
                   setState(() {
                     comments = value;
@@ -752,32 +722,21 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
-                  : RaisedButton(
-                      elevation: 5.0,
+                  : ElevatedButton(
                       onPressed: () {
                         print(blood);
                         print(hourClock);
                         if (blood == '') {
-                          _showErrorDialog(AppTranslations.of(context)
-                              .text("specify_reason_departure"));
+                          _showErrorDialog(l10n.specify_reason_departure);
                         } else if (hourClock == null) {
-                          _showErrorDialog(
-                              AppTranslations.of(context).text("specify_hour"));
+                          _showErrorDialog(l10n.specify_hour);
                         } else {
                           _submit();
                         }
                       },
-                      padding: EdgeInsets.only(
-                          left: 40, right: 40, top: 10, bottom: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      color: HexColor('EA6012'),
                       child: Text(
-                        AppTranslations.of(context).text("accept"),
-                        style: GoogleFonts.montserrat(
-                            textStyle:
-                                TextStyle(fontSize: 20, color: Colors.white)),
+                        l10n.accept,
+                        style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ),
             ),

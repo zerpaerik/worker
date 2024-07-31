@@ -29,8 +29,7 @@ class InitClockOut extends StatefulWidget {
   Map<String, dynamic>? contract;
   Map<String, dynamic>? wk;
 
-  InitClockOut(
-      {required this.user, this.workday, this.work, this.contract, this.wk});
+  InitClockOut({this.user, this.workday, this.work, this.contract, this.wk});
 
   @override
   _InitClockOutState createState() =>

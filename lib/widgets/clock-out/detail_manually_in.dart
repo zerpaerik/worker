@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart' show DateFormat;
@@ -84,7 +83,7 @@ class _DetailManuallyClockOutInState extends State<DetailManuallyClockOutIn> {
 
   todayDateTimeWork() {
     var now = widget.workday!.clock_in_start;
-    String formattedTime = DateFormat('hh:mm:aa').format(now);
+    String formattedTime = DateFormat('hh:mm:aa').format(now!);
     return formattedTime;
   }
 

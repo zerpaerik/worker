@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
@@ -935,7 +934,7 @@ class _InitClockOutState extends State<InitClockOut> {
                                 icon: Icon(Icons.calendar_today),
                                 color: Colors.white,
                                 onPressed: () {
-                                  DatePicker.showDatePicker(context,
+                                  /* DatePicker.showDatePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (start) {
                                     print('confirm start $start');
@@ -946,7 +945,7 @@ class _InitClockOutState extends State<InitClockOut> {
                                       currentTime: DateTime.now(),
                                       locale: LocaleType.en);
 
-                                  setState(() {});
+                                  setState(() {});*/
                                 },
                               ),
                             ),
@@ -956,7 +955,7 @@ class _InitClockOutState extends State<InitClockOut> {
                                 icon: Icon(Icons.timer),
                                 color: Colors.white,
                                 onPressed: () {
-                                  DatePicker.showTimePicker(context,
+                                  /* DatePicker.showTimePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (time) {
                                     print('confirm $time');
@@ -968,7 +967,7 @@ class _InitClockOutState extends State<InitClockOut> {
                                   },
                                       currentTime: DateTime.now(),
                                       locale: LocaleType.en);
-                                  setState(() {});
+                                  setState(() {});*/
                                 },
                               ),
                             )

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart' show DateFormat;
@@ -83,7 +82,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
 
   todayDateTimeWork() {
     var now = widget.workday!.clock_in_start;
-    String formattedTime = DateFormat('hh:mm:aa').format(now);
+    String formattedTime = DateFormat('hh:mm:aa').format(now!);
     return formattedTime;
   }
 
@@ -594,7 +593,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                   height: 20,
                   child: TextButton(
                       onPressed: () {
-                        DatePicker.showTimePicker(context,
+                        /*  DatePicker.showTimePicker(context,
                             showTitleActions: true, onConfirm: (time) {
                           print('confirm $time');
                           hourClock = time;
@@ -603,7 +602,7 @@ class _DetailManuallyClockOutState extends State<DetailManuallyClockOut> {
                           _time = formattedTime;
                           setState(() {});
                         }, currentTime: DateTime.now(), locale: LocaleType.en);
-                        setState(() {});
+                        setState(() {});*/
                       },
                       child: Icon(Icons.timer_off, color: HexColor('EA6012'))),
                 )

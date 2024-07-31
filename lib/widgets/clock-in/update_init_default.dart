@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'dart:convert';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
@@ -491,7 +490,7 @@ class _UpdateInitState extends State<UpdateInit> {
                             icon: Icon(Icons.calendar_today),
                             color: Colors.white,
                             onPressed: () {
-                              DatePicker.showDatePicker(context,
+                              /* DatePicker.showDatePicker(context,
                                   showTitleActions: true, onConfirm: (start) {
                                 print('confirm start $start');
                                 start_time = start;
@@ -501,7 +500,7 @@ class _UpdateInitState extends State<UpdateInit> {
                                   currentTime: DateTime.now(),
                                   locale: LocaleType.en);
 
-                              setState(() {});
+                              setState(() {});*/
                             },
                           ),
                         ),
@@ -511,7 +510,7 @@ class _UpdateInitState extends State<UpdateInit> {
                             icon: Icon(Icons.timer),
                             color: Colors.white,
                             onPressed: () {
-                              DatePicker.showTimePicker(context,
+                              /*  DatePicker.showTimePicker(context,
                                   showTitleActions: true, onConfirm: (time) {
                                 print('confirm $time');
                                 hourClock = time;
@@ -522,7 +521,7 @@ class _UpdateInitState extends State<UpdateInit> {
                               },
                                   currentTime: DateTime.now(),
                                   locale: LocaleType.en);
-                              setState(() {});
+                              setState(() {});*/
                             },
                           ),
                         )

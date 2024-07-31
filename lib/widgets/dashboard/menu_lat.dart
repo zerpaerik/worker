@@ -11,6 +11,9 @@ import 'package:worker/widgets/travel/list.dart';
 import 'package:worker/widgets/workers/index.dart';*/
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../clock-in/init.dart';
+import '../clock-in/list.dart';
+import '../clock-out/init.dart';
 import '../global.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -395,7 +398,7 @@ class _MenuLateralState extends State<MenuLateral> {
                         alignment: Alignment.topLeft,
                         child: TextButton.icon(
                             onPressed: () {
-                              /* Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => InitClockIn(
@@ -403,40 +406,16 @@ class _MenuLateralState extends State<MenuLateral> {
                                           contract: contractDetail,
                                           workday: workday_on,
                                         )),
-                              );*/
-
-                              /* //   if (this.widget.workday.clock_in_start != null) {
-                          if (workday_on['clock_in_init'] == '') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => InitClockIn(
-                                        user: user,
-                                        contract: contractDetail,
-                                        workday: workday_on,
-                                      )),
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ListClockIn(
-                                        user: user,
-                                        workday: this.widget.workday.id,
-                                        // workdayDate: _wd.clock_in_end,
-                                        contract: contractDetail,
-                                        work: this.widget.workday,
-                                      )),
-                            );
-                          }*/
+                              );
                             },
                             icon: ImageIcon(
                               AssetImage('assets/clock-in-lat.png'),
                               color: Colors.black,
                             ),
                             label: Text(
-                              'Clock In',
+                              'Clock Ins',
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -450,17 +429,17 @@ class _MenuLateralState extends State<MenuLateral> {
                         alignment: Alignment.topLeft,
                         child: TextButton.icon(
                             onPressed: () {
-                              /* Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => InitClockOut(
                                           user: user,
                                           //workday: workday_on['workday_id'],
-                                          work: this.widget.workday,
+                                          work: widget.workday,
                                           contract: contractDetail,
                                           wk: workday_on,
                                         )),
-                              );*/
+                              );
 
                               /*   if (workday_on['clock_out_init'] == '') {
                             Navigator.push(
@@ -496,6 +475,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               'Clock Out',
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -561,6 +541,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               l10n.workday_report,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -589,6 +570,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               l10n.warnings,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -614,6 +596,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               l10n.travels,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -640,6 +623,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               l10n.travel_report,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -695,6 +679,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               l10n.workers,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -722,6 +707,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               l10n.projects,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -745,6 +731,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               l10n.contracts,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),
@@ -796,6 +783,7 @@ class _MenuLateralState extends State<MenuLateral> {
                         label: Text(
                           l10n.setting,
                           style: TextStyle(
+                            color: Colors.black,
                             fontSize: 16,
                           ),
                         )))),

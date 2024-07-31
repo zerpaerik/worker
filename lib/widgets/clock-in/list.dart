@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worker/local/database_creator.dart';
 import 'package:worker/model/certification.dart';
@@ -371,7 +370,7 @@ class _ListClockInState extends State<ListClockIn> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        DatePicker.showTimePicker(context,
+                        /* DatePicker.showTimePicker(context,
                             showTitleActions: true, onConfirm: (time) {
                           print('confirm $time');
                           hourClock = time;
@@ -380,7 +379,7 @@ class _ListClockInState extends State<ListClockIn> {
                           _time = formattedTime;
                           setState(() {});
                         }, currentTime: DateTime.now(), locale: LocaleType.en);
-                        setState(() {});
+                        setState(() {});*/
                       },
                       child: Container(
                         alignment: Alignment.center,
@@ -971,7 +970,7 @@ class _ListClockInState extends State<ListClockIn> {
                                             icon: Icon(Icons.calendar_today),
                                             color: HexColor('EA6012'),
                                             onPressed: () {
-                                              DatePicker.showDatePicker(context,
+                                              /* DatePicker.showDatePicker(context,
                                                   showTitleActions: true,
                                                   onConfirm: (start) {
                                                 print('confirm start $start');
@@ -982,7 +981,7 @@ class _ListClockInState extends State<ListClockIn> {
                                                   currentTime: DateTime.now(),
                                                   locale: LocaleType.en);
 
-                                              setState(() {});
+                                              setState(() {});*/
                                             },
                                           ),
                                         ),
@@ -992,7 +991,7 @@ class _ListClockInState extends State<ListClockIn> {
                                             icon: Icon(Icons.timer),
                                             color: HexColor('EA6012'),
                                             onPressed: () {
-                                              DatePicker.showTimePicker(context,
+                                              /* DatePicker.showTimePicker(context,
                                                   showTitleActions: true,
                                                   onConfirm: (time) {
                                                 print('confirm $time');
@@ -1007,7 +1006,7 @@ class _ListClockInState extends State<ListClockIn> {
                                               },
                                                   currentTime: DateTime.now(),
                                                   locale: LocaleType.en);
-                                              setState(() {});
+                                              setState(() {});*/
                                             },
                                           ),
                                         )

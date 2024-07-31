@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'dart:convert';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
@@ -735,9 +734,9 @@ class _InitClockInState extends State<InitClockIn> {
     getContract(1);
     getSWData();
     _checkGps();
-    _getLocation().then((position) {
+    /*_getLocation().then((position) {
       userLocation = position;
-    });
+    });*/
     super.initState();
     setState(() {
       start_time = DateTime.parse(DateTime.now().toString());
@@ -932,14 +931,7 @@ class _InitClockInState extends State<InitClockIn> {
                                 icon: Icon(Icons.calendar_today),
                                 color: Colors.white,
                                 onPressed: () {
-                                  DatePicker.showDatePicker(context,
-                                      /* theme: DatePickerTheme(
-                                          titleHeight: 50,
-                                          containerHeight: 600.0,
-                                          itemStyle: TextStyle(
-                                              color: HexColor('EA6012')),
-                                          doneStyle: TextStyle(
-                                              color: HexColor('EA6012'))),*/
+                                  /*  DatePicker.showDatePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (start) {
                                     print('confirm start $start');
@@ -950,7 +942,7 @@ class _InitClockInState extends State<InitClockIn> {
                                       currentTime: DateTime.now(),
                                       locale: LocaleType.en);
 
-                                  setState(() {});
+                                  setState(() {});*/
                                 },
                               ),
                             ),
@@ -960,14 +952,7 @@ class _InitClockInState extends State<InitClockIn> {
                                 icon: Icon(Icons.timer),
                                 color: Colors.white,
                                 onPressed: () {
-                                  DatePicker.showTimePicker(context,
-                                      /*theme: DatePickerTheme(
-                                          titleHeight: 50,
-                                          containerHeight: 600.0,
-                                          itemStyle: TextStyle(
-                                              color: HexColor('EA6012')),
-                                          doneStyle: TextStyle(
-                                              color: HexColor('EA6012'))),*/
+                                  /* DatePicker.showTimePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (time) {
                                     print('confirm $time');
@@ -979,7 +964,7 @@ class _InitClockInState extends State<InitClockIn> {
                                   },
                                       currentTime: DateTime.now(),
                                       locale: LocaleType.en);
-                                  setState(() {});
+                                  setState(() {});*/
                                 },
                               ),
                             )

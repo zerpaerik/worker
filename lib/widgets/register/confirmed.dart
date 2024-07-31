@@ -143,7 +143,7 @@ class _ConfirmedRegisterState extends State<ConfirmedRegister> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.05,
           ),
-          if (this.widget.code == 1) ...[
+          if (widget.code == 1) ...[
             Container(
                 child: Align(
               alignment: Alignment.center,

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worker/local/database_creator.dart';
 import 'package:worker/model/certification.dart';
@@ -1675,10 +1674,10 @@ class _ListClockInState extends State<ListClockIn> {
                             )
                           : ElevatedButton(
                               onPressed: () async {
-                                final String currentTimeZone =
+                                /*final String currentTimeZone =
                                     await FlutterNativeTimezone
-                                        .getLocalTimezone();
-                                print(currentTimeZone);
+                                        .getLocalTimezone();*/
+                                //print(currentTimeZone)
                                 print('finalizando clockin');
                                 // ignore: unnecessary_null_comparison
                                 if (widget.work!.clock_in_end == null) {

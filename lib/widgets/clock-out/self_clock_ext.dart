@@ -358,7 +358,7 @@ class _SelfClockOutState extends State<SelfClockOut> {
           ),
           if (workday_on != null && workday_on!['clock_out_init'] == '') ...[
             Container(
-                margin: EdgeInsets.only(left: 30, right: 30),
+                margin: const EdgeInsets.only(left: 30, right: 30),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(

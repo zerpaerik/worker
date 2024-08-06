@@ -10,8 +10,8 @@ class Workday with ChangeNotifier {
   final DateTime? clock_out_start;
   final DateTime? default_init;
   final DateTime? default_exit;
-  final String clock_in_location;
-  final String clock_out_location;
+  final String? clock_in_location;
+  final String? clock_out_location;
 
   Workday(
       {required this.id,
@@ -50,8 +50,8 @@ class Workday with ChangeNotifier {
       default_exit: json['default_exit_time'] != null
           ? DateTime.parse(json['default_exit_time'].toString())
           : null,
-      clock_in_location: json['clock_in_location'],
-      clock_out_location: json['clock_out_location'],
+      clock_in_location: json['clock_in_location'].toString(),
+      clock_out_location: json['clock_out_location'].toString(),
     );
   }
 }

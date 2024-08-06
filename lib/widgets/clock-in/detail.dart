@@ -169,14 +169,7 @@ class _DetailClockInState extends State<DetailClockIn> {
       isLoading = true;
     });
 
-    _getLocation().then((position) {
-      userLocation = position;
-    });
-    if (userLocation != null) {
-      _locationMessage = '${userLocation!.latitude} ${userLocation!.longitude}';
-    } else {
-      _locationMessage = '--- ---';
-    }
+    _locationMessage = '--- ---';
 
     try {
       Provider.of<WorkDay>(context, listen: false)
@@ -197,6 +190,7 @@ class _DetailClockInState extends State<DetailClockIn> {
                       work: widget.work,
                       contract: widget.contract,
                       wk: widget.wk,
+                      us: widget.user,
                     )),
           );
           /*  Navigator.push(
@@ -621,6 +615,10 @@ class _DetailClockInState extends State<DetailClockIn> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: () {
                         if (temp == '' &&
                             widget.contract!['contract_temp'] == 'true') {

@@ -21,7 +21,6 @@ const back_camera = "BACK CAMERA";
 class QRSCANOUT extends StatefulWidget {
   final User? user;
   final int? workday;
-  final DateTime? workdayDate;
   Map<String, dynamic>? contract;
   final Workday? work;
   Map<String, dynamic>? wk;
@@ -29,26 +28,23 @@ class QRSCANOUT extends StatefulWidget {
   QRSCANOUT(
       {required this.user,
       required this.workday,
-      this.workdayDate,
       this.contract,
       this.work,
       this.wk});
 
   @override
   State<StatefulWidget> createState() =>
-      _QRSCANOUTState(user!, workday!, workdayDate!, contract!, work!, wk!);
+      _QRSCANOUTState(user!, workday!, contract!, work!, wk!);
 }
 
 class _QRSCANOUTState extends State<QRSCANOUT> {
   User user;
   int workday;
-  DateTime workdayDate;
   Map<String, dynamic> contract;
   Workday work;
   Map<String, dynamic> wk;
 
-  _QRSCANOUTState(this.user, this.workday, this.workdayDate, this.contract,
-      this.work, this.wk);
+  _QRSCANOUTState(this.user, this.workday, this.contract, this.work, this.wk);
   bool Done_Button = false;
   var qrText = "";
   QRViewController? controller;

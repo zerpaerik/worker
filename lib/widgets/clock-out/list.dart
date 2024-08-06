@@ -29,34 +29,26 @@ class ListClockOut extends StatefulWidget {
   static const routeName = '/my-clockout';
   User? user;
   int? workday;
-  DateTime? workday_date;
   Map<String, dynamic>? contract;
   Workday? work;
   Map<String, dynamic>? wk;
 
-  ListClockOut(
-      {this.user,
-      this.workday,
-      this.workday_date,
-      this.contract,
-      this.work,
-      this.wk});
+  ListClockOut({this.user, this.workday, this.contract, this.work, this.wk});
 
   @override
   _ListClockOutState createState() =>
-      _ListClockOutState(user!, workday!, workday_date!, contract!, work!, wk!);
+      _ListClockOutState(user!, workday!, contract!, work!, wk!);
 }
 
 class _ListClockOutState extends State<ListClockOut> {
   User user;
   int workday;
-  DateTime workday_date;
   Map<String, dynamic> contract;
   Workday work;
   Map<String, dynamic> wk;
 
-  _ListClockOutState(this.user, this.workday, this.workday_date, this.contract,
-      this.work, this.wk);
+  _ListClockOutState(
+      this.user, this.workday, this.contract, this.work, this.wk);
   // ignore: unused_field
   int? _selectedIndex = 3;
   Workday? _wd;
@@ -891,7 +883,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.18,
+                                                                0.30,
                                                             child: Container(
                                                               child: Text(
                                                                 'ID#${data[index]['btn_id']}',
@@ -907,7 +899,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                             ),
                                                           )),
                                                       Expanded(
-                                                          flex: 7,
+                                                          flex: 6,
                                                           child: Container(
                                                             alignment: Alignment
                                                                 .topLeft,
@@ -915,7 +907,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.80,
+                                                                0.70,
                                                             child: Row(
                                                               children: <Widget>[
                                                                 Container(
@@ -989,7 +981,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                         ),
                                                       ),
                                                       Expanded(
-                                                          flex: 2,
+                                                          flex: 3,
                                                           child: Container(
                                                             alignment: Alignment
                                                                 .topLeft,
@@ -997,7 +989,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.18,
+                                                                0.30,
                                                             child: Container(
                                                               child: Text(
                                                                 'ID#${datae[index]['btn_id']}',
@@ -1013,7 +1005,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                             ),
                                                           )),
                                                       Expanded(
-                                                          flex: 7,
+                                                          flex: 6,
                                                           child: Container(
                                                             alignment: Alignment
                                                                 .topLeft,
@@ -1021,7 +1013,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.80,
+                                                                0.70,
                                                             child: Row(
                                                               children: <Widget>[
                                                                 Container(
@@ -1137,9 +1129,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                           ),
                                                           Container(
                                                             child: Text(
-                                                              '${data1E[index]['last_name']}' +
-                                                                  ' ' +
-                                                                  '${data1E[index]['first_name']}',
+                                                              '${data1E[index]['last_name']} ${data1E[index]['first_name']}',
                                                               style: TextStyle(
                                                                   fontSize: 15),
                                                             ),
@@ -1222,9 +1212,10 @@ class _ListClockOutState extends State<ListClockOut> {
                                                         children: <Widget>[
                                                           Container(
                                                             margin:
-                                                                EdgeInsets.only(
+                                                                const EdgeInsets
+                                                                    .only(
                                                                     left: 10),
-                                                            child: Icon(
+                                                            child: const Icon(
                                                               Icons.cancel,
                                                               color: Colors.red,
                                                             ),
@@ -1235,7 +1226,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                                     left: 5),
                                                             child: Text(
                                                               'ID# ${data1[index]['btn_id']}',
-                                                              style: TextStyle(
+                                                              style: const TextStyle(
                                                                   color: Colors
                                                                       .grey,
                                                                   fontWeight:
@@ -1278,13 +1269,17 @@ class _ListClockOutState extends State<ListClockOut> {
                   if (config!.role == 'supervisor') ...[
                     Container(
                       alignment: Alignment.topRight,
-                      margin: EdgeInsets.only(right: 30, bottom: 15),
+                      margin: const EdgeInsets.only(right: 30, bottom: 15),
                       // margin: EdgeInsets.only(left:15),
                       child: isLoading
-                          ? Center(
+                          ? const Center(
                               child: CircularProgressIndicator(),
                             )
                           : ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    HexColor('EA6012')),
+                              ),
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -1320,6 +1315,10 @@ class _ListClockOutState extends State<ListClockOut> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: () async {
                             Navigator.push(
                               context,

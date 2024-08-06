@@ -1991,7 +1991,7 @@ class Auth with ChangeNotifier {
 
     if (response.statusCode == 200 && userData.isNotEmpty) {
       Map<String, dynamic> success = {
-        // "data": User.fromJson(userData),
+        "data": User.fromJson(userData),
         "status": response.statusCode.toString()
       };
 
@@ -2029,7 +2029,7 @@ class Auth with ChangeNotifier {
     DateTime now = DateTime.now();
 
     var getUri =
-        Uri.parse(ApiWebServer.server_name + '/api/v-1/user/worked-hours');
+        Uri.parse('${ApiWebServer.server_name}/api/v-1/user/worked-hours');
 
     final response = await http.get(getUri, headers: {
       "content-type": "application/json",

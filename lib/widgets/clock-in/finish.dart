@@ -136,6 +136,7 @@ class _FinishClockInState extends State<FinishClockIn> {
                             workday: widget.workday,
                             work: widget.work,
                             contract: widget.contract,
+                            wk: {},
                           )),
                 );
               },

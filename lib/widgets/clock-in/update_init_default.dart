@@ -24,7 +24,6 @@ import 'list.dart';
 class UpdateInit extends StatefulWidget {
   final User? user;
   final int? workday;
-  final DateTime? workdayDate;
   Map<String, dynamic>? contract;
   final Workday? work;
   Map<String, dynamic>? wk;
@@ -32,28 +31,26 @@ class UpdateInit extends StatefulWidget {
   UpdateInit(
       {required this.user,
       required this.workday,
-      this.workdayDate,
       this.contract,
       this.work,
       this.wk,
       this.dif});
 
   @override
-  _UpdateInitState createState() => _UpdateInitState(
-      user!, workday!, workdayDate!, contract!, work!, wk!, dif!);
+  _UpdateInitState createState() =>
+      _UpdateInitState(user!, workday!, contract!, work!, wk!, dif!);
 }
 
 class _UpdateInitState extends State<UpdateInit> {
   Map<String, dynamic> contract;
   User user;
   int workday;
-  DateTime workdayDate;
   Workday work;
   Map<String, dynamic> wk;
   String dif;
 
-  _UpdateInitState(this.user, this.workday, this.workdayDate, this.contract,
-      this.work, this.wk, this.dif);
+  _UpdateInitState(
+      this.user, this.workday, this.contract, this.work, this.wk, this.dif);
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -469,7 +466,7 @@ class _UpdateInitState extends State<UpdateInit> {
                         ),
                         Text(
                           _time!,
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ],
                     )),
@@ -489,7 +486,18 @@ class _UpdateInitState extends State<UpdateInit> {
                           child: IconButton(
                             icon: Icon(Icons.calendar_today),
                             color: Colors.white,
-                            onPressed: () {
+                            onPressed: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1950),
+                                  //DateTime.now() - not to allow to choose before today.
+                                  lastDate: DateTime(2100));
+                              print(pickedDate);
+                              setState(() {
+                                start_time = pickedDate;
+                              });
+
                               /* DatePicker.showDatePicker(context,
                                   showTitleActions: true, onConfirm: (start) {
                                 print('confirm start $start');
@@ -509,7 +517,27 @@ class _UpdateInitState extends State<UpdateInit> {
                           child: IconButton(
                             icon: Icon(Icons.timer),
                             color: Colors.white,
-                            onPressed: () {
+                            onPressed: () async {
+                              TimeOfDay? picketTime = await showTimePicker(
+                                initialTime: TimeOfDay.now(),
+                                context: context,
+                              );
+
+                              if (picketTime != null) {
+                                DateTime selectedDateTime = DateTime(
+                                  DateTime.now().year,
+                                  DateTime.now().month,
+                                  DateTime.now().day,
+                                  picketTime.hour,
+                                  picketTime.minute,
+                                );
+                                String formattedTime = DateFormat('hh:mm aa')
+                                    .format(selectedDateTime);
+                                _time = formattedTime;
+                                setState(() {
+                                  hourClock = selectedDateTime;
+                                }); // You can use the selectedDateTime as needed.
+                              }
                               /*  DatePicker.showTimePicker(context,
                                   showTitleActions: true, onConfirm: (time) {
                                 print('confirm $time');

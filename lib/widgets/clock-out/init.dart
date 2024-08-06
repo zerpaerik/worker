@@ -28,19 +28,21 @@ class InitClockOut extends StatefulWidget {
   Map<String, dynamic>? contract;
   Map<String, dynamic>? wk;
 
-  InitClockOut({this.user, this.workday, this.work, this.contract, this.wk});
+  InitClockOut(
+      {super.key, this.user, this.workday, this.work, this.contract, this.wk});
 
   @override
   _InitClockOutState createState() =>
+      // ignore: no_logic_in_create_state
       _InitClockOutState(user!, workday!, work!, contract!, wk!);
 }
 
 class _InitClockOutState extends State<InitClockOut> {
-  User user;
-  int workday;
-  Workday work;
-  Map<String, dynamic> contract;
-  Map<String, dynamic> wk;
+  User? user;
+  int? workday;
+  Workday? work;
+  Map<String, dynamic>? contract;
+  Map<String, dynamic>? wk;
 
   _InitClockOutState(
       this.user, this.workday, this.work, this.contract, this.wk);
@@ -48,7 +50,7 @@ class _InitClockOutState extends State<InitClockOut> {
   bool isLoading = false;
   Geolocator? geolocator = Geolocator();
   String? qrCodeResult = "Not Yet Scanned";
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Position? userLocation;
   String? geo;
@@ -703,6 +705,7 @@ class _InitClockOutState extends State<InitClockOut> {
 
   @override
   void initState() {
+    print(widget.workday);
     super.initState();
     _viewWorkDay();
     setState(() {
@@ -913,7 +916,8 @@ class _InitClockOutState extends State<InitClockOut> {
                             ),
                             Text(
                               _time!,
-                              style: TextStyle(fontSize: 16),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
                             ),
                           ],
                         )),
@@ -933,7 +937,17 @@ class _InitClockOutState extends State<InitClockOut> {
                               child: IconButton(
                                 icon: Icon(Icons.calendar_today),
                                 color: Colors.white,
-                                onPressed: () {
+                                onPressed: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(1950),
+                                      //DateTime.now() - not to allow to choose before today.
+                                      lastDate: DateTime(2100));
+                                  print(pickedDate);
+                                  setState(() {
+                                    start_time = pickedDate;
+                                  });
                                   /* DatePicker.showDatePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (start) {
@@ -954,7 +968,28 @@ class _InitClockOutState extends State<InitClockOut> {
                               child: IconButton(
                                 icon: Icon(Icons.timer),
                                 color: Colors.white,
-                                onPressed: () {
+                                onPressed: () async {
+                                  TimeOfDay? picketTime = await showTimePicker(
+                                    initialTime: TimeOfDay.now(),
+                                    context: context,
+                                  );
+
+                                  if (picketTime != null) {
+                                    DateTime selectedDateTime = DateTime(
+                                      DateTime.now().year,
+                                      DateTime.now().month,
+                                      DateTime.now().day,
+                                      picketTime.hour,
+                                      picketTime.minute,
+                                    );
+                                    String formattedTime =
+                                        DateFormat('hh:mm aa')
+                                            .format(selectedDateTime);
+                                    _time = formattedTime;
+                                    setState(() {
+                                      hourClock = selectedDateTime;
+                                    }); // You can use the selectedDateTime as needed.
+                                  }
                                   /* DatePicker.showTimePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (time) {

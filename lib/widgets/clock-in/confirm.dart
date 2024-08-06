@@ -72,6 +72,8 @@ class _ConfirmClockInState extends State<ConfirmClockIn> {
 
   void _viewUser() {
     Provider.of<Auth>(context, listen: false).fetchUser().then((value) {
+      print('response user');
+      print(value);
       setState(() {
         _user = value['data'];
       });

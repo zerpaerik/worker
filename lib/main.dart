@@ -5,6 +5,7 @@ import 'package:worker/utils/language.dart';
 import 'package:worker/blocs/locale_bloc/locale_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:worker/widgets/dashboard/index.dart';
 
 import 'local/database_creator.dart';
 import 'providers/auth.dart';

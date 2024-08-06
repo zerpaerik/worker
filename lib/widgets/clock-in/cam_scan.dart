@@ -18,30 +18,21 @@ import 'list.dart';
 class QRSCAN extends StatefulWidget {
   final User? user;
   final int? workday;
-  final DateTime? workdayDate;
   Map<String, dynamic>? contract;
   final Workday? work;
   Map<String, dynamic>? wk;
   final User? us;
 
-  QRSCAN(
-      {this.user,
-      this.workday,
-      this.workdayDate,
-      this.contract,
-      this.work,
-      this.wk,
-      this.us});
+  QRSCAN({this.user, this.workday, this.contract, this.work, this.wk, this.us});
 
   @override
   State<StatefulWidget> createState() =>
-      _QRSCANState(user!, workday!, workdayDate!, contract!, work!, wk!, us!);
+      _QRSCANState(user!, workday!, contract!, work!, wk!, us!);
 }
 
 class _QRSCANState extends State<QRSCAN> {
   User user;
   int workday;
-  DateTime workdayDate;
   Map<String, dynamic> contract;
   Workday work;
   Map<String, dynamic> wk;
@@ -50,8 +41,8 @@ class _QRSCANState extends State<QRSCAN> {
   var selectedValue;
   int worker_category = 0;
 
-  _QRSCANState(this.user, this.workday, this.workdayDate, this.contract,
-      this.work, this.wk, this.us);
+  _QRSCANState(
+      this.user, this.workday, this.contract, this.work, this.wk, this.us);
   bool Done_Button = false;
   var qrText = "";
   QRViewController? controller;
@@ -209,6 +200,7 @@ class _QRSCANState extends State<QRSCAN> {
     String? token = await getToken();
     String contract = widget.contract!['contract_id'].toString();
 
+    print('llego aqui');
     setState(() {
       scanning = true;
     });
@@ -219,16 +211,24 @@ class _QRSCANState extends State<QRSCAN> {
         headers: {"Authorization": "Token $token"});
 
     var resBody = json.decode(response.body);
+    print('hay respuesta');
 
     if (response.statusCode == 200 && resBody['first_name'] != null) {
       print('dio 200 scan list');
 
+      print('va a detallaae');
+
       User _user = User.fromJson(resBody);
+
+      print('va a detalleccccc');
+
       setState(() {
         qrText = "";
         controller?.stopCamera();
         Done_Button = false;
       });
+      print('va a detalle');
+      // ignore: use_build_context_synchronously
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -272,6 +272,7 @@ class _QRSCANState extends State<QRSCAN> {
           controller?.stopCamera();
           Done_Button = false;
         });
+        // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -292,6 +293,7 @@ class _QRSCANState extends State<QRSCAN> {
           controller?.stopCamera();
           Done_Button = false;
         });
+        // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -305,6 +307,7 @@ class _QRSCANState extends State<QRSCAN> {
         );
       }
     }
+    return null;
   }
 
   Future<dynamic> addProyect(int worker, cate) async {
@@ -486,32 +489,31 @@ class _QRSCANState extends State<QRSCAN> {
         body: Column(
           children: <Widget>[
             if (add) ...[
-              Container(
-                //margin: EdgeInsets.only(left: 5),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(l10n.adding_project,
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      )),
-                ),
-              )
+              Align(
+                alignment: Alignment.topCenter,
+                child: Text(l10n.adding_project,
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    )),
+              ),
             ],
             Expanded(
+              flex: 4,
               child: Container(
                   child: QRView(
                 key: qrKey,
                 onQRViewCreated: (controller) {
-                  setState(() {
-                    this.controller = controller;
-                  });
-                  resumeCamera();
+                  this.controller = controller;
+
+                  //resumeCamera();
                   controller.scannedDataStream.listen((scanData) {
+                    print(('entro a scanned'));
                     setState(() {
                       result = scanData;
                     });
+                    print('result scanner');
                     controller.dispose();
                     scanQRWorker(result?.code, '1111', '1111');
                   });
@@ -525,7 +527,6 @@ class _QRSCANState extends State<QRSCAN> {
                   overlayColor: Colors.black.withOpacity(0.9),
                 ),
               )),
-              flex: 4,
             ),
           ],
         ));
@@ -536,7 +537,7 @@ class _QRSCANState extends State<QRSCAN> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         qrText = scanData as String;
-        controller?.pauseCamera();
+        controller.pauseCamera();
         //Done_Button = true;
       });
       scanQRWorker(qrText, '1111', '1111');

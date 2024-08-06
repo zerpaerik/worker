@@ -13,6 +13,7 @@ import '../../model/workday.dart';
 
 import '../../providers/workday.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import '../global.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
@@ -42,7 +43,7 @@ class _InitClockInState extends State<InitClockIn> {
   bool isLoading = false;
   Map<String, dynamic>? data;
   Map<String, dynamic>? workday_on;
-  bool? isData = false;
+  bool isData = false;
 
   Geolocator? geolocator = Geolocator();
 
@@ -146,6 +147,8 @@ class _InitClockInState extends State<InitClockIn> {
       workday_on = todo;
       isData = true;
     });
+    print('is data');
+    print(isData);
     print(workday_on);
     return workday_on;
   }
@@ -178,8 +181,8 @@ class _InitClockInState extends State<InitClockIn> {
     return todo;
   }
 
-  Future<Position> _getLocation() async {
-    var currentLocation;
+  Future<Position?> _getLocation() async {
+    Position? currentLocation;
     try {
       currentLocation = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.best);
@@ -844,7 +847,7 @@ class _InitClockInState extends State<InitClockIn> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.04,
           ),
-          if (!isData!) ...[
+          if (!isData) ...[
             Container(
               margin: EdgeInsets.only(top: 100),
               child: Center(
@@ -852,7 +855,7 @@ class _InitClockInState extends State<InitClockIn> {
               ),
             )
           ],
-          if (!isData!) ...[
+          if (isData) ...[
             if (workday_on != null && workday_on!['clock_in_init'] == '') ...[
               Container(
                   margin: EdgeInsets.only(left: 30, right: 30, bottom: 10),
@@ -930,7 +933,17 @@ class _InitClockInState extends State<InitClockIn> {
                               child: IconButton(
                                 icon: Icon(Icons.calendar_today),
                                 color: Colors.white,
-                                onPressed: () {
+                                onPressed: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(1950),
+                                      //DateTime.now() - not to allow to choose before today.
+                                      lastDate: DateTime(2100));
+                                  print(pickedDate);
+                                  setState(() {
+                                    start_time = pickedDate;
+                                  });
                                   /*  DatePicker.showDatePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (start) {
@@ -951,7 +964,29 @@ class _InitClockInState extends State<InitClockIn> {
                               child: IconButton(
                                 icon: Icon(Icons.timer),
                                 color: Colors.white,
-                                onPressed: () {
+                                onPressed: () async {
+                                  TimeOfDay? picketTime = await showTimePicker(
+                                    initialTime: TimeOfDay.now(),
+                                    context: context,
+                                  );
+
+                                  if (picketTime != null) {
+                                    DateTime selectedDateTime = DateTime(
+                                      DateTime.now().year,
+                                      DateTime.now().month,
+                                      DateTime.now().day,
+                                      picketTime.hour,
+                                      picketTime.minute,
+                                    );
+                                    String formattedTime =
+                                        DateFormat('hh:mm aa')
+                                            .format(selectedDateTime);
+                                    _time = formattedTime;
+                                    setState(() {
+                                      hourClock = selectedDateTime;
+                                    }); // You can use the selectedDateTime as needed.
+                                  }
+
                                   /* DatePicker.showTimePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (time) {
@@ -1010,6 +1045,7 @@ class _InitClockInState extends State<InitClockIn> {
               height: MediaQuery.of(context).size.height * 0.25,
             ),
             if (workday_on != null && workday_on!['clock_in_init'] == '') ...[
+              Text('ff'),
               Container(
                 alignment: Alignment.topRight,
                 margin: EdgeInsets.only(right: 30),
@@ -1038,6 +1074,7 @@ class _InitClockInState extends State<InitClockIn> {
             if (workday_on != null && workday_on!['clock_in_init'] != '') ...[
               if (workday_on != null &&
                   workday_on!['has_clockin'].toString() == 'true') ...[
+                Text('qq'),
                 Container(
                   alignment: Alignment.topRight,
                   margin: EdgeInsets.only(right: 30),
@@ -1070,6 +1107,7 @@ class _InitClockInState extends State<InitClockIn> {
               ],
               if (workday_on != null &&
                   workday_on!['has_clockin'].toString() == 'false') ...[
+                Text('aa'),
                 Container(
                   alignment: Alignment.topRight,
                   margin: EdgeInsets.only(right: 30),
@@ -1125,7 +1163,7 @@ class _InitClockInState extends State<InitClockIn> {
                 ),
               ],
             ]
-          ]
+          ],
         ],
       ),
     )));

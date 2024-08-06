@@ -31,28 +31,20 @@ class ListClockIn extends StatefulWidget {
   static const routeName = '/my-clockin';
   final User? user;
   final int? workday;
-  final DateTime? workdayDate;
   Map<String, dynamic>? contract;
   final Workday? work;
   Map<String, dynamic>? wk;
 
-  ListClockIn(
-      {required this.user,
-      required this.workday,
-      this.workdayDate,
-      this.contract,
-      this.work,
-      this.wk});
+  ListClockIn({this.user, this.workday, this.contract, this.work, this.wk});
 
   @override
   _ListClockInState createState() =>
-      _ListClockInState(user!, workday!, workdayDate!, contract!, work!, wk!);
+      _ListClockInState(user!, workday!, contract!, work!, wk!);
 }
 
 class _ListClockInState extends State<ListClockIn> {
   User user;
   int workday;
-  DateTime workdayDate;
   Map<String, dynamic> contract;
   Workday work;
   Map<String, dynamic> wk;
@@ -63,8 +55,7 @@ class _ListClockInState extends State<ListClockIn> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Position? userLocation;
-  _ListClockInState(this.user, this.workday, this.workdayDate, this.contract,
-      this.work, this.wk);
+  _ListClockInState(this.user, this.workday, this.contract, this.work, this.wk);
   // ignore: unused_field
   int? _selectedIndex = 3;
   bool? loading = false;
@@ -553,6 +544,7 @@ class _ListClockInState extends State<ListClockIn> {
       print('dio 200 scan list');
       User _user = User.fromJson(resBody);
 
+      // ignore: use_build_context_synchronously
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -837,6 +829,7 @@ class _ListClockInState extends State<ListClockIn> {
       });
       if (response.statusCode == 200) {
         _showviewExitProject();
+        // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -1227,6 +1220,7 @@ class _ListClockInState extends State<ListClockIn> {
                               print(init);
                               print(now.difference(init).toString());
                               if (now.difference(init) > Duration(minutes: 1)) {
+                                // ignore: use_build_context_synchronously
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -1241,6 +1235,7 @@ class _ListClockInState extends State<ListClockIn> {
                                           )),
                                 );
                               } else {
+                                // ignore: use_build_context_synchronously
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -1476,12 +1471,10 @@ class _ListClockInState extends State<ListClockIn> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.18,
+                                                                0.25,
                                                             child: Container(
                                                               child: Text(
-                                                                'ID#' +
-                                                                    '' +
-                                                                    '${data[index]['btn_id']}',
+                                                                'ID#${data[index]['btn_id']}',
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .grey,
@@ -1494,7 +1487,7 @@ class _ListClockInState extends State<ListClockIn> {
                                                             ),
                                                           )),
                                                       Expanded(
-                                                          flex: 7,
+                                                          flex: 6,
                                                           child: Container(
                                                             alignment: Alignment
                                                                 .topLeft,
@@ -1502,7 +1495,7 @@ class _ListClockInState extends State<ListClockIn> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.80,
+                                                                0.70,
                                                             child: Row(
                                                               children: <Widget>[
                                                                 Container(
@@ -1511,9 +1504,7 @@ class _ListClockInState extends State<ListClockIn> {
                                                                           left:
                                                                               2),
                                                                   child: Text(
-                                                                    '${data[index]['last_name']}' +
-                                                                        ' ' +
-                                                                        '${data[index]['first_name']}',
+                                                                    '${data[index]['last_name']} ${data[index]['first_name']}',
                                                                     style: TextStyle(
                                                                         fontSize:
                                                                             15),
@@ -1672,6 +1663,10 @@ class _ListClockInState extends State<ListClockIn> {
                               child: CircularProgressIndicator(),
                             )
                           : ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    HexColor('EA6012')),
+                              ),
                               onPressed: () async {
                                 /*final String currentTimeZone =
                                     await FlutterNativeTimezone

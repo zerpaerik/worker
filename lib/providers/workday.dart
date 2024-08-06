@@ -72,6 +72,9 @@ class WorkDay with ChangeNotifier {
     print('llego pv wkd');
     String? token = await getToken();
     DateTime now = DateTime.now();
+
+    print(start);
+    print(time);
     String s_d = start.toString().substring(0, 11) +
         time.toString().substring(10, 23).replaceAll(" ", "");
 
@@ -83,7 +86,7 @@ class WorkDay with ChangeNotifier {
     print(contract);
 
     workday = await getWorkday(1);
-    final url = ApiWebServer.API_CREATE_WORKDAY;
+    const url = ApiWebServer.API_CREATE_WORKDAY;
 
     try {
       if (valid_temp.toString() == 'true') {
@@ -680,11 +683,12 @@ class WorkDay with ChangeNotifier {
 
     print(workday);
     print(worker);
+    print(wd);
 
-    clockin = DateTime.parse(wd['default_exit']);
+    clockin = DateTime.parse(wd['default_exit'].toString());
 
-    final url = ApiWebServer.server_name +
-        '/api/v-1/workday/$_workday/workday-register/create';
+    final url =
+        '${ApiWebServer.server_name}/api/v-1/workday/$_workday/workday-register/create';
     try {
       final response = await http.post(Uri.parse(url),
           body: json.encode({
@@ -711,7 +715,7 @@ class WorkDay with ChangeNotifier {
       // print(responseData);
       notifyListeners();
 
-      return Clocks.fromJson(responseData);
+      return 1 /*Clocks.fromJson(responseData)*/;
     } catch (error) {
       print(error);
       throw error;

@@ -208,11 +208,13 @@ class User with ChangeNotifier {
       first_name: json['first_name'],
       last_name: json['last_name'],
       email: json['email'],
-      profile_image: json['profile_image'],
+      profile_image: File(json['profile_image']),
       country: json['country'],
       state: json['state'],
       city: json['city'],
-      birth_date: json['birth_date'],
+      birth_date: json['birth_date'] != null
+          ? DateTime.parse(json['birth_date'].toString())
+          : DateTime.now(),
       gender: json['gender'],
       zip_code: json['zip_code'],
       address_1: json['address_1'],
@@ -239,7 +241,9 @@ class User with ChangeNotifier {
       tax_doc_file: json['tax_doc_file'],
       state_name: json['state_name'],
       city_name: json['city_name'],
-      doc_expire_date: json['doc_expire_date'],
+      doc_expire_date: json['doc_expire_date'] != null
+          ? DateTime.parse(json['doc_expire_date'].toString())
+          : DateTime.now(),
 
       /* ssn_dependents_number: json['ssn_dependents_number'],
       other_income: json['other_income'],

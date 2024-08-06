@@ -130,14 +130,9 @@ class _DetailClockOutState extends State<DetailClockOut> {
     setState(() {
       isLoading = true;
     });
-    _getLocation().then((position) {
-      userLocation = position;
-    });
-    if (userLocation != null) {
-      _locationMessage = '${userLocation!.latitude} ${userLocation!.longitude}';
-    } else {
-      _locationMessage = '--- ---';
-    }
+
+    _locationMessage = '--- ---';
+
     try {
       Provider.of<WorkDay>(context, listen: false)
           .addClockOut(
@@ -147,12 +142,15 @@ class _DetailClockOutState extends State<DetailClockOut> {
         workday_on,
       )
           .then((response) {
+        print('responseclock out');
+        print(response);
+        int resp = 0;
         setState(() {
           isLoading = false;
-          clock = response;
+          resp = response;
         });
         getWorkdayOn(1);
-        if (clock != null) {
+        if (resp != 0) {
           /* Navigator.push(
             context,
             MaterialPageRoute(
@@ -537,6 +535,10 @@ class _DetailClockOutState extends State<DetailClockOut> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: _submit,
                       child: Text(
                         l10n.accept,

@@ -215,6 +215,7 @@ class _ConfigPageState extends State<ConfigPage> {
                     label: Text(
                       l10n.terms,
                       style: TextStyle(
+                        color: Colors.black,
                         fontSize: 16,
                       ),
                     )))),
@@ -233,6 +234,7 @@ class _ConfigPageState extends State<ConfigPage> {
                     label: Text(
                       l10n.policies,
                       style: TextStyle(
+                        color: Colors.black,
                         fontSize: 16,
                       ),
                     )))),
@@ -257,6 +259,7 @@ class _ConfigPageState extends State<ConfigPage> {
                     label: Text(
                       l10n.change_password,
                       style: TextStyle(
+                        color: Colors.black,
                         fontSize: 16,
                       ),
                     )))),
@@ -275,6 +278,7 @@ class _ConfigPageState extends State<ConfigPage> {
                     label: Text(
                       l10n.inactive,
                       style: TextStyle(
+                        color: Colors.black,
                         fontSize: 16,
                       ),
                     )))),
@@ -297,6 +301,7 @@ class _ConfigPageState extends State<ConfigPage> {
                     label: Text(
                       l10n.delete_a,
                       style: TextStyle(
+                        color: Colors.black,
                         fontSize: 16,
                       ),
                     )))),
@@ -316,6 +321,7 @@ class _ConfigPageState extends State<ConfigPage> {
                     label: Text(
                       l10n.logout,
                       style: TextStyle(
+                        color: Colors.black,
                         fontSize: 16,
                       ),
                     ))))

@@ -53,31 +53,36 @@ class WorkdayRegister with ChangeNotifier {
       last_name: json['last_name'],
       clock_in: json['clock_in'] != null ? json['clock_in'] : null,
       workday_entry_time: json['workday_entry_time'] != null
-          ? json['workday_entry_time']
-          : null,
+          ? DateTime.parse(json['workday_entry_time'].toString())
+          : DateTime.now(),
       clock_out: json['clock_out'] != null ? json['clock_out'] : null,
       workday_departure_time: json['workday_departure_time'] != null
-          ? json['workday_departure_time']
-          : null,
-      lunch_start_time:
-          json['lunch_start_time'] != null ? json['lunch_start_time'] : null,
-      lunch_end_time:
-          json['lunch_end_time'] != null ? json['lunch_end_time'] : null,
+          ? DateTime.parse(json['workday_departure_time'].toString())
+          : DateTime.now(),
+      lunch_start_time: json['lunch_start_time'].toString() != 'null'
+          ? DateTime.parse(json['lunch_start_time'].toString())
+          : DateTime.now(),
+      lunch_end_time: json['lunch_end_time'].toString() != 'null'
+          ? DateTime.parse(json['lunch_end_time'].toString())
+          : DateTime.now(),
       lunch_duration: json['lunch_duration'],
-      standby_start_time: json['standby_start_time'] != null
-          ? json['standby_start_time']
-          : null,
-      standby_end_time:
-          json['standby_end_time'] != null ? json['standby_end_time'] : null,
-      standby_duration: json['standby_duration'],
-      travel_start_time:
-          json['travel_start_time'] != null ? json['travel_start_time'] : null,
-      travel_end_time:
-          json['travel_end_time'] != null ? json['travel_end_time'] : null,
       travel_duration: json['travel_duration'],
+      standby_start_time: json['standby_start_time'].toString() != 'null'
+          ? DateTime.parse(json['standby_start_time'].toString())
+          : DateTime.now(),
+      standby_end_time: json['standby_end_time'].toString() != 'null'
+          ? DateTime.parse(json['standby_end_time'].toString())
+          : DateTime.now(),
+      standby_duration: json['standby_duration'],
+      travel_start_time: json['travel_start_time'].toString() != 'null'
+          ? DateTime.parse(json['travel_start_time'].toString())
+          : DateTime.now(),
+      travel_end_time: json['travel_end_time'].toString() != 'null'
+          ? DateTime.parse(json['travel_end_time'].toString())
+          : DateTime.now(),
       was_driver: json['was_driver'],
       was_lead: json['was_lead'],
-      comments: json['comments'],
+      comments: json['comments'].toString(),
     );
   }
 }

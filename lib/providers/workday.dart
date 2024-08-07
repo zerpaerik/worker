@@ -1533,13 +1533,13 @@ class WorkDay with ChangeNotifier {
   }
 
   Future<dynamic> editWorkdayReportVerified(
-      workday, WorkdayRegister report) async {
+      workday, WorkdayRegister? report) async {
     String? token = await getToken();
-    int rep = report.id;
+    int rep = report!.id;
     try {
       final response = await http.patch(
-          Uri.parse(ApiWebServer.server_name +
-              '/api/v-1/workday/$workday/workday-report/worker-report/update'),
+          Uri.parse(
+              '${ApiWebServer.server_name}/api/v-1/workday/$workday/workday-report/worker-report/update'),
           body: json.encode([
             {"id": rep.toString(), "editor": 1}
           ]),
@@ -2156,10 +2156,10 @@ class WorkDay with ChangeNotifier {
       workday,
       workday_entry_time,
       workday_departure_time,
-      WorkdayRegister worday_register,
+      WorkdayRegister? worday_register,
       start,
       end) async {
-    int report = worday_register.id;
+    int report = worday_register!.id;
     String? token = await getToken();
 
     print('llego a pv edit workday report');
@@ -2250,8 +2250,8 @@ class WorkDay with ChangeNotifier {
   }
 
   Future<dynamic> editWorkdayReportLunch(workday, workday_entry_time,
-      workday_departure_time, WorkdayRegister worday_register) async {
-    int report = worday_register.id;
+      workday_departure_time, WorkdayRegister? worday_register) async {
+    int report = worday_register!.id;
 
     print('llego a pv edit workday report');
     print(workday_entry_time);
@@ -2293,8 +2293,8 @@ class WorkDay with ChangeNotifier {
   }
 
   Future<dynamic> editWorkdayReportStand(workday, workday_entry_time,
-      workday_departure_time, WorkdayRegister worday_register) async {
-    int report = worday_register.id;
+      workday_departure_time, WorkdayRegister? worday_register) async {
+    int report = worday_register!.id;
 
     print('llego a pv edit workday report');
     print(workday_entry_time);
@@ -2336,8 +2336,8 @@ class WorkDay with ChangeNotifier {
   }
 
   Future<dynamic> editWorkdayReportTravel(workday, workday_entry_time,
-      workday_departure_time, WorkdayRegister worday_register) async {
-    int report = worday_register.id;
+      workday_departure_time, WorkdayRegister? worday_register) async {
+    int report = worday_register!.id;
 
     print('llego a pv edit workday report');
     print(workday_entry_time);

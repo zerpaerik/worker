@@ -206,7 +206,7 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   late int travel;
   late bool _isLoading = false;
-  late Config config = Config(0, '', token, role, '', '', '', '', '', 'btn_id',
+  late Config config = Config(0, '', token, '', '', '', '', '', '', 'btn_id',
       '', '', '', '', '', '', '');
   late String token = '';
   late int _currentIndex = 0;

@@ -26,6 +26,8 @@ import '../../model/user.dart';
 import '../../model/workday.dart';
 import '../../model/modules.dart';
 import '../my-profile/config.dart';
+import '../workday-report/base.dart';
+import '../workday-report/init.dart';
 
 class MenuLateral extends StatefulWidget {
   final User user;
@@ -482,20 +484,20 @@ class _MenuLateralState extends State<MenuLateral> {
                 Divider(),
               ],
               if (config.role == 'supervisor' ||
-                  this.widget.modules.workday_reports_module == true) ...[
+                  widget.modules.workday_reports_module == true) ...[
                 Container(
                     margin: EdgeInsets.only(left: 10),
                     child: Align(
                         alignment: Alignment.topLeft,
                         child: TextButton.icon(
                             onPressed: () {
-                              /*  if (workday_on['workday_id'] == '') {
-                               Navigator.push(
+                              if (workday_on['workday_id'] == '') {
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => WorkDayPage(
                                             user: user,
-                                            workday: this.widget.workday.id,
+                                            workday: widget.workday.id,
                                             contract: contractDetail,
                                           )),
                                 );
@@ -507,7 +509,7 @@ class _MenuLateralState extends State<MenuLateral> {
                                     MaterialPageRoute(
                                         builder: (context) => WorkDayPage(
                                               user: user,
-                                              workday: this.widget.workday.id,
+                                              workday: widget.workday.id,
                                               contract: contractDetail,
                                             )),
                                   );
@@ -517,7 +519,7 @@ class _MenuLateralState extends State<MenuLateral> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => InitWorkdayReport(
-                                              workday: this.widget.workday,
+                                              workday: widget.workday,
                                               contract: contractDetail,
                                             )),
                                   );
@@ -527,20 +529,20 @@ class _MenuLateralState extends State<MenuLateral> {
                                     MaterialPageRoute(
                                         builder: (context) => WorkDayPage(
                                               user: user,
-                                              workday: this.widget.workday.id,
+                                              workday: widget.workday.id,
                                               contract: contractDetail,
                                             )),
                                   );
                                 }
-                              }*/
+                              }
                             },
-                            icon: ImageIcon(
+                            icon: const ImageIcon(
                               AssetImage('assets/002-data.png'),
                               color: Colors.black,
                             ),
                             label: Text(
                               l10n.workday_report,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
                               ),
@@ -651,6 +653,7 @@ class _MenuLateralState extends State<MenuLateral> {
                             label: Text(
                               l10n.expenses,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),

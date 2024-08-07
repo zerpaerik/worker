@@ -131,7 +131,14 @@ class _ShowQRWorkerState extends State<ShowQRWorker> {
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                   )),
-              //SizedBox(height:30),
+              SizedBox(height: 30),
+              QrImageView(
+                data: config != null ? config.btn_id : widget.config.btn_id,
+                version: QrVersions.auto,
+                gapless: true,
+                size: MediaQuery.of(context).size.width * 0.65,
+                errorCorrectionLevel: QrErrorCorrectLevel.H,
+              ),
               /*QrImage(
                 data:
                     config != null ? config.btn_id : widget.config.btn_id,

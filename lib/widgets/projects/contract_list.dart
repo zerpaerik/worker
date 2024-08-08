@@ -510,6 +510,10 @@ class _ContractListState extends State<ContractList> {
                       width: MediaQuery.of(context).size.width * 0.50,
                       child: Container(
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: () {
                             Navigator.push(
                               context,

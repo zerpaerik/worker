@@ -1009,6 +1009,10 @@ class _ListCrewState extends State<ListCrew> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: () async {
                         endIn();
                       },
@@ -1031,6 +1035,10 @@ class _ListCrewState extends State<ListCrew> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: () async {
                         Navigator.push(
                           context,
@@ -1064,6 +1072,10 @@ class _ListCrewState extends State<ListCrew> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: () async {
                         endOut();
                       },
@@ -1080,6 +1092,10 @@ class _ListCrewState extends State<ListCrew> {
               margin: EdgeInsets.only(right: 20),
               // margin: EdgeInsets.only(left:15),
               child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(HexColor('EA6012')),
+                ),
                 onPressed: () async {
                   Navigator.push(
                     context,

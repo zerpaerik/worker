@@ -579,6 +579,10 @@ class _InitCrewReportState extends State<InitCrewReport> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: () {
                         submit();
                       },
@@ -715,6 +719,10 @@ class _InitCrewReportState extends State<InitCrewReport> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: () {
                         submit();
                       },

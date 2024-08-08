@@ -1192,7 +1192,7 @@ class _DashboardHomeState extends State<DashboardHome> {
         body: config != null &&
                 config.id_type != null &&
                 (config.id_type == 'business' || config.id_type == 'customer')
-            ? const Text('Dashboard business')
+            ? const Center(child: Text('Dashboard business'))
             : SingleChildScrollView(
                 child: Column(children: <Widget>[
                 SizedBox(

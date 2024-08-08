@@ -26,6 +26,8 @@ import '../../model/user.dart';
 import '../../model/workday.dart';
 import '../../model/modules.dart';
 import '../my-profile/config.dart';
+import '../projects/index.dart';
+import '../projects/project_list.dart';
 import '../workday-report/base.dart';
 import '../workday-report/init.dart';
 
@@ -697,11 +699,11 @@ class _MenuLateralState extends State<MenuLateral> {
                         alignment: Alignment.topLeft,
                         child: TextButton.icon(
                             onPressed: () {
-                              /* Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProjectListN()),
-                              );*/
+                              );
                             },
                             icon: ImageIcon(
                               AssetImage('assets/proyectos.png'),
@@ -721,11 +723,11 @@ class _MenuLateralState extends State<MenuLateral> {
                         alignment: Alignment.topLeft,
                         child: TextButton.icon(
                             onPressed: () {
-                              /*  Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProjectList()),
-                              );*/
+                              );
                             },
                             icon: ImageIcon(
                               AssetImage('assets/proyectos.png'),

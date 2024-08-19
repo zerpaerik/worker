@@ -1296,8 +1296,6 @@ class WorkDay with ChangeNotifier {
 
     Map<String, dynamic> data = {
       "workday": workdayy.toString(),
-      // "workday_entry_time": fec.toUtc().toIso8601String().toString(),
-      //"workday_departure_time": fecs.toUtc().toIso8601String().toString(),
       "had_workday": true
     };
 

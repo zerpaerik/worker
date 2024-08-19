@@ -436,6 +436,7 @@ class _BodyProfileState extends State<BodyProfile> {
                                               child: Text(
                                                 l10n.warnings,
                                                 style: const TextStyle(
+                                                  color: Colors.black,
                                                   fontSize: 10,
                                                 ),
                                               )))
@@ -567,6 +568,7 @@ class _BodyProfileState extends State<BodyProfile> {
                                   Text(
                                     l10n.info_per,
                                     style: TextStyle(
+                                      color: Colors.black,
                                       fontSize: 16,
                                     ),
                                   ),
@@ -592,6 +594,7 @@ class _BodyProfileState extends State<BodyProfile> {
                               label: Text(
                                 l10n.info_acad,
                                 style: TextStyle(
+                                  color: Colors.black,
                                   fontSize: 16,
                                 ),
                               )))),
@@ -616,6 +619,7 @@ class _BodyProfileState extends State<BodyProfile> {
                                 l10n.job_offer,
                                 style: TextStyle(
                                   fontSize: 16,
+                                  color: Colors.black,
                                 ),
                               )))),
                   Container(
@@ -639,6 +643,7 @@ class _BodyProfileState extends State<BodyProfile> {
                               label: Text(
                                 l10n.mod_perfil,
                                 style: TextStyle(
+                                  color: Colors.black,
                                   fontSize: 16,
                                 ),
                               ))))
@@ -664,6 +669,7 @@ class _BodyProfileState extends State<BodyProfile> {
                             label: Text(
                               l10n.setting,
                               style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             )))),

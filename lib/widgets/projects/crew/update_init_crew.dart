@@ -478,6 +478,10 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
                     child: CircularProgressIndicator(),
                   )
                 : ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(HexColor('EA6012')),
+                    ),
                     onPressed: () {
                       submit();
                     },

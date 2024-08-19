@@ -30,6 +30,7 @@ import 'badge_icon.dart';
 //import 'dashboard_business.dart';
 
 //import 'dashboard_worker.dart';
+import 'dashboard_business.dart';
 import 'dashboard_worker.dart';
 import 'menu_lat.dart';
 
@@ -1192,7 +1193,7 @@ class _DashboardHomeState extends State<DashboardHome> {
         body: config != null &&
                 config.id_type != null &&
                 (config.id_type == 'business' || config.id_type == 'customer')
-            ? const Center(child: Text('Dashboard business'))
+            ? DashboardBusiness()
             : SingleChildScrollView(
                 child: Column(children: <Widget>[
                 SizedBox(

@@ -98,9 +98,6 @@ class _LoginNewState extends State<LoginNew> {
       print(_authResponse);
 
       if (_authResponse['status'] == '200') {
-        print('entro aquis');
-        print(_authResponse);
-
         if (_authResponse['data']['role'] == 'business' ||
             _authResponse['data']['role'] == 'customer') {
           Navigator.push(

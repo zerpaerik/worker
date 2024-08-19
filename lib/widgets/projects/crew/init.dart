@@ -631,6 +631,10 @@ class _InitCrewReportState extends State<InitCrewReport> {
               margin: EdgeInsets.only(right: 30),
               //width: MediaQuery.of(context).size.width * 0.70,
               child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(HexColor('EA6012')),
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,

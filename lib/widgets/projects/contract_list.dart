@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart' show DateFormat;
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:worker/widgets/projects/project_list.dart';

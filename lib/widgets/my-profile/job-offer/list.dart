@@ -534,6 +534,11 @@ class _JobOfferPageState extends State<JobOfferPage> {
                                       // margin: EdgeInsets.only(left: 190),
                                       //padding: EdgeInsets.only(left: 60, right: 60),
                                       child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    HexColor('EA6012')),
+                                          ),
                                           onPressed: () {
                                             Navigator.push(
                                               context,

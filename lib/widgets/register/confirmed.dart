@@ -8,6 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 
 import '../global.dart';
+//import '../profile/confirm.dart';
+//import '../profile/confirm.dart';
 
 class ConfirmedRegister extends StatefulWidget {
   static const routeName = '/confirmed-account';

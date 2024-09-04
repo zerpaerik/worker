@@ -457,6 +457,10 @@ class _NewWorkdayReportCJState extends State<NewWorkdayReportCJ> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                           onPressed: () {
                             if (durationLunch != null) {
                               _submit();
@@ -646,6 +650,10 @@ class _NewWorkdayReportCJState extends State<NewWorkdayReportCJ> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: hourClock != null && hourClock1 != null
                               ? () {
                                   if (hourClock!.isAfter(hourClock1!)) {
@@ -676,6 +684,10 @@ class _NewWorkdayReportCJState extends State<NewWorkdayReportCJ> {
                 margin: EdgeInsets.only(right: 30),
                 //width: MediaQuery.of(context).size.width * 0.70,
                 child: ElevatedButton(
+                    style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                   onPressed: () {
                     Navigator.push(
                       context,

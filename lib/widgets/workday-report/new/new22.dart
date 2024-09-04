@@ -501,6 +501,10 @@ class _NewWorkdayReport22State extends State<NewWorkdayReport22> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: _submit,
                       child: Text(
                         l10n.continues,

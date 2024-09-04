@@ -123,6 +123,8 @@ class _ListClockInState extends State<ListClockIn> {
   DateTime? hourClock7; // fin travel
   DateTime? hourClock8; // init return
   DateTime? hourClock9; // fin return
+  Map<String, dynamic>? contractCurrent;
+  String isContract = "0";
 
   getWorkdayOn(int id) async {
     final sql = '''SELECT * FROM ${DatabaseCreator.todoTable6}
@@ -1108,8 +1110,32 @@ class _ListClockInState extends State<ListClockIn> {
         });
   }
 
+  Future<dynamic> _viewContract() async {
+    String? token = await getToken();
+
+    final response = await http.get(
+        Uri.parse('${ApiWebServer.server_name}/api/v-2/contract/current'),
+        headers: {
+          "content-type": "application/json",
+          "accept": "application/json",
+          "Authorization": "Token" + " " + "$token"
+        });
+    Map<String, dynamic> resBody = json.decode(response.body);
+
+    setState(() {
+      contractCurrent = resBody;
+      isContract = response.statusCode.toString();
+    });
+
+    print('iscon');
+    print(isContract);
+  }
+
   @override
   void initState() {
+    print('widget contract');
+    print(widget.contract);
+    _viewContract();
     getWorkdayOn(1);
     super.initState();
     fetchWorkday();
@@ -1214,11 +1240,14 @@ class _ListClockInState extends State<ListClockIn> {
                               // print(workday_on['ult_clock'].toString());
                               //print(hourClockT);
                               DateTime now = DateTime.now();
-                              DateTime init = DateTime.parse(
-                                  workday_on!['ult_clock'].toString());
-                              print(now);
-                              print(init);
-                              print(now.difference(init).toString());
+                              print(workday_on!['ult_clock']);
+                              DateTime init = workday_on!['ult_clock'] != ''
+                                  ? DateTime.parse(
+                                      workday_on!['ult_clock'].toString())
+                                  : DateTime.now();
+                              //  print(now);
+                              //print(init);
+                              // print(now.difference(init).toString());
                               if (now.difference(init) > Duration(minutes: 1)) {
                                 // ignore: use_build_context_synchronously
                                 Navigator.push(
@@ -1270,16 +1299,18 @@ class _ListClockInState extends State<ListClockIn> {
                         color: HexColor('EA6012'))),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text('BTN',
-                    style: TextStyle(
-                      fontSize: 17,
-                    )),
+            if (contractCurrent != null) ...[
+              Container(
+                margin: EdgeInsets.only(left: 20),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(contractCurrent!['contract_owner'].toString(),
+                      style: TextStyle(
+                        fontSize: 17,
+                      )),
+                ),
               ),
-            ),
+            ],
             Row(
               children: <Widget>[
                 Container(

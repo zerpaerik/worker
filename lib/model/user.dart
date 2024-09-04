@@ -238,7 +238,9 @@ class User with ChangeNotifier {
       degree_levels: json['degree_levels'],
       speciality_or_degree: json['speciality_or_degree'] ?? '0',
       referral_code: json['referral_code'],
-      tax_doc_file: json['tax_doc_file'],
+      tax_doc_file: json['tax_doc_file'] != null
+          ? File(json['tax_doc_file'])
+          : File('assets'),
       state_name: json['state_name'],
       city_name: json['city_name'],
       doc_expire_date: json['doc_expire_date'] != null

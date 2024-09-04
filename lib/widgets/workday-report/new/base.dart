@@ -661,6 +661,10 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
                         child: CircularProgressIndicator(),
                       )
                     : ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                         onPressed: () {
                           _submit();
                           /* if (start_time.isAfter(end_time)) {
@@ -776,6 +780,10 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                           onPressed: _submit1,
                           child: Text(
                             'Finalizar',
@@ -800,6 +808,10 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                           onPressed: _submitSJ,
                           child: Text(
                             l10n.continues,

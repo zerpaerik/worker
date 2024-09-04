@@ -485,6 +485,10 @@ class _NewWorkdayReport3State extends State<NewWorkdayReport3> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: () {
                             if (durationLunch != null) {
                               _submit();
@@ -674,6 +678,10 @@ class _NewWorkdayReport3State extends State<NewWorkdayReport3> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: hourClock != null && hourClock1 != null
                               ? () {
                                   _submit();
@@ -705,6 +713,10 @@ class _NewWorkdayReport3State extends State<NewWorkdayReport3> {
                 margin: EdgeInsets.only(right: 30),
                 //width: MediaQuery.of(context).size.width * 0.70,
                 child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(HexColor('EA6012')),
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,

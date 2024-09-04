@@ -83,6 +83,8 @@ class _ListClockOutState extends State<ListClockOut> {
   String? dat;
   int? totalp;
   int? totala;
+  Map<String, dynamic>? contractCurrent;
+  String isContract = "0";
 
   Future<Position> _getLocation() async {
     var currentLocation;
@@ -542,8 +544,30 @@ class _ListClockOutState extends State<ListClockOut> {
     );
   }
 
+  Future<dynamic> _viewContract() async {
+    String? token = await getToken();
+
+    final response = await http.get(
+        Uri.parse('${ApiWebServer.server_name}/api/v-2/contract/current'),
+        headers: {
+          "content-type": "application/json",
+          "accept": "application/json",
+          "Authorization": "Token" + " " + "$token"
+        });
+    Map<String, dynamic> resBody = json.decode(response.body);
+
+    setState(() {
+      contractCurrent = resBody;
+      isContract = response.statusCode.toString();
+    });
+
+    print('iscon');
+    print(isContract);
+  }
+
   @override
   void initState() {
+    _viewContract();
     super.initState();
     getSWData();
     getSWData1();
@@ -695,16 +719,18 @@ class _ListClockOutState extends State<ListClockOut> {
                         color: HexColor('EA6012'))),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text('BTN',
-                    style: TextStyle(
-                      fontSize: 17,
-                    )),
+            if (contractCurrent != null) ...[
+              Container(
+                margin: EdgeInsets.only(left: 20),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(contractCurrent!['contract_owner'].toString(),
+                      style: TextStyle(
+                        fontSize: 17,
+                      )),
+                ),
               ),
-            ),
+            ],
             Row(
               children: <Widget>[
                 Container(

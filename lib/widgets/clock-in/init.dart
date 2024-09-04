@@ -1035,7 +1035,6 @@ class _InitClockInState extends State<InitClockIn> {
               height: MediaQuery.of(context).size.height * 0.25,
             ),
             if (workday_on != null && workday_on!['clock_in_init'] == '') ...[
-              Text('ff'),
               Container(
                 alignment: Alignment.topRight,
                 margin: EdgeInsets.only(right: 30),
@@ -1064,7 +1063,6 @@ class _InitClockInState extends State<InitClockIn> {
             if (workday_on != null && workday_on!['clock_in_init'] != '') ...[
               if (workday_on != null &&
                   workday_on!['has_clockin'].toString() == 'true') ...[
-                Text('qq'),
                 Container(
                   alignment: Alignment.topRight,
                   margin: EdgeInsets.only(right: 30),

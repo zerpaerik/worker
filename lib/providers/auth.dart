@@ -39,6 +39,7 @@ class Auth with ChangeNotifier {
   late String _typeE;
   late String _hi;
   late String _ei;
+  List locations = [];
   // ignore: unused_field
   late String _he;
   // ignore: unused_field
@@ -1503,6 +1504,7 @@ class Auth with ChangeNotifier {
     print(response.statusCode);
     print(responseData);
     if (response.statusCode == 200) {
+      locations = responseData['location_list'] ?? [];
       _token = responseData['token'];
       _role = responseData['role'] ?? '';
       _userId = responseData['user_id'] ?? 0;
@@ -1518,12 +1520,16 @@ class Auth with ChangeNotifier {
       _addres = responseData['has_city'].toString() ?? ' ';
       documents = responseData['legal_documents_count'] ?? ' ';
       health = int.parse(responseData['blood_type']);
-      print(_token);
+      print('data de response');
       print(_role);
-      print(_userId);
-      print(_contract);
+      print(locations);
+      if (locations.isNotEmpty) {
+        print('hay ubicaciones');
+      } else {
+        print('no hay ubicaciones');
+      }
 
-      if (_role == 'business' || _role == 'customer') {
+      if (_role == 'business' || _role == 'customer' || locations.isNotEmpty) {
         print(_role);
         print('entro aqui customer');
         print('response bdy');
@@ -1673,6 +1679,9 @@ class Auth with ChangeNotifier {
             SharedPreferences sup = await SharedPreferences.getInstance();
             sup.setInt('intValue', 0);
           }*/
+
+        print('id_type00');
+        print(_id_type);
         RepositoryServiceTodo.updateTodo(
             config,
             _token,

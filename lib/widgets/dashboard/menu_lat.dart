@@ -395,7 +395,8 @@ class _MenuLateralState extends State<MenuLateral> {
                 ],
               ],
               if (config.role == 'supervisor' ||
-                  this.widget.modules.clock_in_module == true) ...[
+                  widget.modules.clock_in_module == true &&
+                      config.id_type != 'business') ...[
                 Container(
                     margin: EdgeInsets.only(left: 10),
                     child: Align(
@@ -426,7 +427,8 @@ class _MenuLateralState extends State<MenuLateral> {
                 Divider(),
               ],
               if (config.role == 'supervisor' ||
-                  this.widget.modules.clock_out_module == true) ...[
+                  this.widget.modules.clock_out_module == true &&
+                      config.id_type != 'business') ...[
                 Container(
                     margin: EdgeInsets.only(left: 10),
                     child: Align(
@@ -486,7 +488,8 @@ class _MenuLateralState extends State<MenuLateral> {
                 Divider(),
               ],
               if (config.role == 'supervisor' ||
-                  widget.modules.workday_reports_module == true) ...[
+                  widget.modules.workday_reports_module == true &&
+                      config.id_type != 'business') ...[
                 Container(
                     margin: EdgeInsets.only(left: 10),
                     child: Align(
@@ -634,7 +637,8 @@ class _MenuLateralState extends State<MenuLateral> {
                 Divider(),
               ],
               if (config.role == 'supervisor' ||
-                  this.widget.modules.expenses_module == true) ...[
+                  this.widget.modules.expenses_module == true &&
+                      config.id_type != 'business') ...[
                 Container(
                     margin: EdgeInsets.only(left: 10),
                     child: Align(

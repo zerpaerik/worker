@@ -35,6 +35,7 @@ class _RegisterUserNewState extends State<RegisterUserNew> {
   late String password;
   late String password1;
   late Config config;
+  late String phone;
 
   late String l;
   final _passwordController = TextEditingController();
@@ -313,6 +314,31 @@ class _RegisterUserNewState extends State<RegisterUserNew> {
                                               fontFamily: 'Quicksand')),
                                       onChanged: (value) {
                                         email = value;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                    ),
+                                    TextFormField(
+                                      keyboardType: TextInputType.phone,
+                                      decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                          prefixIcon: Icon(Icons.email,
+                                              color: HexColor('EA6012'),
+                                              size: 20.0),
+                                          contentPadding: EdgeInsets.only(
+                                              left: 15.0, top: 15.0),
+                                          hintText: l10n.phone_number,
+                                          hintStyle: TextStyle(
+                                              color: Colors.grey,
+                                              fontFamily: 'Quicksand')),
+                                      onChanged: (value) {
+                                        phone = value;
                                       },
                                     ),
                                     SizedBox(

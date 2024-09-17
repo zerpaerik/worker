@@ -41,13 +41,13 @@ class User with ChangeNotifier {
   final File? tax_doc_file;
 
   // ignore: non_constant_identifier_names
-  final String? contact_first_name;
+  late final String? contact_first_name;
   // ignore: non_constant_identifier_names
-  final String? contact_last_name;
+  late final String? contact_last_name;
   // ignore: non_constant_identifier_names
-  final String? contact_phone;
+  late final String? contact_phone;
   // ignore: non_constant_identifier_names
-  final String? contact_email;
+  late final String? contact_email;
   // ignore: non_constant_identifier_names
   final int? blood_type;
   // ignore: non_constant_identifier_names
@@ -208,13 +208,15 @@ class User with ChangeNotifier {
       first_name: json['first_name'],
       last_name: json['last_name'],
       email: json['email'],
-      profile_image: File(json['profile_image']),
+      profile_image: json['profile_image'] != null
+          ? File(json['profile_image'])
+          : File('assets/'),
       country: json['country'],
       state: json['state'],
       city: json['city'],
       birth_date: json['birth_date'] != null
           ? DateTime.parse(json['birth_date'].toString())
-          : DateTime.now(),
+          : DateTime.parse('0000-00-00'),
       gender: json['gender'],
       zip_code: json['zip_code'],
       address_1: json['address_1'],
@@ -223,13 +225,13 @@ class User with ChangeNotifier {
       id_type: json['id_type'],
       id_number: json['id_number'],
       doc_type: json['doc_type'] ?? '0',
-      phone_number: json['phone_number'] ?? '0',
+      phone_number: json['phone_number'] ?? '-',
       doc_number: json['doc_number'] ?? '-',
       doc_image: json['doc_image'],
-      contact_first_name: json['contact_first_name'] ?? '0',
-      contact_last_name: json['contact_last_name'] ?? '0',
-      contact_phone: json['contact_phone'] ?? '0',
-      contact_email: json['contact_email'] ?? '0',
+      contact_first_name: json['contact_first_name'] ?? '-',
+      contact_last_name: json['contact_last_name'] ?? '-',
+      contact_phone: json['contact_phone'] ?? '-',
+      contact_email: json['contact_email'] ?? '-',
       btn_id: json['btn_id'],
       dependents_number: json['dependents_number'] != null
           ? json['dependents_number'].toString()
@@ -245,8 +247,7 @@ class User with ChangeNotifier {
       city_name: json['city_name'],
       doc_expire_date: json['doc_expire_date'] != null
           ? DateTime.parse(json['doc_expire_date'].toString())
-          : DateTime.now(),
-
+          : DateTime.parse('0000-00-00'),
       /* ssn_dependents_number: json['ssn_dependents_number'],
       other_income: json['other_income'],
       deduction_type: json['deduction_type'],

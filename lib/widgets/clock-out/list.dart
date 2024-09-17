@@ -667,8 +667,10 @@ class _ListClockOutState extends State<ListClockOut> {
                             backgroundColor: HexColor('EA6012'),
                             onPressed: () async {
                               DateTime now = DateTime.now();
-                              DateTime init =
-                                  DateTime.parse(workday_on!['ult_clock']);
+                              DateTime init = workday_on!['ult_clock'] != ''
+                                  ? DateTime.parse(
+                                      workday_on!['ult_clock'].toString())
+                                  : DateTime.now();
 
                               if (now.difference(init) >
                                   const Duration(minutes: 1)) {

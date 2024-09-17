@@ -25,6 +25,7 @@ import '../../model/user.dart';
 import '../../model/workday.dart';
 import '../../providers/auth.dart';
 import '../../providers/notification_bloc.dart';
+import '../my-profile/info-personal/part_oblig.dart';
 import 'appbar.dart';
 import 'badge_icon.dart';
 //import 'dashboard_business.dart';
@@ -192,6 +193,7 @@ class _DashboardHomeState extends State<DashboardHome> {
   late Map<String, dynamic> travel_detail = {};
   late Map<String, dynamic> contract = {};
   late Map<String, dynamic> info = {};
+  late bool isCompleted = true;
   late String num_offers =
       ApiWebServer.server_name + '/api/v-1/contract/joboffer/not-accepted';
 
@@ -626,11 +628,21 @@ class _DashboardHomeState extends State<DashboardHome> {
         user = value['data'];
         se = value['status'];
       });
+      print('data user');
+      print(user.address_1);
+      print(user.profile_image);
+      print(user.phone_number);
+      print('fin');
       // ignore: unnecessary_null_comparison
       if (config != null &&
-          config.id_type != 'business' &&
-          user.phone_number == '0') {
-        _showviewPhone();
+              config.id_type != 'business' &&
+              user.phone_number == '-' ||
+          user.profile_image == null ||
+          user.address_1 == null) {
+        setState(() {
+          isCompleted = false;
+        });
+        //_showviewPhone();
       }
     });
   }
@@ -859,68 +871,6 @@ class _DashboardHomeState extends State<DashboardHome> {
     );
   }
 
-  void _showviewPhone() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10.0),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        title: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 10),
-              alignment: Alignment.topLeft,
-              child: Image.asset(
-                'assets/call.png',
-                width: 80,
-                color: HexColor('EA6012'),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Container(
-                margin: EdgeInsets.only(left: 10, right: 10),
-                alignment: Alignment.center,
-                child: Text('Debes actualizar tu número telefónico'))
-          ],
-        ),
-        titleTextStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: HexColor('EA6012'),
-          fontSize: 17,
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Ok',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: HexColor('EA6012'),
-                  fontSize: 17,
-                )),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              /*Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => UpdatePhone(
-                          user: user,
-                        )),
-              );*/
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   _launchPlay() async {
     const url =
         'https://play.google.com/store/apps/details?id=com.emplooy.worker';
@@ -1098,21 +1048,17 @@ class _DashboardHomeState extends State<DashboardHome> {
   @override
   void initState() {
     _viewContract();
-    //getSWDataToday();
-    this.getCountNotif();
+    getCountNotif();
     super.initState();
     _initPackageInfo();
     _viewWorkDay();
-    //_viewHours();
     _viewUser();
-    //_viewDevice();
-    //this.getVersions();
-    this.getSWData();
+
+    getSWData();
     if (isNotSession) {
       _showviewRequest(context);
     }
-    //this.getTravel();
-    this.getM();
+    getM();
     getTodo(1);
     _timesNotify();
   }
@@ -1199,6 +1145,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.01,
                 ),
+
                 /*   FlatButton(
                         onPressed: () {
                           Navigator.push(
@@ -1216,6 +1163,45 @@ class _DashboardHomeState extends State<DashboardHome> {
                 if (config != null &&
                     config.id_type != null &&
                     config.id_type != 'business') ...[
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  if (isCompleted == false) ...[
+                    Align(
+                        alignment: Alignment.topLeft,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ViewProfileOblig(user: user)),
+                            );
+                          },
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin:
+                                  const EdgeInsets.only(left: 20, right: 20),
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 0.5),
+                                borderRadius: BorderRadius.circular(3.0),
+                              ),
+                              //height: MediaQuery.of(context).size.width * 0.1,
+                              child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 5, bottom: 5, left: 5, right: 5),
+                                    child: Text(
+                                      'Your profile is incomplete, you must complete it in order to receive job offers. Click here!',
+                                      style: TextStyle(
+                                          color: HexColor('EA6012'),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ))),
+                        )),
+                  ],
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),

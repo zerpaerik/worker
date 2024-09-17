@@ -18,13 +18,12 @@ import '../dashboard/badge_icon.dart';
 class MyProfile extends StatefulWidget {
   static const routeName = '/my-profile';
   final User user;
-  final Config? config;
 
   // ignore: prefer_const_constructors_in_immutables
-  MyProfile({required this.user, required this.config});
+  MyProfile({required this.user});
 
   @override
-  _MyProfileState createState() => _MyProfileState(user, config!);
+  _MyProfileState createState() => _MyProfileState(user);
 }
 
 class _MyProfileState extends State<MyProfile> {
@@ -88,7 +87,7 @@ class _MyProfileState extends State<MyProfile> {
       city_name: '');
   late Config config = Config(
       0, '', '', '', '', '', '', '', '', 'btn_id', '', '', '', '', '', '', '');
-  _MyProfileState(this.user, this.config);
+  _MyProfileState(this.user);
   late User _user = User(
       id: 0,
       first_name: '',
@@ -169,7 +168,7 @@ class _MyProfileState extends State<MyProfile> {
   void _viewUser() {
     Provider.of<Auth>(context, listen: false).fetchUser().then((value) {
       setState(() {
-        _user = value;
+        _user = value['data'];
       });
     });
   }

@@ -286,23 +286,20 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> updatetax(User user, photo) async {
+  Future<dynamic> updatetax(type, number, photo) async {
     print('edita tax document');
-    print(user.id_number);
-    print(user.id_type);
+
     print(photo);
     String? token = await getToken();
     config = await getTodo(1);
 
-    if (user.id_type == 'SSN') {
+    if (type == 'SSN') {
       id_type = 1;
-    } else if (user.id_type == 'ITIN') {
+    } else if (type == 'ITIN') {
       id_type = 2;
-    } else if (user.id_type == 'SSN en proceso' ||
-        user.id_type == "SSN in process") {
+    } else if (type == 'SSN en proceso' || type == "SSN in process") {
       id_type = 3;
-    } else if (user.id_type == 'ITIN en proceso' ||
-        user.id_type == "ITIN in process") {
+    } else if (type == 'ITIN en proceso' || type == "ITIN in process") {
       id_type = 4;
     } else {
       id_type = 5;
@@ -312,12 +309,12 @@ class Auth with ChangeNotifier {
     print(id_type);
 
     if (id_type == 1 || id_type == 2) {
-      Map<String, String> headers = {"Authorization": "Token" + " " + "$token"};
+      Map<String, String> headers = {"Authorization": "Token $token"};
       var postUri = Uri.parse(
-          ApiWebServer.server_name + '/api/v-1/user/tax-documents/update');
-      var request = new http.MultipartRequest("PATCH", postUri);
+          '${ApiWebServer.server_name}/api/v-1/user/tax-documents/update');
+      var request = http.MultipartRequest("PATCH", postUri);
       request.headers.addAll(headers);
-      request.fields['id_number'] = user.id_number.toString();
+      request.fields['id_number'] = number.toString();
       request.fields['id_type'] = id_type.toString();
       request.files
           .add(await http.MultipartFile.fromPath('tax_doc_file', photo.path));
@@ -1399,27 +1396,28 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> updateProfile2(User user, User user1) async {
+  Future<dynamic> updateProfile2(
+      User user,
+      User user1,
+      Map<String, dynamic> data,
+      String name,
+      String ape,
+      String ph,
+      String email) async {
     print(user.dependents_number);
     String? token = await getToken();
     print('llego hoy otra vez');
+    print(name);
+    print(ape);
 
     Map<String, String> headers = {"Authorization": "Token" + " " + "$token"};
     var postUri = Uri.parse(ApiWebServer.API_UPDATE_USER);
     var request = http.MultipartRequest("PATCH", postUri);
     request.headers.addAll(headers);
-    request.fields['contact_first_name'] = (user.contact_first_name != null
-        ? user.contact_first_name.toString()
-        : user1.contact_first_name)!;
-    request.fields['contact_last_name'] = (user.contact_last_name != null
-        ? user.contact_last_name.toString()
-        : user1.contact_last_name)!;
-    request.fields['contact_phone'] = (user.contact_phone != null
-        ? user.contact_phone.toString()
-        : user1.contact_phone)!;
-    request.fields['contact_email'] = (user.contact_email != null
-        ? user.contact_email.toString()
-        : user1.contact_email)!;
+    request.fields['contact_first_name'] = name;
+    request.fields['contact_last_name'] = ape;
+    request.fields['contact_phone'] = ph;
+    request.fields['contact_email'] = email;
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
     print(response.body);
@@ -1438,10 +1436,7 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> updateProfilePhone(User user, User user1) async {
-    print(user.phone_number);
-    print(user1.phone_number);
-
+  Future<dynamic> updateProfilePhone(String phone, User user1) async {
     String? token = await getToken();
     print('llego hoy otra vez');
 
@@ -1449,9 +1444,7 @@ class Auth with ChangeNotifier {
     var postUri = Uri.parse(ApiWebServer.API_UPDATE_USER);
     var request = new http.MultipartRequest("PATCH", postUri);
     request.headers.addAll(headers);
-    request.fields['phone_number'] = (user.phone_number != null
-        ? user.phone_number.toString()
-        : user1.phone_number)!;
+    request.fields['phone_number'] = (phone ?? user1.phone_number)!;
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
     print(response.body);
@@ -2030,6 +2023,23 @@ class Auth with ChangeNotifier {
         json.decode(utf8.decode(response.bodyBytes));
 
     return User.fromJson(userData);
+  }
+
+  Future<dynamic> fetchdataUser() async {
+    String? token = await getToken();
+    config = await getTodo(1);
+
+    var getUri = Uri.parse(ApiWebServer.API_GET_USER);
+
+    final response = await http.get(getUri, headers: {
+      "content-type": "application/json",
+      "accept": "application/json",
+      "Authorization": "Token $token"
+    });
+    Map<String, dynamic> userData =
+        json.decode(utf8.decode(response.bodyBytes));
+
+    return userData;
   }
 
   Future<dynamic> fetchHours() async {

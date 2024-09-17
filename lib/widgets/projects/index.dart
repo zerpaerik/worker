@@ -39,6 +39,8 @@ class _ProjectListState extends State<ProjectList> {
             '${ApiWebServer.server_name}/api/v-2/contract/user-contracts'),
         headers: {"Authorization": "Token $token"});
 
+    print(res.body);
+
     var resBody = json.decode(utf8.decode(res.bodyBytes));
 
     setState(() {

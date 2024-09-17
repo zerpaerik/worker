@@ -68,6 +68,7 @@ dependencies:
   barcode_scan2: ^4.3.3
   flutter_cupertino_datetime_picker: ^3.0.0
   camera: ^0.11.0+1
+  flutter_radio_button_group: ^0.0.4+5
 
 dev_dependencies:
   flutter_test:

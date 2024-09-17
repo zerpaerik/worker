@@ -118,9 +118,9 @@ class _ShowQRWorkerState extends State<ShowQRWorker> {
               Text(
                   config != null
                       ? config.last_name + ' ' + config.first_name
-                      : this.widget.config.last_name +
+                      : widget.config.last_name +
                           ' ' +
-                          this.widget.config.first_name,
+                          widget.config.first_name,
                   style: TextStyle(
                     color: HexColor('EA6012'),
                     fontWeight: FontWeight.bold,

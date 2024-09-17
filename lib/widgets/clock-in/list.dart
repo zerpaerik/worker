@@ -1149,6 +1149,7 @@ class _ListClockInState extends State<ListClockIn> {
       hourClock = DateTime.parse((DateTime.now().toString()));
     });
     getTodo(1);
+    print(workday_on!);
   }
 
   @override

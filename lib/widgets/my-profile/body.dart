@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worker/providers/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:worker/widgets/my-profile/info-personal/update_image_profile.dart';
 import '../global.dart';
 import '../../model/user.dart';
 import '../../model/config.dart';
@@ -32,7 +34,7 @@ class _BodyProfileState extends State<BodyProfile> {
   late User user;
   late Config config;
   _BodyProfileState(this.user, this.config);
-  late final User _user = User(
+  late User _user = User(
       id: 0,
       first_name: '',
       email: '',
@@ -129,11 +131,11 @@ class _BodyProfileState extends State<BodyProfile> {
   }
 
   void _viewUser() {
-    /* Provider.of<Auth>(context, listen: false).fetchUser1().then((value) {
+    Provider.of<Auth>(context, listen: false).fetchUser1().then((value) {
       setState(() {
         _user = value;
       });
-    });*/
+    });
   }
 
   void _metricsBusiness(estatus) {
@@ -279,22 +281,22 @@ class _BodyProfileState extends State<BodyProfile> {
               alignment: Alignment.topCenter,
               child: GestureDetector(
                   onTap: () {
-                    /*  Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UpdateProfile(
-                                user: this.widget.user,
-                                config: config,
+                          builder: (context) => ImageInputCamera(
+                                document: XFile('assets'),
                               )),
-                    );*/
+                    );
                   },
                   child: CircleAvatar(
                     radius: 80.0,
-                    backgroundImage: NetworkImage(bodyImage),
+                    backgroundImage:
+                        NetworkImage(_user.profile_image.toString()),
                   )),
             )),
         Container(
-            padding: EdgeInsets.only(top: 130.0),
+            padding: const EdgeInsets.only(top: 130.0),
             child: Align(
                 alignment: Alignment.topCenter,
                 child: Column(
@@ -555,8 +557,8 @@ class _BodyProfileState extends State<BodyProfile> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ViewProfileOblig(
-                                          user: this.widget.user)),
+                                      builder: (context) =>
+                                          ViewProfileOblig(user: widget.user)),
                                 );
                               },
                               icon: ImageIcon(

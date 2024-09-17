@@ -505,6 +505,10 @@ class _ViewProfileAddressState extends State<ViewProfileAddress> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: stateFin == 0 ? null : _updateAddress,
                       child: Text(
                         l10n.next,

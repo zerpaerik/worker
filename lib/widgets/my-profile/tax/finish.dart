@@ -121,7 +121,6 @@ class _FinishW9State extends State<FinishW9> {
                   MaterialPageRoute(
                       builder: (context) => MyProfile(
                             user: widget.user,
-                            config: config,
                           )),
                 );
               },

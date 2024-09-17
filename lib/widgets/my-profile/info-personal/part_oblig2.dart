@@ -47,6 +47,10 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
   late List _listEdo = ['Soltero(a)', 'Casado(a)', 'Divorciado(a)', 'Viudo(a)'];
   late List _listBlodd = ['A', 'B', 'AB', 'O'];
   late List _listRH = ['Positivo (+)', 'Negativo (-)', 'No lo se'];
+  late String name = '';
+  late String ape = '';
+  late String phone = '';
+  late String email = '';
 
   late final _priceFocusNode = FocusNode();
   late final _descriptionFocusNode = FocusNode();
@@ -86,7 +90,6 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
   // ignore: unused_field
   // ignore: unused_field
   late String _myActivityResult = '';
-  late String name = '';
 
   // MASK SSN - ITIN
   var maskTextInputFormatter = MaskTextInputFormatter(
@@ -163,8 +166,15 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
       _isLoading = true;
     });
     try {
+      Map<String, dynamic> data = {
+        "name": name,
+        "ape": ape,
+        "phone": phone,
+        "email": email,
+      };
       await Provider.of<Auth>(context, listen: false)
-          .updateProfile2(_editedUser, widget.user)
+          .updateProfile2(
+              _editedUser, widget.user, data, name, ape, phone, email)
           .then((response) {
         setState(() {
           _isLoading = false;
@@ -190,25 +200,10 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    if (this.widget.user.id_type == '1') {
-      _valDoc = 'SSN';
-    } else {
-      _valDoc = 'ITIN';
-    }
-
-    if (this.widget.user.doc_type == '1') {
-      _valDocI = 'Licencia de Conducir';
-    }
-    if (this.widget.user.doc_type == '2') {
-      _valDocI = 'StateId';
-    }
-    if (this.widget.user.doc_type == '3') {
-      _valDocI = 'Pasaporte';
-    }
     _valEdo = 'Soltero(a)';
     _valBlood = 'A';
     _valRh = 'Positivo (+)';
-    _valDocsSheet = user.id_number!;
+    _valDocsSheet = '-';
 
     return Scaffold(
       //endDrawer: EndDrawer(),
@@ -293,9 +288,9 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
             Container(
                 margin: EdgeInsets.only(left: 30, right: 30),
                 child: TextFormField(
-                  initialValue: this.widget.user.contact_first_name == '0'
+                  initialValue: widget.user.contact_first_name == '0'
                       ? ''
-                      : this.widget.user.contact_first_name,
+                      : widget.user.contact_first_name,
                   decoration: InputDecoration(
                       labelText: l10n.key_first_name,
                       labelStyle:
@@ -310,13 +305,15 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
                     }
                     return null;
                   },
+                  onChanged: (value) {
+                    setState(() {
+                      name = value;
+                    });
+                  },
                   onSaved: (value) {
-                    /* _editedUser = User(
-                        contact_first_name: value,
-                        contact_last_name: _editedUser.contact_last_name,
-                        contact_phone: _editedUser.contact_phone,
-                        contact_email: _editedUser.contact_email,
-                        dependents_number: _editedUser.dependents_number);*/
+                    setState(() {
+                      name = value!;
+                    });
                   },
                 )),
             Container(
@@ -339,7 +336,17 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
                   }
                   return null;
                 },
+                onChanged: (value) {
+                  setState(() {
+                    ape = value;
+                  });
+                },
                 onSaved: (value) {
+                  setState(() {
+                    ape = value!;
+                  });
+                  _editedUser.contact_last_name = value;
+
                   /*  _editedUser = User(
                       contact_first_name: _editedUser.contact_first_name,
                       contact_last_name: value,
@@ -369,7 +376,17 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
                     }
                     return null;
                   },
-                  onSaved: (value) {},
+                  onChanged: (value) {
+                    setState(() {
+                      phone = value;
+                    });
+                  },
+                  onSaved: (value) {
+                    setState(() {
+                      phone = value!;
+                    });
+                    _editedUser.contact_phone = value;
+                  },
                 )),
             Container(
               margin: EdgeInsets.only(left: 30, right: 30),
@@ -391,7 +408,17 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
                   }
                   return null;
                 },
-                onSaved: (value) {},
+                onChanged: (value) {
+                  setState(() {
+                    email = value;
+                  });
+                },
+                onSaved: (value) {
+                  setState(() {
+                    email = value!;
+                  });
+                  _editedUser.contact_email = value;
+                },
               ),
             ),
             SizedBox(
@@ -407,7 +434,13 @@ class _ViewProfileOblig2State extends State<ViewProfileOblig2> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
-                      onPressed: () {},
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
+                      onPressed: () {
+                        _saveForm();
+                      },
                       child: Text(
                         l10n.update_next,
                         style: TextStyle(

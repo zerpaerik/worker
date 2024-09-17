@@ -371,6 +371,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.19"
+  flutter_radio_button_group:
+    dependency: "direct main"
+    description:
+      name: flutter_radio_button_group
+      sha256: "3093512f8abe9b8626a5e5f7047477ea3e5b2989e0c02ff1daf43cb16d32adcc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4+5"
   flutter_rounded_date_picker:
     dependency: "direct main"
     description:

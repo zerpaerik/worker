@@ -221,7 +221,6 @@ class _JobOfferPageState extends State<JobOfferPage> {
                           MaterialPageRoute(
                               builder: (context) => MyProfile(
                                     user: widget.user,
-                                    config: config,
                                   )),
                         );
                       },

@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:open_mail_app/open_mail_app.dart';
+import 'package:worker/widgets/dashboard/index.dart';
 
 import '../global.dart';
+import 'continue.dart';
 //import '../profile/confirm.dart';
 //import '../profile/confirm.dart';
 
@@ -164,10 +166,26 @@ class _ConfirmedRegisterState extends State<ConfirmedRegister> {
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  l10n.confirm_1,
+                  'Your account was created successfully',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              )),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+          Container(
+              margin: EdgeInsets.only(left: 30, right: 30),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  l10n.confirm_1,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
                 ),
@@ -300,11 +318,16 @@ class _ConfirmedRegisterState extends State<ConfirmedRegister> {
                     ), //borderSide: BorderSide(color: HexColor('EA6012')),
                     //onPressed: () => select("English"),
                     onPressed: () {
-                      resend(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ConfirmProfile()),
+                      );
+                      //resend(context);
                     },
 
                     child: Text(
-                      l10n.confirm_5,
+                      l10n.continues,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,

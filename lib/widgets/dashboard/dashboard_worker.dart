@@ -80,8 +80,8 @@ class _DashboardWorkerState extends State<DashboardWorker> {
   @override
   void initState() {
     super.initState();
-    this._viewHours();
-    this._viewContract();
+    _viewHours();
+    _viewContract();
   }
 
   @override
@@ -128,27 +128,6 @@ class _DashboardWorkerState extends State<DashboardWorker> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                /*Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                      width: 60,
-                      margin: EdgeInsets.only(left: 10),
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 0.5),
-                        borderRadius: BorderRadius.circular(3.0),
-                      ),
-                      //height: MediaQuery.of(context).size.width * 0.1,
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          'BETA',
-                          style: TextStyle(
-                              color: HexColor('EA6012'),
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      )),
-                ),*/
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.020,
                 ),

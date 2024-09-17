@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:worker/widgets/my-profile/info-personal/update_phone.dart';
 import 'package:worker/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +24,7 @@ import '../index.dart';
 import 'part_address.dart';
 import 'part_ciud.dart';
 import 'part_oblig2.dart';
+import 'tax.dart';
 
 class ViewProfileOblig extends StatefulWidget {
   static const routeName = '/view-my-profile';
@@ -34,12 +38,13 @@ class ViewProfileOblig extends StatefulWidget {
 }
 
 class _ViewProfileObligState extends State<ViewProfileOblig> {
-  late User user;
+  late User? user;
   _ViewProfileObligState(this.user);
   late String sexo;
   late List<Gender> _genders = Gender.getGenders();
   late List<DropdownMenuItem<Gender>> _dropdownMenuItems;
   late Gender _selectedGender;
+  late Map<String, dynamic>? dataUser = {};
 
   late List dataStates = [];
   late List dataCitys = [];
@@ -66,7 +71,64 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
   late String name = '';
   // ignore: unused_field
   late var _isLoading = false;
-  late User _user;
+  late User _user = User(
+      id: 0,
+      first_name: '',
+      email: '',
+      birth_date: DateTime.parse('0000-00-00'),
+      last_name: '',
+      password2: '',
+      gender: '',
+      country: 0,
+      state: 0,
+      city: 0,
+      address_1: '-',
+      address_2: '-',
+      birthplace: '',
+      is_us_citizen: false,
+      id_type: '',
+      id_number: '',
+      doc_type: '',
+      doc_expire_date: DateTime.parse('0000-00-00'),
+      doc_image: null,
+      doc_number: '',
+      dependents_number: '',
+      contact_first_name: '',
+      contact_last_name: '',
+      contact_phone: '',
+      contact_email: '',
+      signature: null,
+      marital_status: '',
+      blood_type: 0,
+      rh_factor: 0,
+      phone_number: '',
+      zip_code: '',
+      profile_image: null,
+      degree_levels: '',
+      speciality_or_degree: '',
+      english_learning_method: '',
+      english_learning_level: '',
+      english_mastery: '',
+      spanish_mastery: '',
+      spanish_learning_method: '',
+      spanish_learning_level: '',
+      expertise_area: '',
+      cv_file: null,
+      btn_id: '',
+      referral_code: '',
+      doc_type_no: '',
+      expiration_date_no: DateTime.now(),
+      front_image_no: File('file.txt'),
+      rear_image_no: File('file.txt'),
+      i94_form_image: File('file.txt'),
+      uscis_number: '',
+      ssn_dependents_number: '',
+      other_income: '',
+      deduction_type: '',
+      deduction_amount: '',
+      tax_doc_file: File('file.txt'),
+      state_name: '',
+      city_name: '');
 
   String capitalize(String string) {
     if (string == null) {
@@ -102,10 +164,15 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
   }
 
   void _viewUser() {
-    Provider.of<Auth>(context, listen: false).fetchUser1().then((value) {
+    Provider.of<Auth>(context, listen: false).fetchUser().then((value) {
+      print('resultado data de usuario');
+      print(value);
       setState(() {
-        _user = value;
+        _user = value['data'];
       });
+      print('data de address');
+      print(_user.address_1);
+      print(_user.gender);
     });
   }
 
@@ -131,13 +198,14 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
 
   @override
   Widget build(BuildContext context) {
-    DateFormat format = DateFormat("yyyy-MM-dd");
     final l10n = AppLocalizations.of(context)!;
 
+    DateFormat format = DateFormat("yyyy-MM-dd");
+
     if (widget.user.gender == '1') {
-      sexo = 'Masculino';
+      sexo = 'Male';
     } else {
-      sexo = 'Femenino';
+      sexo = 'Female';
     }
     return Scaffold(
       //  endDrawer: EndDrawer(),
@@ -166,8 +234,7 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => MyProfile(
-                                    user: widget.user,
-                                    config: null,
+                                    user: _user,
                                   )),
                         );
                       },
@@ -193,7 +260,6 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                           MaterialPageRoute(
                               builder: (context) => MyProfile(
                                     user: widget.user,
-                                    config: null,
                                   )),
                         );
                       },
@@ -241,7 +307,7 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                           Text(l10n.key_first_name,
                               style: TextStyle(
                                   fontSize: 17, color: HexColor('EA6012'))),
-                          Text(widget.user.first_name!),
+                          Text(_user.first_name!),
                         ]),
                   ),
                 ),
@@ -259,7 +325,7 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                           Text(l10n.key_last_name,
                               style: TextStyle(
                                   fontSize: 17, color: HexColor('EA6012'))),
-                          Text(widget.user.last_name!),
+                          Text(_user.last_name!),
                         ]),
                   ),
                 ),
@@ -282,9 +348,7 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                           Text(l10n.birth_date,
                               style: TextStyle(
                                   fontSize: 17, color: HexColor('EA6012'))),
-                          Text(widget.user.birth_date
-                              .toString()
-                              .substring(0, 11)),
+                          Text(_user.birth_date.toString().substring(0, 11)),
                         ]),
                   ),
                 ),
@@ -384,7 +448,15 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                                   Icons.edit,
                                   color: HexColor('EA6012'),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => UpdatePhone(
+                                              user: widget.user,
+                                            )),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -395,7 +467,7 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                           child: Align(
                             alignment: Alignment.topLeft,
                             // ignore: unnecessary_null_comparison
-                            child: Text(widget.user.phone_number.toString()),
+                            child: Text(_user.phone_number!),
                           )),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.01),
@@ -439,8 +511,9 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ViewProfileCiud(
-                                              user: _user,
+                                        builder: (context) =>
+                                            EditDocumentProfile(
+                                              user: widget.user,
                                             )),
                                   );
                                 },
@@ -524,10 +597,13 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                         ],
                       ),
                       Container(
-                          margin: EdgeInsets.only(left: 10),
+                          margin: const EdgeInsets.only(left: 10),
                           child: Align(
                               alignment: Alignment.topLeft,
-                              child: Text(widget.user.address_1!))),
+                              // ignore: unnecessary_null_comparison
+                              child: Text(_user.address_1 != 'null'
+                                  ? _user.address_1.toString()
+                                  : 'S/D'))),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.01),
                     ],
@@ -571,7 +647,7 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ViewProfileOblig2(
-                                              user: widget.user,
+                                              user: _user,
                                             )),
                                   );
                                 },
@@ -584,9 +660,8 @@ class _ViewProfileObligState extends State<ViewProfileOblig> {
                           margin: EdgeInsets.only(left: 10),
                           child: Align(
                               alignment: Alignment.topLeft,
-                              child: Text(_user != null
-                                  ? '${_user.contact_last_name} ${_user.contact_first_name}'
-                                  : '${widget.user.contact_last_name} ${widget.user.contact_first_name}'))),
+                              child: Text(
+                                  '${_user.contact_last_name} ${_user.contact_first_name}'))),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.01),
                     ],

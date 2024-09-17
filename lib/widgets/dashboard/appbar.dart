@@ -223,7 +223,6 @@ class _AppBarButtonState extends State<AppBarButton> {
           MaterialPageRoute(
               builder: (context) => MyProfile(
                     user: widget.user,
-                    config: config,
                   )),
         );
         break;

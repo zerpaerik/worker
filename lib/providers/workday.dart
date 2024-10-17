@@ -1110,8 +1110,12 @@ class WorkDay with ChangeNotifier {
     String? token = await getToken();
     workday = await getWorkday(1);
 
+    print('token de auth');
+    print(token);
+    print('${ApiWebServer.server_name}/api/v-1/workday/get-current');
+
     final response = await http.get(
-        Uri.parse(ApiWebServer.server_name + '/api/v-1/workday/get-current'),
+        Uri.parse('${ApiWebServer.server_name}/api/v-1/workday/get-current'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

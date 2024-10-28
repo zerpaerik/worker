@@ -567,6 +567,10 @@ class _UpdateInitState extends State<UpdateInit> {
                     child: CircularProgressIndicator(),
                   )
                 : ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(HexColor('EA6012')),
+                    ),
                     onPressed: () async {
                       _editWorkdayDef();
                     },

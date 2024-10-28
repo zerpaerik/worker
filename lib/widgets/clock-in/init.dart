@@ -1044,6 +1044,10 @@ class _InitClockInState extends State<InitClockIn> {
                         child: CircularProgressIndicator(),
                       )
                     : ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                         onPressed: () async {
                           if (contractDetail!['contract_temp'].toString() ==
                               'true') {
@@ -1072,6 +1076,10 @@ class _InitClockInState extends State<InitClockIn> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: () async {
                             Navigator.push(
                               context,
@@ -1105,6 +1113,10 @@ class _InitClockInState extends State<InitClockIn> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: () async {
                             Navigator.push(
                               context,

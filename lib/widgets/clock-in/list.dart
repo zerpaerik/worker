@@ -362,6 +362,10 @@ class _ListClockInState extends State<ListClockIn> {
                       height: 10,
                     ),
                     ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
                       onPressed: () {
                         /* DatePicker.showTimePicker(context,
                             showTitleActions: true, onConfirm: (time) {
@@ -1377,6 +1381,10 @@ class _ListClockInState extends State<ListClockIn> {
                 //  margin: EdgeInsets.only(left: 30),
                 //width: MediaQuery.of(context).size.width * 0.70,
                 child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(HexColor('EA6012')),
+                  ),
                   onPressed: () {
                     _showInputDialog(l10n.remove_project_c);
                     //exitProyect(_selectWorkers);
@@ -1745,6 +1753,10 @@ class _ListClockInState extends State<ListClockIn> {
                           child: CircularProgressIndicator(),
                         )
                       : ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: () async {
                             Navigator.push(
                               context,
@@ -1755,6 +1767,7 @@ class _ListClockInState extends State<ListClockIn> {
                                         work: widget.work,
                                         contract: widget.contract,
                                         wk: workday_on,
+                                        us: widget.user,
                                       )),
                             );
                             /*  if (!(await Geolocator()

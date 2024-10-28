@@ -453,7 +453,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                                 icon: Icon(Icons.calendar_today),
                                 color: HexColor('EA6012'),
                                 onPressed: () async {
-                                  DateTime? pickedDate = await showDatePicker(
+                                  /*  DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
                                       firstDate: DateTime(1950),
@@ -462,27 +462,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                                   print(pickedDate);
                                   setState(() {
                                     start_time = pickedDate;
-                                  });
-                                  /* DatePicker.showDatePicker(context,
-                                      theme: DatePickerTheme(
-                                          titleHeight: 50,
-                                          containerHeight: 600.0,
-                                          itemStyle: TextStyle(
-                                              color: HexColor('EA6012')),
-                                          doneStyle: TextStyle(
-                                              color: HexColor('EA6012'))),
-                                      showTitleActions: true,
-                                      onConfirm: (start) {
-                                    print('confirm start sup $start');
-                                    start_time = start;
-
-                                    setState(() {
-                                      start_time = start;
-                                    });
-                                  },
-                                      currentTime: DateTime.now(),
-                                      locale: LocaleType.en);
-                                  setState(() {});*/
+                                  });*/
                                 },
                               ),
                             ),
@@ -492,7 +472,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                                 icon: Icon(Icons.timer),
                                 color: HexColor('EA6012'),
                                 onPressed: () async {
-                                  TimeOfDay? picketTime = await showTimePicker(
+                                  /*  TimeOfDay? picketTime = await showTimePicker(
                                     initialTime: TimeOfDay.now(),
                                     context: context,
                                   );
@@ -512,29 +492,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                                     setState(() {
                                       hourClock = selectedDateTime;
                                     }); // You can use the selectedDateTime as needed.
-                                  }
-                                  /*  DatePicker.showTimePicker(context,
-                                      theme: DatePickerTheme(
-                                          titleHeight: 50,
-                                          containerHeight: 600.0,
-                                          itemStyle: TextStyle(
-                                              color: HexColor('EA6012')),
-                                          doneStyle: TextStyle(
-                                              color: HexColor('EA6012'))),
-                                      showTitleActions: true,
-                                      onConfirm: (time) {
-                                    print('confirm entrada $time');
-                                    hourClock = time;
-                                    String formattedTime =
-                                        DateFormat('hh:mm aa').format(time);
-                                    _time = formattedTime;
-                                    setState(() {
-                                      //start_time = hourClock;
-                                    });
-                                  },
-                                      currentTime: DateTime.now(),
-                                      locale: LocaleType.en);
-                                  setState(() {});*/
+                                  }*/
                                 },
                               ),
                             )
@@ -611,7 +569,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                                 icon: Icon(Icons.calendar_today),
                                 color: HexColor('EA6012'),
                                 onPressed: () async {
-                                  DateTime? pickedDate = await showDatePicker(
+                                  /*DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
                                       firstDate: DateTime(1950),
@@ -620,25 +578,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                                   print(pickedDate);
                                   setState(() {
                                     end_time = pickedDate;
-                                  });
-                                  /*  DatePicker.showDatePicker(context,
-                                      theme: DatePickerTheme(
-                                          titleHeight: 50,
-                                          containerHeight: 600.0,
-                                          itemStyle: TextStyle(
-                                              color: HexColor('EA6012')),
-                                          doneStyle: TextStyle(
-                                              color: HexColor('EA6012'))),
-                                      showTitleActions: true, onConfirm: (end) {
-                                    end_time = end;
-                                    print('confirm end_time $end');
-                                    setState(() {
-                                      end_time = end;
-                                    });
-                                  },
-                                      currentTime: DateTime.now(),
-                                      locale: LocaleType.en);
-                                  setState(() {});*/
+                                  });*/
                                 },
                               ),
                             ),
@@ -648,7 +588,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                                 icon: Icon(Icons.timer_off),
                                 color: HexColor('EA6012'),
                                 onPressed: () async {
-                                  TimeOfDay? picketTime = await showTimePicker(
+                                  /*  TimeOfDay? picketTime = await showTimePicker(
                                     initialTime: TimeOfDay.now(),
                                     context: context,
                                   );
@@ -668,29 +608,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                                     setState(() {
                                       hourClock1 = selectedDateTime;
                                     }); // You can use the selectedDateTime as needed.
-                                  }
-                                  /* DatePicker.showTimePicker(context,
-                                      theme: DatePickerTheme(
-                                          titleHeight: 50,
-                                          containerHeight: 600.0,
-                                          itemStyle: TextStyle(
-                                              color: HexColor('EA6012')),
-                                          doneStyle: TextStyle(
-                                              color: HexColor('EA6012'))),
-                                      showTitleActions: true,
-                                      onConfirm: (time1) {
-                                    print('confirm salida sup $time1');
-                                    hourClock1 = time1;
-                                    String formattedTime1 =
-                                        DateFormat('hh:mm aa').format(time1);
-                                    _time1 = formattedTime1;
-                                    setState(() {
-                                      // end_time = hourClock1;
-                                    });
-                                  },
-                                      currentTime: DateTime.now(),
-                                      locale: LocaleType.en);
-                                  setState(() {});*/
+                                  }*/
                                 },
                               ),
                             )

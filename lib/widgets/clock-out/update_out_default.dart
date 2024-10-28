@@ -486,6 +486,10 @@ class _UpdateOutState extends State<UpdateOut> {
                     child: CircularProgressIndicator(),
                   )
                 : ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(HexColor('EA6012')),
+                    ),
                     onPressed: () async {
                       _editWorkdayDef();
                     },

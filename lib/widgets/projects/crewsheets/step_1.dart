@@ -313,7 +313,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
               height: MediaQuery.of(context).size.height * 0.05,
             ),
             Container(
-                margin: EdgeInsets.only(left: 30),
+                margin: const EdgeInsets.only(left: 30),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Image.asset(
@@ -326,7 +326,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
               height: MediaQuery.of(context).size.height * 0.04,
             ),
             Container(
-                margin: EdgeInsets.only(left: 30, right: 30),
+                margin: const EdgeInsets.only(left: 30, right: 30),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(

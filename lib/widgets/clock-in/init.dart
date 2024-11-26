@@ -1058,8 +1058,7 @@ class _InitClockInState extends State<InitClockIn> {
                         },
                         child: Text(
                           l10n.clockin_5,
-                          style: TextStyle(
-                              fontSize: 20, color: HexColor('EA6012')),
+                          style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),
               )
@@ -1095,15 +1094,14 @@ class _InitClockInState extends State<InitClockIn> {
                           },
                           child: Text(
                             l10n.clockin_6,
-                            style: TextStyle(
-                                fontSize: 20, color: HexColor('EA6012')),
+                            style: const TextStyle(
+                                fontSize: 20, color: Colors.white),
                           ),
                         ),
                 )
               ],
               if (workday_on != null &&
                   workday_on!['has_clockin'].toString() == 'false') ...[
-                Text('aa'),
                 Container(
                   alignment: Alignment.topRight,
                   margin: EdgeInsets.only(right: 30),
@@ -1132,8 +1130,7 @@ class _InitClockInState extends State<InitClockIn> {
                           },
                           child: Text(
                             l10n.clockin_6,
-                            style: TextStyle(
-                                fontSize: 20, color: HexColor('EA6012')),
+                            style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                         ),
                 ),

@@ -5,8 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worker/local/database_creator.dart';
 import 'package:worker/model/certification.dart';
 import 'package:worker/model/config.dart';
-import 'package:worker/providers/workday.dart';
-import 'package:worker/widgets/dashboard/index.dart';
 import 'package:worker/widgets/projects/crewsheets/step_0.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +95,7 @@ class _ListCrewState extends State<ListCrew> {
   int? totalw;
   bool exitproject = false;
   Map<String, dynamic>? crewCurrent;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime? start_time;
   DateTime? end_time;
 
@@ -122,8 +120,7 @@ class _ListCrewState extends State<ListCrew> {
     setState(() {
       workday_on = todo;
     });
-    print('response worday n');
-    print(workday_on);
+
     return workday_on;
   }
 
@@ -142,21 +139,16 @@ class _ListCrewState extends State<ListCrew> {
       scanning = true;
     });
     int? crew = widget.workday;
-    print('datos de scan crew');
-    print(identification);
-    print(crew);
+
     final response = await http.get(
         Uri.parse(
             '${ApiWebServer.server_name}/api/v-1/crew/$crew/user/$identification'),
         headers: {"Authorization": "Token $token"});
     setState(() {});
-    print(response.statusCode);
-    print(response.body);
 
     var resBody = json.decode(response.body);
 
     if (response.statusCode == 200 && resBody['first_name'] != null) {
-      print('dio 200 scan list');
       setState(() {
         scanning = false;
       });

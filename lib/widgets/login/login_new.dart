@@ -112,12 +112,31 @@ class _LoginNewState extends State<LoginNew> {
           /* FirebaseAuth.instance.signInWithEmailAndPassword(
               email: _authData['email'], password: _authData['email']);*/
           if (_authResponse['data']['has_profile_image'] == false) {
+            print('aq');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashboardHome(
+                    noti: false,
+                    data: {},
+                  ),
+                ));
             // Navigator.of(context).pushReplacementNamed('/confirm-profile');
             /*  Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ConfirmProfile()),
             );*/
           } else if (_authResponse['data']['id_type'] == null) {
+            print('aq1');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashboardHome(
+                    noti: false,
+                    data: {},
+                  ),
+                ));
+
             // Navigator.of(context).pushReplacementNamed('/confirm-profile');
             /*   Navigator.push(
               context,
@@ -129,8 +148,24 @@ class _LoginNewState extends State<LoginNew> {
             _authResponse['data']['id_type'] != '4' ||
             _authResponse['data']['id_type'] != '5'*/
               ) {
-            print(_authResponse['data']['tax_doc_file']);
+            print('aq4');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashboardHome(
+                    noti: false,
+                    data: {},
+                  ),
+                ));
             if (_authResponse['data']['id_type'] == '1') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DashboardHome(
+                      noti: false,
+                      data: {},
+                    ),
+                  ));
               /* Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -139,6 +174,16 @@ class _LoginNewState extends State<LoginNew> {
                         )),
               );*/
             } else if (_authResponse['data']['id_type'] == '2') {
+              print('aq6');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DashboardHome(
+                      noti: false,
+                      data: {},
+                    ),
+                  ));
+
               /*  Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -149,6 +194,16 @@ class _LoginNewState extends State<LoginNew> {
             } else {
               if (_authResponse['data']['legal_documents_count'] == null ||
                   _authResponse['data']['legal_documents_count'] == 0) {
+                print('aq99');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DashboardHome(
+                        noti: false,
+                        data: {},
+                      ),
+                    ));
+
                 // Navigator.of(context).pushReplacementNamed('/confirm-profile');
                 /* Navigator.push(
                   context,
@@ -156,18 +211,48 @@ class _LoginNewState extends State<LoginNew> {
                       builder: (context) => TypeDocumentProfile()),
                 );*/
               } else if (_authResponse['data']['has_city'] == false) {
+                print('aq991');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DashboardHome(
+                        noti: false,
+                        data: {},
+                      ),
+                    ));
+
                 // Navigator.of(context).pushReplacementNamed('/confirm-profile');
                 /* Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => AddressProfile()),
                 );*/
               } else if (_authResponse['data']['blood_type'] == null) {
+                print('aq992');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DashboardHome(
+                        noti: false,
+                        data: {},
+                      ),
+                    ));
+
                 // Navigator.of(context).pushReplacementNamed('/confirm-profile');
                 /* Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => HealthInformation()),
                 );*/
               } else if (_authResponse['data']['contact_first_name'] == null) {
+                print('aq993');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DashboardHome(
+                        noti: false,
+                        data: {},
+                      ),
+                    ));
+
                 // Navigator.of(context).pushReplacementNamed('/confirm-profile');
                 /* Navigator.push(
                   context,
@@ -186,24 +271,64 @@ class _LoginNewState extends State<LoginNew> {
             }
           } else if (_authResponse['data']['legal_documents_count'] == null ||
               _authResponse['data']['legal_documents_count'] == 0) {
+            print('aq9994');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashboardHome(
+                    noti: false,
+                    data: {},
+                  ),
+                ));
+
             // Navigator.of(context).pushReplacementNamed('/confirm-profile');
             /*Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => TypeDocumentProfile()),
             );*/
           } else if (_authResponse['data']['has_city'] == false) {
+            print('aq9996');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashboardHome(
+                    noti: false,
+                    data: {},
+                  ),
+                ));
+
             // Navigator.of(context).pushReplacementNamed('/confirm-profile');
             /*   Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => AddressProfile()),
             );*/
           } else if (_authResponse['data']['blood_type'] == null) {
+            print('aq9997');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashboardHome(
+                    noti: false,
+                    data: {},
+                  ),
+                ));
+
             // Navigator.of(context).pushReplacementNamed('/confirm-profile');
             /*  Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HealthInformation()),
             );*/
           } else if (_authResponse['data']['contact_first_name'] == null) {
+            print('aq9998');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashboardHome(
+                    noti: false,
+                    data: {},
+                  ),
+                ));
+
             // Navigator.of(context).pushReplacementNamed('/confirm-profile');
             /* Navigator.push(
               context,

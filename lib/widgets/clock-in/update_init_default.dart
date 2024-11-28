@@ -574,9 +574,9 @@ class _UpdateInitState extends State<UpdateInit> {
                     onPressed: () async {
                       _editWorkdayDef();
                     },
-                    child: Text(
+                    child: const Text(
                       'Modificar',
-                      style: TextStyle(fontSize: 20, color: HexColor('EA6012')),
+                      style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),
           ),

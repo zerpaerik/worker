@@ -637,6 +637,10 @@ class _EditWorkdayInd4State extends State<EditWorkdayInd4> {
                         child: CircularProgressIndicator(),
                       )
                     : ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                         onPressed: hourClock != null && hourClock1 != null
                             ? () {
                                 if (hourClock!.isAfter(hourClock1!)) {
@@ -669,6 +673,10 @@ class _EditWorkdayInd4State extends State<EditWorkdayInd4> {
                         child: CircularProgressIndicator(),
                       )
                     : ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                         onPressed: () {
                           _submitReview();
                           /*  Navigator.push(

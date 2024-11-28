@@ -320,8 +320,8 @@ class _DetailWorkDayState extends State<DetailWorkDay> {
                             },
                             child: Text(
                               l10n.accept,
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 15, color: HexColor('EA6012')),
                             ),
                           ),
                         ))

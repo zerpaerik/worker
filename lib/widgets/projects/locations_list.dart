@@ -39,16 +39,12 @@ class _LocationsListState extends State<LocationsList> {
 
   Future<dynamic> getProjects() async {
     String token = await getToken();
-
     int project = widget.project!['id'];
-
     var res = await http.get(
         Uri.parse(
             '${ApiWebServer.server_name}/api/v-1/project/$project/location'),
         headers: {"Authorization": "Token $token"});
-
     var resBody = json.decode(utf8.decode(res.bodyBytes));
-
     setState(() {
       listProjects = resBody;
       rows = resBody;
@@ -58,9 +54,6 @@ class _LocationsListState extends State<LocationsList> {
         isData = 'N';
       }
     });
-    print('locaciones');
-    print(resBody);
-
     return "Sucess";
   }
 
@@ -73,7 +66,6 @@ class _LocationsListState extends State<LocationsList> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     return Scaffold(
       body: ListView(
         children: <Widget>[
@@ -87,7 +79,6 @@ class _LocationsListState extends State<LocationsList> {
                 child: Container(
                   margin: EdgeInsets.only(left: 15),
                   alignment: Alignment.topLeft,
-                  //height: MediaQuery.of(context).size.width * 0.1,
                   width: MediaQuery.of(context).size.width * 0.50,
                   child: Container(
                     child: IconButton(

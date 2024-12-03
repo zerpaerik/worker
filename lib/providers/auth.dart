@@ -1493,7 +1493,7 @@ class Auth with ChangeNotifier {
       },
     );
     final responseData = json.decode(utf8.decode(response.bodyBytes));
-    print('response');
+    print('response data');
     print(response.statusCode);
     print(responseData);
     if (response.statusCode == 200) {

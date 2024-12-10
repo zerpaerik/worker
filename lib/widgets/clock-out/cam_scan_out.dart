@@ -10,6 +10,7 @@ import 'package:worker/model/workday.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:worker/providers/url_constants.dart';
 
+import '../global.dart';
 import 'detail.dart';
 import 'list.dart';
 
@@ -120,9 +121,10 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
     setState(() {
       scanning = true;
     });
+
     final response = await http.get(
         Uri.parse(
-            '$urlServices/api/v-1/user/get-registered-user/$identification/$contract/out'),
+            '${ApiWebServer.server_name}/api/v-1/user/get-registered-user/$identification/$contract/out'),
         headers: {"Authorization": "Token $token"});
     setState(() {});
     //print(response.statusCode);
@@ -269,28 +271,24 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: Container(
-                child: QRView(
+            flex: 4,
+            child: QRView(
               key: qrKey,
-              onQRViewCreated: /* _onQRViewCreatedOut*/
-                  (controller) {
-                setState(() {
-                  this.controller = controller;
-                });
-                resumeCamera();
+              onQRViewCreated: (controller) {
+                this.controller = controller;
 
+                //resumeCamera();
                 controller.scannedDataStream.listen((scanData) {
+                  print(('entro a scanned'));
                   setState(() {
                     result = scanData;
                   });
+                  print('result scanner');
                   controller.dispose();
-                  print('result code scaner');
-                  scanQRWorkerOut(result!.code, '1111', '1111');
-
-                  // Navigator.pop(context);
+                  scanQRWorkerOut(result?.code, '1111', '1111');
                 });
               },
-              overlayMargin: EdgeInsets.only(left: 10, right: 10),
+              overlayMargin: const EdgeInsets.only(left: 10, right: 10),
               overlay: QrScannerOverlayShape(
                 borderColor: HexColor('EA6012'),
                 borderRadius: 2,
@@ -298,8 +296,7 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
                 borderWidth: 5,
                 overlayColor: Colors.black.withOpacity(0.9),
               ),
-            )),
-            flex: 4,
+            ),
           ),
         ],
       ),

@@ -23,29 +23,25 @@ import 'list.dart';
 
 class InitClockOut extends StatefulWidget {
   User? user;
-  int? workday;
   Workday? work;
   Map<String, dynamic>? contract;
   Map<String, dynamic>? wk;
 
-  InitClockOut(
-      {super.key, this.user, this.workday, this.work, this.contract, this.wk});
+  InitClockOut({super.key, this.user, this.work, this.contract, this.wk});
 
   @override
   _InitClockOutState createState() =>
       // ignore: no_logic_in_create_state
-      _InitClockOutState(user!, workday!, work!, contract!, wk!);
+      _InitClockOutState(user!, work!, contract!, wk!);
 }
 
 class _InitClockOutState extends State<InitClockOut> {
   User? user;
-  int? workday;
   Workday? work;
   Map<String, dynamic>? contract;
   Map<String, dynamic>? wk;
 
-  _InitClockOutState(
-      this.user, this.workday, this.work, this.contract, this.wk);
+  _InitClockOutState(this.user, this.work, this.contract, this.wk);
   final GlobalKey<FormState> _formKey = GlobalKey();
   bool isLoading = false;
   Geolocator? geolocator = Geolocator();
@@ -705,7 +701,6 @@ class _InitClockOutState extends State<InitClockOut> {
 
   @override
   void initState() {
-    print(widget.workday);
     super.initState();
     _viewWorkDay();
     setState(() {

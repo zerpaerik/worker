@@ -18,6 +18,7 @@ import '../dashboard/index.dart';
 import '../global.dart';
 import '../widgets.dart';
 import 'detail.dart';
+import 'edit1.dart';
 
 class WorkDayPage extends StatefulWidget {
   static const routeName = '/workday-page';
@@ -774,11 +775,6 @@ class _WorkDayPageState extends State<WorkDayPage> {
             final l10n = AppLocalizations.of(context)!;
 
             return Card(
-              /* shape: (selectedIndex == position)
-            ? RoundedRectangleBorder(
-                side: BorderSide(color: Colors.green, width: 2))
-            : null,*/
-              //elevation: 6,
               margin: EdgeInsets.only(top: 10, left: 20, right: 20),
               color: Colors.white,
               child: Column(
@@ -790,10 +786,8 @@ class _WorkDayPageState extends State<WorkDayPage> {
                       Expanded(
                         flex: 2,
                         child: Container(
-                          //color: HexColor('009444'),
                           alignment: Alignment.topLeft,
                           margin: EdgeInsets.only(left: 10),
-                          //height: MediaQuery.of(context).size.width * 0.1,
                           width: MediaQuery.of(context).size.width * 0.90,
                           child: Column(
                             children: <Widget>[
@@ -864,16 +858,6 @@ class _WorkDayPageState extends State<WorkDayPage> {
                                   )
                                 ],
                               )
-                              /*Text(
-                                  'Horas T: ' +
-                                      data[index]['worked_hours']
-                                          .toString()
-                                          .substring(0, 4),
-                                  style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                          fontSize: 16,
-                                          color: HexColor('EA6012'),
-                                          fontWeight: FontWeight.bold)))*/
                             ],
                           ),
                         ),
@@ -1061,17 +1045,17 @@ class _WorkDayPageState extends State<WorkDayPage> {
                                   //_showPrev();
                                 } else {
                                   if (data[index]['had_workday'] == true) {
-                                    /*  Navigator.push(
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               EditWorkdayReport1(
                                                 user: user,
-                                                workday: widget.workday,
+                                                //workday: widget.workday,
                                                 contract: widget.contract,
                                                 report: data[index],
                                               )),
-                                    );*/
+                                    );
                                   } else {}
                                 }
                               }),

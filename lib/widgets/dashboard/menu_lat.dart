@@ -440,7 +440,6 @@ class _MenuLateralState extends State<MenuLateral> {
                                 MaterialPageRoute(
                                     builder: (context) => InitClockOut(
                                           user: user,
-                                          workday: workday_on['workday_id'],
                                           work: widget.workday,
                                           contract: contractDetail,
                                           wk: workday_on,

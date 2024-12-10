@@ -144,7 +144,7 @@ class _DetailExtSCClockOutState extends State<DetailExtSCClockOut> {
             context,
             MaterialPageRoute(
                 builder: (context) => InitClockOut(
-                      workday: widget.workday!.id,
+                      //workday: widget.workday!.id,
                       work: widget.workday,
                       contract: widget.contract,
                       wk: widget.wk,

@@ -214,11 +214,7 @@ class _EditCrewReport1State extends State<EditCrewReport1> {
     print('se fue');
     try {
       Provider.of<WorkDay>(context, listen: false)
-          .editWorkdayReportEntry(
-        hourClock,
-        hourClock1,
-        widget.report,
-      )
+          .editWorkdayReportEntry(hourClock, hourClock1, widget.report, '', '')
           .then((response) {
         setState(() {
           isLoading = false;

@@ -1564,33 +1564,78 @@ class WorkDay with ChangeNotifier {
     }
   }
 
-  Future<dynamic> editWorkdayReportEntry(entry, departure, report) async {
+  Future<dynamic> editWorkdayReportEntry(
+      entry, departure, report, start, end) async {
     print(entry);
     print(departure);
 
     print(report);
     String? token = await getToken();
 
+    late String s_d;
+    late String e_d;
+
+    if (entry != null && departure != null) {
+      s_d = start.toString().substring(0, 11) +
+          entry.toString().substring(10, 23).replaceAll(" ", "");
+      e_d = end.toString().substring(0, 11) +
+          departure.toString().substring(10, 23).replaceAll(" ", "");
+    } else if (entry != null && departure == null) {
+      print('2 if');
+      s_d = start.toString().substring(0, 11) +
+          entry.toString().substring(10, 23).replaceAll(" ", "");
+      e_d = end.toString().substring(0, 11) +
+          report['workday_departure_time']
+              .toString()
+              .substring(10, 23)
+              .replaceAll(" ", "");
+      print(e_d);
+    } else if (entry == null && departure != null) {
+      print('3 if');
+      s_d = start.toString().substring(0, 11) +
+          report['workday_entry_time']
+              .toString()
+              .substring(10, 23)
+              .replaceAll(" ", "");
+      e_d = end.toString().substring(0, 11) +
+          departure.toString().substring(10, 23).replaceAll(" ", "");
+      print(e_d);
+    } else if (entry == null && departure == null) {
+      print('4 if');
+      s_d = start.toString().substring(0, 11) +
+          report['workday_entry_time']
+              .toString()
+              .substring(10, 23)
+              .replaceAll(" ", "");
+      e_d = end.toString().substring(0, 11) +
+          report['workday_departure_time']
+              .toString()
+              .substring(10, 23)
+              .replaceAll(" ", "");
+    }
+    DateTime fec = DateTime.parse(s_d);
+    DateTime fecs = DateTime.parse(e_d);
+
     int wk = report['workday'];
     int rep = report['id'];
 
     try {
       final response = await http.patch(
-          Uri.parse(ApiWebServer.server_name +
-              '/api/v-1/workday/$wk/workday-report/$rep/update'),
+          Uri.parse(
+              '${ApiWebServer.server_name}/api/v-1/workday/$wk/workday-report/$rep/update'),
           body: json.encode({
             "id": report.toString(),
             "workday_entry_time": entry != null
-                ? entry.toUtc().toIso8601String()
+                ? fec.toIso8601String().toString()
                 : report['workday_entry_time'],
             "workday_departure_time": departure != null
-                ? departure.toUtc().toIso8601String()
-                : report['workday_departure_time']
+                ? fecs.toIso8601String().toString()
+                : report['workday_departure_time'],
           }),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': "Token" + " " + "$token"
+            'Authorization': "Token $token"
           });
       //final responseData = json.decode(response.body);
       final responseData = json.decode(response.body);

@@ -606,37 +606,39 @@ class _DetailClockInState extends State<DetailClockIn> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.10,
             ),
-            Container(
-              alignment: Alignment.topRight,
-              margin: EdgeInsets.only(right: 30, bottom: 15),
-              // margin: EdgeInsets.only(left:15),
-              child: isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(HexColor('EA6012')),
+            if (workday_on != null) ...[
+              Container(
+                alignment: Alignment.topRight,
+                margin: EdgeInsets.only(right: 30, bottom: 15),
+                // margin: EdgeInsets.only(left:15),
+                child: isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
+                        onPressed: () {
+                          if (temp == '' &&
+                              widget.contract!['contract_temp'] == 'true') {
+                            _showErrorDialog(l10n.temp_ob);
+                          } else if (widget.contract!['contract_temp'] ==
+                                  'true' &&
+                              tm! >= 100) {
+                            _showErrorDialog(l10n.temp_el);
+                          } else {
+                            _submit();
+                          }
+                        },
+                        child: Text(
+                          l10n.accept,
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
                       ),
-                      onPressed: () {
-                        if (temp == '' &&
-                            widget.contract!['contract_temp'] == 'true') {
-                          _showErrorDialog(l10n.temp_ob);
-                        } else if (widget.contract!['contract_temp'] ==
-                                'true' &&
-                            tm! >= 100) {
-                          _showErrorDialog(l10n.temp_el);
-                        } else {
-                          _submit();
-                        }
-                      },
-                      child: Text(
-                        l10n.accept,
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-            ),
+              ),
+            ]
           ])))),
     );
   }

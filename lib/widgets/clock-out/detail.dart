@@ -374,7 +374,7 @@ class _DetailClockOutState extends State<DetailClockOut> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text(widget.datas!['company_name'],
+                child: Text(widget.datas!['company_name'].toString(),
                     style: TextStyle(
                       fontSize: 17,
                     )),
@@ -526,26 +526,28 @@ class _DetailClockOutState extends State<DetailClockOut> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.15,
             ),
-            Container(
-              alignment: Alignment.topRight,
-              margin: EdgeInsets.only(right: 30, bottom: 15),
-              // margin: EdgeInsets.only(left:15),
-              child: isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(HexColor('EA6012')),
+            if (workday_on != null) ...[
+              Container(
+                alignment: Alignment.topRight,
+                margin: EdgeInsets.only(right: 30, bottom: 15),
+                // margin: EdgeInsets.only(left:15),
+                child: isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
+                        onPressed: _submit,
+                        child: Text(
+                          l10n.accept,
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
                       ),
-                      onPressed: _submit,
-                      child: Text(
-                        l10n.accept,
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-            ),
+              )
+            ],
           ])))),
     );
   }

@@ -506,6 +506,7 @@ class _QRSCANState extends State<QRSCAN> {
                 key: qrKey,
                 onQRViewCreated: (controller) {
                   this.controller = controller;
+                  print('entro aq');
 
                   //resumeCamera();
                   controller.scannedDataStream.listen((scanData) {

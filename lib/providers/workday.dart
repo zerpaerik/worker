@@ -1474,7 +1474,7 @@ class WorkDay with ChangeNotifier {
   }
 
   Future<dynamic> editWorkdayReport1(
-      workday, lunch_start_time, lunch_end_time, lunch_duration, report) async {
+      lunch_start_time, lunch_end_time, lunch_duration, report) async {
     String lunch;
 
     print(workday);
@@ -1618,11 +1618,14 @@ class WorkDay with ChangeNotifier {
 
     int wk = report['workday'];
     int rep = report['id'];
+    print('horas finales');
+    print(fec.toIso8601String().toString());
+    print(fecs.toIso8601String().toString());
 
     try {
       final response = await http.patch(
           Uri.parse(
-              '${ApiWebServer.server_name}/api/v-1/workday/$wk/workday-report/$rep/update'),
+              '${ApiWebServer.server_name}/api/v-1/workday/workday-report/$rep/update'),
           body: json.encode({
             "id": report.toString(),
             "workday_entry_time": entry != null

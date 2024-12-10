@@ -199,8 +199,7 @@ class _NewWorkdayReport1State extends State<NewWorkdayReport1> {
     int? report = widget.report;
     try {
       Provider.of<WorkDay>(context, listen: false)
-          .editWorkdayReport1(
-              widget.workday, hourClock, hourClock1, durationLunch, report)
+          .editWorkdayReport1(hourClock, hourClock1, durationLunch, report)
           .then((response) {
         setState(() {
           isLoading = false;
@@ -709,10 +708,10 @@ class _NewWorkdayReport1State extends State<NewWorkdayReport1> {
                 margin: EdgeInsets.only(right: 30),
                 //width: MediaQuery.of(context).size.width * 0.70,
                 child: ElevatedButton(
-                    style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(HexColor('EA6012')),
-                        ),
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(HexColor('EA6012')),
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,

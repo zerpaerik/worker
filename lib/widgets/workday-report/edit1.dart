@@ -10,6 +10,7 @@ import '../../../model/user.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import 'base.dart';
+import 'edit2.dart';
 
 class EditWorkdayReport1 extends StatefulWidget {
   static const routeName = '/new-workday';
@@ -207,7 +208,7 @@ class _EditWorkdayReport1State extends State<EditWorkdayReport1> {
 
   Future<void> _submit() async {
     setState(() {
-      //  isLoading = true;
+      isLoading = true;
     });
     print('se fue');
     try {
@@ -219,15 +220,12 @@ class _EditWorkdayReport1State extends State<EditWorkdayReport1> {
           isLoading = false;
         });
         if (response['status'] == '200') {
-          /* Navigator.push(
+          Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => EditWorkdayReport2(
-                    user: user,
-                    workday: this.widget.workday,
-                    contract: this.widget.contract,
-                    report: this.widget.report)),
-          );*/
+                    contract: widget.contract, report: widget.report!)),
+          );
         } else {
           setState(() {
             isLoading = false;

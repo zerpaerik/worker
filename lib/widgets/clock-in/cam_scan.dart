@@ -156,7 +156,7 @@ class _QRSCANState extends State<QRSCAN> {
             fontSize: 20),
         actions: <Widget>[
           TextButton(
-            child: Text('Ok'),
+            child: Text('Continue'),
             onPressed: () {
               Navigator.of(ctx).pop();
               Navigator.push(
@@ -268,12 +268,11 @@ class _QRSCANState extends State<QRSCAN> {
       if (error == 'The worker has already clocked-in') {
         _showErrorDialog('Al ready clocked id');
         setState(() {
-          qrText = "";
-          controller?.stopCamera();
-          Done_Button = false;
+          //  qrText = "";
+          // controller?.stopCamera();
+          // Done_Button = false;
         });
-        // ignore: use_build_context_synchronously
-        Navigator.push(
+        /* Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => ListClockIn(
@@ -283,7 +282,7 @@ class _QRSCANState extends State<QRSCAN> {
                     work: widget.work,
                     wk: widget.wk,
                   )),
-        );
+        );*/
       }
 
       if (error == 'Not found.') {

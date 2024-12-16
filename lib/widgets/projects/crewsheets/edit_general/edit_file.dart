@@ -122,6 +122,28 @@ class _EditCrewFileReport1State extends State<EditCrewFileReport1> {
     final savedImage = await imageFile.saveTo('${appDir.path}/$fileName');
   }
 
+  Future<void> _takePhoto() async {
+    // ignore: deprecated_member_use
+    final imageFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      maxWidth: 600,
+    );
+    if (imageFile == null) {
+      return;
+    }
+    setState(() {
+      _documentPhoto = imageFile;
+    });
+    print('result file');
+    print(_documentPhoto);
+
+    final appDir = await syspaths.getApplicationDocumentsDirectory();
+    final fileName = path.basename(imageFile.path);
+    // ignore: unused_local_variable
+    //final savedImage = await imageFile.copy('${appDir.path}/$fileName');
+    final savedImage = await imageFile.saveTo('${appDir.path}/$fileName');
+  }
+
   Future<void> _submit() async {
     setState(() {
       isLoading = true;
@@ -198,6 +220,86 @@ class _EditCrewFileReport1State extends State<EditCrewFileReport1> {
   Widget build(BuildContext context) {
     DateFormat format = DateFormat("yyyy-MM-dd");
     final l10n = AppLocalizations.of(context)!;
+    void _showCamera() {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          //title: Text('An Error Occurred!'),
+          content: Container(
+            height: 100,
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Container(
+                      child: IconButton(
+                          icon: ImageIcon(
+                            AssetImage(
+                              'assets/camera.png',
+                            ),
+                            color: HexColor('EA6012'),
+                          ),
+                          onPressed: () {
+                            _takePhoto();
+                            //_navigateFrontPhoto(context);
+                            //_takePicture();
+                          }),
+                    ),
+                    Container(
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.of(ctx).pop();
+                            _takePhoto();
+                            // _navigateFrontPhoto(context);
+                            // _takePicture();
+                          },
+                          child: Container(
+                              child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(l10n.camera,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ))))),
+                    )
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      child: IconButton(
+                          icon: ImageIcon(
+                            AssetImage(
+                              'assets/subir.png',
+                            ),
+                            color: HexColor('EA6012'),
+                          ),
+                          onPressed: () {
+                            _takeGallery();
+                          }),
+                    ),
+                    Container(
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.of(ctx).pop();
+                            _takeGallery();
+                          },
+                          child: Container(
+                              child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(l10n.gallery,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ))))),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
           child: Form(
@@ -374,7 +476,7 @@ class _EditCrewFileReport1State extends State<EditCrewFileReport1> {
                                     color: HexColor('EA6012'),
                                   ),
                                   onPressed: () async {
-                                    _takeGallery();
+                                    _showCamera();
                                   },
                                 ),
                               ),

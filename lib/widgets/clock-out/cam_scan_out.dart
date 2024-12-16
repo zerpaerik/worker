@@ -95,7 +95,11 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('Error'),
-        content: Text(message),
+        content: Text(message,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: HexColor('EA6012'))),
         titleTextStyle: TextStyle(
             color: HexColor('373737'),
             fontFamily: 'OpenSansRegular',
@@ -106,6 +110,17 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
             child: Text('Ok'),
             onPressed: () {
               Navigator.of(ctx).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => QRSCANOUT(
+                          user: widget.user,
+                          workday: widget.workday,
+                          work: widget.work,
+                          contract: widget.contract,
+                          wk: widget.wk,
+                        )),
+              );
             },
           )
         ],
@@ -187,13 +202,13 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
       if (error == 'The worker has already clocked out') {
         _showErrorDialog('This QR has already been scanned today');
         setState(() {
-          qrText = "";
-          controller?.pauseCamera();
-          Done_Button = false;
+          //  qrText = "";
+          // controller?.pauseCamera();
+          //Done_Button = false;
         });
         //Navigator.pop(context);
 
-        Navigator.push(
+        /*Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => ListClockOut(
@@ -203,7 +218,7 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
                     work: this.widget.work,
                     wk: this.widget.wk,
                   )),
-        );
+        );*/
       }
       /*else {
         _showErrorDialog('Verifique la información.');

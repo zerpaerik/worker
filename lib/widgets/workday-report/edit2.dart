@@ -4,7 +4,6 @@ import 'package:worker/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
-
 import '../../../model/user.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
@@ -281,8 +280,6 @@ class _EditWorkdayReport2State extends State<EditWorkdayReport2> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WorkDayPage(
-                                      user: null,
-                                      workday: null,
                                       contract: widget.contract,
                                     )),
                           );

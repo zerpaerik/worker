@@ -1047,11 +1047,11 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   @override
   void initState() {
+    _viewWorkDay();
     _viewContract();
     getCountNotif();
     super.initState();
     _initPackageInfo();
-    _viewWorkDay();
     _viewUser();
 
     getSWData();

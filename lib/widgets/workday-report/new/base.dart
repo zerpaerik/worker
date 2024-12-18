@@ -74,6 +74,7 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
   var drivers;
   final _form = GlobalKey<FormState>();
   List? data = [];
+  bool isWorkday = false;
 
   String? questions;
   var image;
@@ -227,10 +228,11 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
       isLoading = true;
     });
     print('se fue');
+    print(widget.workday!.id);
     try {
       Provider.of<WorkDay>(context, listen: false)
           .addWorkdayReportBase(
-              widget.workday!.id, hourClock, hourClock1, start_time, end_time)
+              _wd!.id, hourClock, hourClock1, start_time, end_time)
           .then((response) {
         setState(() {
           isLoading = false;
@@ -241,7 +243,7 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
             MaterialPageRoute(
                 builder: (context) => NewWorkdayReport1(
                       user: user,
-                      workday: widget.workday!.id,
+                      workday: _wd!.id,
                       report: response['report'],
                       contract: widget.contract,
                     )),
@@ -283,7 +285,7 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
             MaterialPageRoute(
                 builder: (context) => WorkDayPage(
                       user: user,
-                      workday: widget.workday!.id,
+                      workday: _wd!.id,
                       contract: widget.contract,
                     )),
           );
@@ -323,7 +325,7 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
             MaterialPageRoute(
                 builder: (context) => NewWorkdayReportCJ(
                       user: user,
-                      workday: widget.workday!.id,
+                      workday: _wd!.id,
                       contract: widget.contract,
                       report: response['report'],
                     )),
@@ -362,6 +364,7 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
     Provider.of<WorkDay>(context, listen: false).fetchWorkDay().then((value) {
       setState(() {
         _wd = value;
+        isWorkday = true;
       });
       getWorkdayOn(1);
     });
@@ -369,6 +372,7 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
 
   @override
   void initState() {
+    _viewWorkDay();
     tc = TextEditingController();
     selectedRadio = 0;
     selectedRadio1 = 0;
@@ -660,14 +664,15 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
                     ? Center(
                         child: CircularProgressIndicator(),
                       )
-                    : ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(HexColor('EA6012')),
-                        ),
-                        onPressed: () {
-                          _submit();
-                          /* if (start_time.isAfter(end_time)) {
+                    : isWorkday
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(HexColor('EA6012')),
+                            ),
+                            onPressed: () {
+                              _submit();
+                              /* if (start_time.isAfter(end_time)) {
                             _showErrorDialog1(AppTranslations.of(context)
                                 .text("warning_departure_date"));
                           } else if (start_time.isAtSameMomentAs(end_time) &&
@@ -677,15 +682,16 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
                           } else {
                             _submit();
                           }*/
-                        },
-                        child: Text(
-                          l10n.next,
-                          style: TextStyle(
-                              // fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.white),
-                        ),
-                      ),
+                            },
+                            child: Text(
+                              l10n.next,
+                              style: TextStyle(
+                                  // fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            ),
+                          )
+                        : Text(''),
               ),
             ],
             if (selectedRadio1 == 2) ...[
@@ -781,9 +787,9 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
                         )
                       : ElevatedButton(
                           style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(HexColor('EA6012')),
-                        ),
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: _submit1,
                           child: Text(
                             'Finalizar',
@@ -809,9 +815,9 @@ class _NewWorkdayReportBaseState extends State<NewWorkdayReportBase> {
                         )
                       : ElevatedButton(
                           style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(HexColor('EA6012')),
-                        ),
+                            backgroundColor:
+                                MaterialStateProperty.all(HexColor('EA6012')),
+                          ),
                           onPressed: _submitSJ,
                           child: Text(
                             l10n.continues,

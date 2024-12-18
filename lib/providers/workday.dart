@@ -97,7 +97,6 @@ class WorkDay with ChangeNotifier {
               'geographical_coordinates': geo,
               'supervisor_temperature': temp,
               'default_entry_time': fec.toIso8601String().toString()
-              //'temperature': '00.00'
             }),
             headers: {
               'Content-Type': 'application/json',
@@ -1281,6 +1280,7 @@ class WorkDay with ChangeNotifier {
     late String e_d;
 
     print('llego');
+    print(workdayy);
     print(workday_entry_time);
     print(workday_departure_time);
     print(start_date);

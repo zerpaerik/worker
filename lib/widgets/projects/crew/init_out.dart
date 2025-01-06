@@ -364,7 +364,7 @@ class _OutCrewReportState extends State<OutCrewReport> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Ingresa la hora de salida por defecto',
+                  'Enter the default departure time',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -417,7 +417,7 @@ class _OutCrewReportState extends State<OutCrewReport> {
                         ),
                         Text(
                           _time,
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ],
                     )),
@@ -499,7 +499,7 @@ class _OutCrewReportState extends State<OutCrewReport> {
                       // _editWorkdayDef();
                     },
                     child: Text(
-                      'Cambiar',
+                      'Modify',
                       style: TextStyle(fontSize: 20, color: HexColor('EA6012')),
                     ),
                   ),

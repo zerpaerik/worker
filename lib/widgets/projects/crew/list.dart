@@ -804,7 +804,7 @@ class _ListCrewState extends State<ListCrew> {
             margin: EdgeInsets.only(left: 20),
             child: Align(
               alignment: Alignment.topLeft,
-              child: Text('BTN',
+              child: Text(widget.contract!['project_name'],
                   style: TextStyle(
                     fontSize: 17,
                   )),

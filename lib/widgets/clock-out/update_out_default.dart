@@ -332,7 +332,7 @@ class _UpdateOutState extends State<UpdateOut> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Actualiza la hora de salida por defecto',
+                  'Update the default clock-out time',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -360,7 +360,7 @@ class _UpdateOutState extends State<UpdateOut> {
                         Container(
                           margin: EdgeInsets.only(left: 5, top: 5),
                           child: Text(
-                            'Salida',
+                            'Exit',
                             style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         )
@@ -494,7 +494,7 @@ class _UpdateOutState extends State<UpdateOut> {
                       _editWorkdayDef();
                     },
                     child: const Text(
-                      'Modificar',
+                      'Modify',
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),

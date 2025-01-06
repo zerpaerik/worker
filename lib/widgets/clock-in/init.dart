@@ -306,7 +306,6 @@ class _InitClockInState extends State<InitClockIn> {
         setState(() {
           isLoading = false;
         });
-        //getWorkdayOn(1);
         if (response['status'] == '201') {
           Navigator.push(
             context,
@@ -368,10 +367,6 @@ class _InitClockInState extends State<InitClockIn> {
         }
       });
     } catch (error) {}
-    /* Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ProfilePartOblig2()),
-          );*/
   }
 
   void _showInputDialog(String title) {
@@ -387,16 +382,14 @@ class _InitClockInState extends State<InitClockIn> {
                   child: Form(
                       key: _scaffoldKey,
                       child: Column(
-                        //mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          SizedBox(
+                          const SizedBox(
                             height: 50,
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 10, right: 10),
                             child: Text(title,
-                                style: TextStyle(
-                                  // fontWeight: FontWeight.bold,
+                                style: const TextStyle(
                                   fontSize: 18,
                                 ),
                                 textAlign: TextAlign.center),
@@ -415,9 +408,9 @@ class _InitClockInState extends State<InitClockIn> {
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  'Temp',
+                                margin: const EdgeInsets.only(left: 10),
+                                child: const Text(
+                                  'Temperature',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
@@ -426,12 +419,13 @@ class _InitClockInState extends State<InitClockIn> {
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.only(left: 10),
+                                margin: const EdgeInsets.only(left: 10),
                                 width: 50,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
-                                  keyboardType: TextInputType.numberWithOptions(
-                                      decimal: true),
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: true),
                                   onChanged: (value) {
                                     setState(() {
                                       temp = value;
@@ -440,15 +434,15 @@ class _InitClockInState extends State<InitClockIn> {
                                   },
                                 ),
                               ),
-                              Text('F°')
+                              const Text('F°')
                             ],
                           ),
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.08),
                           Container(
-                            margin: EdgeInsets.only(left: 10, right: 10),
-                            child: Text('Temp',
+                            margin: const EdgeInsets.only(left: 10, right: 10),
+                            child: const Text('Temperature',
                                 style: TextStyle(
                                   // fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -469,8 +463,8 @@ class _InitClockInState extends State<InitClockIn> {
                                     width: MediaQuery.of(context).size.width *
                                         0.50,
                                     child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 1.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 1.0),
                                       width: MediaQuery.of(context).size.width *
                                           0.35,
                                       child: OutlinedButton(
@@ -504,8 +498,8 @@ class _InitClockInState extends State<InitClockIn> {
                                     width: MediaQuery.of(context).size.width *
                                         0.50,
                                     child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 1.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 1.0),
                                       width: MediaQuery.of(context).size.width *
                                           0.35,
                                       child: OutlinedButton(
@@ -539,7 +533,7 @@ class _InitClockInState extends State<InitClockIn> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                         ],

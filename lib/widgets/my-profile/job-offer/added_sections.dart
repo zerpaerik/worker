@@ -35,7 +35,7 @@ class _AAddedSectionsOfferState extends State<AAddedSectionsOffer> {
   late bool address = false;
 
   late final String url =
-      ApiWebServer.server_name + '/api/v-1/contract/joboffer/';
+      '${ApiWebServer.server_name}/api/v-1/contract/joboffer/';
 
   Map<String, dynamic> data = {};
   late var benefitsO;

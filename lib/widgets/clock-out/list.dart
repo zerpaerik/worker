@@ -1348,7 +1348,40 @@ class _ListClockOutState extends State<ListClockOut> {
                                 MaterialStateProperty.all(HexColor('EA6012')),
                           ),
                           onPressed: () async {
-                            Navigator.push(
+                            DateTime now = DateTime.now();
+                            DateTime init = workday_on!['ult_clock'] != ''
+                                ? DateTime.parse(
+                                    workday_on!['ult_clock'].toString())
+                                : DateTime.now();
+
+                            if (now.difference(init) >
+                                const Duration(minutes: 1)) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UpdateOut(
+                                          user: user,
+                                          workday: widget.workday,
+                                          work: widget.work,
+                                          contract: widget.contract,
+                                          wk: workday_on,
+                                          dif: now.difference(init).toString(),
+                                        )),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => QRSCANOUT(
+                                          user: user,
+                                          workday: widget.workday,
+                                          work: widget.work,
+                                          contract: widget.contract,
+                                          wk: workday_on,
+                                        )),
+                              );
+                            }
+                            /*  Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => QRSCANOUT(
@@ -1358,7 +1391,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                         contract: widget.contract,
                                         wk: workday_on,
                                       )),
-                            );
+                            );*/
                           },
                           child: Text(
                             l10n.clockout_3,

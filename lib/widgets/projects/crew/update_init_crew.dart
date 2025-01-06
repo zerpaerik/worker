@@ -312,7 +312,7 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Actualizar hora por defecto por inactividad',
+                  'Update default time due to inactivity',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 25,
@@ -404,7 +404,7 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
                         ),
                         Text(
                           _time!,
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ],
                     )),

@@ -413,7 +413,7 @@ class _UpdateInitState extends State<UpdateInit> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Actualiza la hora de entrada por defecto',
+                  'Update the default clock-in time',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -575,7 +575,7 @@ class _UpdateInitState extends State<UpdateInit> {
                       _editWorkdayDef();
                     },
                     child: const Text(
-                      'Modificar',
+                      'Modify',
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),

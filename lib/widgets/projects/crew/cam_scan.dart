@@ -191,7 +191,7 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
         });
       }
       if (error == 'The worker has already clocked-in') {
-        _showErrorDialog('El trabajador ya hizo check en la jornada.');
+        _showErrorDialog('The worker has already checked in for the day.');
         setState(() {
           qrText = "";
           controller?.pauseCamera();

@@ -886,7 +886,7 @@ class _ListClockInState extends State<ListClockIn> {
                           Container(
                             margin:
                                 EdgeInsets.only(left: 10, right: 10, top: 10),
-                            child: Text('Inactividad: ' + inact.substring(0, 7),
+                            child: Text('Inactivity: ' + inact.substring(0, 7),
                                 style: TextStyle(
                                   // fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -1241,17 +1241,13 @@ class _ListClockInState extends State<ListClockIn> {
                             onPressed: () async {
                               await getWorkdayOn(1);
 
-                              // print(workday_on['ult_clock'].toString());
-                              //print(hourClockT);
                               DateTime now = DateTime.now();
                               print(workday_on!['ult_clock']);
                               DateTime init = workday_on!['ult_clock'] != ''
                                   ? DateTime.parse(
                                       workday_on!['ult_clock'].toString())
                                   : DateTime.now();
-                              //  print(now);
-                              //print(init);
-                              // print(now.difference(init).toString());
+
                               if (now.difference(init) > Duration(minutes: 1)) {
                                 // ignore: use_build_context_synchronously
                                 Navigator.push(
@@ -1758,7 +1754,46 @@ class _ListClockInState extends State<ListClockIn> {
                                 MaterialStateProperty.all(HexColor('EA6012')),
                           ),
                           onPressed: () async {
-                            Navigator.push(
+                            await getWorkdayOn(1);
+
+                            DateTime now = DateTime.now();
+                            DateTime init = workday_on!['ult_clock'] != ''
+                                ? DateTime.parse(
+                                    workday_on!['ult_clock'].toString())
+                                : DateTime.now();
+
+                            if (now.difference(init) >
+                                const Duration(minutes: 1)) {
+                              // ignore: use_build_context_synchronously
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UpdateInit(
+                                          user: user,
+                                          workday: widget.workday,
+                                          work: widget.work,
+                                          contract: widget.contract,
+                                          wk: workday_on,
+                                          dif: now.difference(init).toString(),
+                                        )),
+                              );
+                            } else {
+                              // ignore: use_build_context_synchronously
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => QRSCAN(
+                                          user: user,
+                                          workday: widget.workday,
+                                          work: widget.work,
+                                          contract: widget.contract,
+                                          wk: workday_on,
+                                          us: widget.user,
+                                        )),
+                              );
+                            }
+
+                            /*Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => QRSCAN(
@@ -1769,7 +1804,7 @@ class _ListClockInState extends State<ListClockIn> {
                                         wk: workday_on,
                                         us: widget.user,
                                       )),
-                            );
+                            );*/
                             /*  if (!(await Geolocator()
                                 .isLocationServiceEnabled())) {
                               _checkGps();

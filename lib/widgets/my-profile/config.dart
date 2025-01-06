@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:worker/local/service.dart';
 import 'dart:convert';
 import 'package:worker/providers/url_constants.dart';
 
@@ -9,6 +10,8 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:worker/model/user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../local/database_creator.dart';
+import '../../model/config.dart';
 import '../../providers/auth.dart';
 import '../global.dart';
 import '../login/preview.dart';
@@ -26,6 +29,8 @@ class ConfigPage extends StatefulWidget {
 class _ConfigPageState extends State<ConfigPage> {
   late User user;
   _ConfigPageState(this.user);
+  late Config config;
+
   _launchURLTerms() async {
     const url = '${ApiWebServer.server_name}/terms-and-conditions';
     if (await canLaunch(url)) {
@@ -44,6 +49,20 @@ class _ConfigPageState extends State<ConfigPage> {
     }
   }
 
+  getTodo(int id) async {
+    final sql = '''SELECT * FROM ${DatabaseCreator.todoTable}
+    WHERE ${DatabaseCreator.id} = ?''';
+
+    List<dynamic> params = [id];
+    final data = await db.rawQuery(sql, params);
+
+    final todo = Config.fromJson(data.first);
+    setState(() {
+      config = todo;
+    });
+    return todo;
+  }
+
   getToken() async {
     SharedPreferences token = await SharedPreferences.getInstance();
     String? stringValue = token.getString('stringValue');
@@ -52,6 +71,8 @@ class _ConfigPageState extends State<ConfigPage> {
 
   Future<dynamic> logout() async {
     String token = await getToken();
+    config = await getTodo(1);
+
     var res = await http.post(
         Uri.parse('${ApiWebServer.server_name}/api/v-1/auth/logout'),
         headers: {
@@ -59,19 +80,19 @@ class _ConfigPageState extends State<ConfigPage> {
           'Accept': 'application/json',
           'Authorization': 'Token $token'
         });
-
     if (res.statusCode == 200) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs?.setBool("isLoggedIn", false);
+
+      RepositoryServiceTodo.updateTodoSesion(config);
+      RepositoryServiceTodo.updateTodoRole(config);
+
       SharedPreferences prefrences = await SharedPreferences.getInstance();
       await prefrences.clear();
 
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const PreviewAccount()));
-    } else {}
-
-    print(res.statusCode);
-    print(res.body);
+    }
   }
 
   Future<dynamic> inactive() async {
@@ -96,6 +117,13 @@ class _ConfigPageState extends State<ConfigPage> {
 
     print(res.statusCode);
     print(res.body);
+  }
+
+  @override
+  void initState() {
+    getTodo(1);
+    // TODO: implement initState
+    super.initState();
   }
 
   @override

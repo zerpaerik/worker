@@ -434,7 +434,7 @@ class RepositoryServiceTodo {
     SET ${DatabaseCreator.contract_id} = "${id}",
     ${DatabaseCreator.contract_name} = "${name}",
     ${DatabaseCreator.contract_temp} = "${temp}"
-    WHERE ${DatabaseCreator.id} = ${contract.id}
+    WHERE ${DatabaseCreator.id} = "1"
     ''';
     final result = await db.rawUpdate(sql);
     print(result);
@@ -727,6 +727,24 @@ class RepositoryServiceTodo {
     final result = await db.rawUpdate(sql);
     print(result);
   }
+
+  static Future<void> updateContractFull(Config todo) async {
+    final sql = '''UPDATE ${DatabaseCreator.todoTable}
+    SET ${DatabaseCreator.contract} = ""
+    WHERE ${DatabaseCreator.id} = 1
+    ''';
+    final result = await db.rawUpdate(sql);
+    print(result);
+  }
+
+  /**
+   * 
+   * 
+   * $id INTEGER PRIMARY KEY UNIQUE ,'
+        ' $contract_id INT ,$contract_name TEXT, $contract_temp TEXT
+   * 
+   * 
+   */
 
   static Future<Object?> todosCount() async {
     final data = await db

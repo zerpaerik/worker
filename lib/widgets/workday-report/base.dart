@@ -1050,7 +1050,7 @@ class _WorkDayPageState extends State<WorkDayPage> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               EditWorkdayReport1(
-                                                user: user,
+                                                user: widget.user,
                                                 //workday: widget.workday,
                                                 contract: widget.contract,
                                                 report: data[index],

@@ -42,9 +42,13 @@ class _LoginNewState extends State<LoginNew> {
   late String l;
   late String email = '';
   late String password = '';
-  final _passwordController = TextEditingController();
   var maskTextInputFormatter =
       MaskTextInputFormatter(filter: {"": RegExp(r'[a-z, @]')});
+  bool _obscured = true;
+  final textFieldFocusNode = FocusNode();
+  final _passwordController = TextEditingController();
+
+  final TextEditingController passwordController = TextEditingController();
 
   void _showErrorDialog(String message) {
     print(message);
@@ -72,6 +76,16 @@ class _LoginNewState extends State<LoginNew> {
         ],
       ),
     );
+  }
+
+  void _toggleObscured() {
+    setState(() {
+      _obscured = !_obscured;
+      if (textFieldFocusNode.hasPrimaryFocus)
+        return; // If focus is on text field, dont unfocus
+      textFieldFocusNode.canRequestFocus =
+          false; // Prevents focus if tap on eye
+    });
   }
 
   Future<void> _submit() async {
@@ -576,6 +590,18 @@ class _LoginNewState extends State<LoginNew> {
     return stringValue;
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    passwordController.text = '';
+  }
+
+  void dispose() {
+    super.dispose();
+    passwordController.dispose();
+  }
+
   // ignore: unused_element
 
   @override
@@ -715,7 +741,8 @@ class _LoginNewState extends State<LoginNew> {
                             TextFormField(
                               autofillHints: [AutofillHints.password],
                               enableSuggestions: true,
-                              obscureText: true,
+                              controller: passwordController,
+                              obscureText: _obscured,
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
@@ -723,6 +750,20 @@ class _LoginNewState extends State<LoginNew> {
                                   ),
                                   prefixIcon: Icon(Icons.lock,
                                       color: HexColor('EA6012'), size: 20.0),
+                                  suffixIcon: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 4, 0),
+                                    child: GestureDetector(
+                                      onTap: _toggleObscured,
+                                      child: Icon(
+                                        _obscured
+                                            ? Icons.visibility_rounded
+                                            : Icons.visibility_off_rounded,
+                                        size: 24,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
                                   contentPadding:
                                       EdgeInsets.only(left: 15.0, top: 15.0),
                                   hintText: 'Password',

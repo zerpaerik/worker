@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worker/model/certification.dart';
 import '../../local/database_creator.dart';
@@ -804,9 +805,8 @@ class _ListClockOutState extends State<ListClockOut> {
                     alignment: Alignment.topLeft,
                     child: Text(
                         workday_on != null
-                            ? workday_on!['clock_in_init']
-                                .toString()
-                                .substring(0, 10)
+                            ? DateFormat('MM-dd-y').format(DateTime.parse(
+                                workday_on!['clock_in_init'].toString()))
                             : '',
                         style: TextStyle(
                             fontSize: 15,
@@ -1348,6 +1348,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                 MaterialStateProperty.all(HexColor('EA6012')),
                           ),
                           onPressed: () async {
+                            await getWorkdayOn(1);
                             DateTime now = DateTime.now();
                             DateTime init = workday_on!['ult_clock'] != ''
                                 ? DateTime.parse(
@@ -1381,17 +1382,6 @@ class _ListClockOutState extends State<ListClockOut> {
                                         )),
                               );
                             }
-                            /*  Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => QRSCANOUT(
-                                        user: user,
-                                        workday: workday_on!['workday_id'],
-                                        work: widget.work,
-                                        contract: widget.contract,
-                                        wk: workday_on,
-                                      )),
-                            );*/
                           },
                           child: Text(
                             l10n.clockout_3,

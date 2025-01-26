@@ -200,7 +200,7 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
         );
       }
       if (error == 'The worker has already clocked out') {
-        _showErrorDialog('This QR has already been scanned today');
+        _showErrorDialog('QR ALREADY SCANNED');
         setState(() {
           //  qrText = "";
           // controller?.pauseCamera();
@@ -259,11 +259,11 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
               context,
               MaterialPageRoute(
                   builder: (context) => ListClockOut(
-                        user: this.widget.user,
-                        workday: this.widget.workday,
-                        contract: this.widget.contract,
-                        work: this.widget.work,
-                        wk: this.widget.wk,
+                        user: widget.user,
+                        workday: widget.workday,
+                        contract: widget.contract,
+                        work: widget.work,
+                        wk: widget.wk,
                       )),
             );
           },

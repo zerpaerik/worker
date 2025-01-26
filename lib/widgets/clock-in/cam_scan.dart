@@ -266,7 +266,7 @@ class _QRSCANState extends State<QRSCAN> {
         });
       }
       if (error == 'The worker has already clocked-in') {
-        _showErrorDialog('Al ready clocked id');
+        _showErrorDialog('QR ALREADY SCANNED');
         setState(() {
           //  qrText = "";
           // controller?.stopCamera();

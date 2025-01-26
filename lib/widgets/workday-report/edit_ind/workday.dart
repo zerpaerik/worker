@@ -270,6 +270,8 @@ class _EditWorkdayInd1State extends State<EditWorkdayInd1> {
     selectedRadio10 = 0;
     start_time = widget.wr!.workday_entry_time;
     end_time = widget.wr!.workday_departure_time;
+    print(widget.report);
+    print(widget.wr!.first_name);
 
     super.initState();
   }
@@ -360,6 +362,18 @@ class _EditWorkdayInd1State extends State<EditWorkdayInd1> {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
+                        color: HexColor('EA6012')),
+                  ),
+                )),
+            Container(
+                margin: EdgeInsets.only(left: 28, top: 5),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    ' ${widget.wr!.first_name} ${widget.wr!.last_name}',
+                    style: TextStyle(
+                        //fontWeight: FontWeight.bold,
+                        fontSize: 20,
                         color: HexColor('EA6012')),
                   ),
                 )),

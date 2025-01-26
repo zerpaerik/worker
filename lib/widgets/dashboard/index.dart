@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:worker/model/config.dart';
+import 'package:worker/model/contract.dart';
 import 'package:worker/providers/travel.dart';
 import 'package:worker/providers/workday.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:worker/widgets/login/preview.dart';
 import '../../local/database_creator.dart';
 import '../../local/service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -183,6 +185,7 @@ class _DashboardHomeState extends State<DashboardHome> {
       clock_out_location: '');
   var jsonData;
   late User userModel;
+  late Contract _cont;
   //bool noti = false;
   late String text =
       'Hola, Registrate en la mejor plataforma de empleo de EUA, a traves del siguiente enlace: $urlServices/user/register-worker?referralCode=';
@@ -773,7 +776,7 @@ class _DashboardHomeState extends State<DashboardHome> {
     ));*/
   }
 
-  Future<dynamic> getSWData() async {
+  Future<dynamic> getSWData(context) async {
     String token = await getToken();
     print('token');
     print(token);
@@ -791,9 +794,9 @@ class _DashboardHomeState extends State<DashboardHome> {
 
     if (res.statusCode != 200) {
       setState(() {
-        //  isNotSession = true;
+        isNotSession = true;
       });
-      //_showviewRequest();
+      _showviewRequest(context);
     }
 
     return info;
@@ -860,10 +863,24 @@ class _DashboardHomeState extends State<DashboardHome> {
               Navigator.of(ctx).pop();
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs?.setBool("isLoggedIn", false);
+
+              RepositoryServiceTodo.updateTodoSesion(config);
+              RepositoryServiceTodo.updateTodoRole(config);
+              RepositoryServiceTodo.updateTodoContract(config);
+              RepositoryServiceTodo.updateContractDetail(_cont, "", "", "");
+
               SharedPreferences prefrences =
                   await SharedPreferences.getInstance();
               await prefrences.clear();
-              Navigator.of(context).pushReplacementNamed('/auth');
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PreviewAccount()));
+              /*SharedPreferences prefrences =
+                  await SharedPreferences.getInstance();
+              await prefrences.clear();
+              Navigator.of(context).pushReplacementNamed('/auth');*/
             },
           ),
         ],
@@ -1054,7 +1071,7 @@ class _DashboardHomeState extends State<DashboardHome> {
     _initPackageInfo();
     _viewUser();
 
-    getSWData();
+    getSWData(context);
     if (isNotSession) {
       _showviewRequest(context);
     }

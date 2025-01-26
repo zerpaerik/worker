@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:worker/local/service.dart';
+import 'package:worker/model/contract.dart';
 import 'dart:convert';
 import 'package:worker/providers/url_constants.dart';
 
@@ -69,18 +70,44 @@ class _ConfigPageState extends State<ConfigPage> {
     return stringValue;
   }
 
+  getContract(int id) async {
+    final sql = '''SELECT * FROM ${DatabaseCreator.todoTable5}
+    WHERE ${DatabaseCreator.id} = ?''';
+
+    List<dynamic> params = [id];
+    final data = await db.rawQuery(sql, params);
+
+    final contract = Contract.fromJson(data.first);
+
+    return contract;
+  }
+
   Future<dynamic> logout() async {
     String token = await getToken();
     config = await getTodo(1);
+    Contract contract = await getContract(1);
 
-    var res = await http.post(
+    /*var res = await http.post(
         Uri.parse('${ApiWebServer.server_name}/api/v-1/auth/logout'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Token $token'
-        });
-    if (res.statusCode == 200) {
+        });*/
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs?.setBool("isLoggedIn", false);
+
+    RepositoryServiceTodo.updateTodoSesion(config);
+    RepositoryServiceTodo.updateTodoRole(config);
+    RepositoryServiceTodo.updateTodoContract(config);
+    RepositoryServiceTodo.updateContractDetail(contract, "", "", "");
+
+    SharedPreferences prefrences = await SharedPreferences.getInstance();
+    await prefrences.clear();
+
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const PreviewAccount()));
+    /* if (res.statusCode == 200) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs?.setBool("isLoggedIn", false);
 
@@ -92,7 +119,7 @@ class _ConfigPageState extends State<ConfigPage> {
 
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const PreviewAccount()));
-    }
+    }*/
   }
 
   Future<dynamic> inactive() async {

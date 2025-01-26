@@ -400,11 +400,13 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
                         Text(
                           DateFormat("MMMM d yyyy")
                               .format(DateTime.parse(start_time.toString())),
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(
+                              fontSize: 16, color: HexColor('EA6012')),
                         ),
                         Text(
                           _time!,
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 16, color: HexColor('EA6012')),
                         ),
                       ],
                     )),

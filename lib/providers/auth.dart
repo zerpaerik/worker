@@ -1664,14 +1664,6 @@ class Auth with ChangeNotifier {
         prefs7?.setBool("isBusiness", false);
         print('locations list');
         print(responseData['location_list'].toString());
-        /*  if (responseData['location_list'].toString() != "[]" ||
-              responseData['project_list'].toString() != "[]") {
-            SharedPreferences sup = await SharedPreferences.getInstance();
-            sup.setInt('intValue', 1);
-          } else {
-            SharedPreferences sup = await SharedPreferences.getInstance();
-            sup.setInt('intValue', 0);
-          }*/
 
         print('id_type00');
         print(_id_type);
@@ -1747,7 +1739,7 @@ class Auth with ChangeNotifier {
     config = await getTodo(1);
     const url = ApiWebServer.API_AUTH_LOGOUT;
     // ignore: unused_local_variable
-    final response = http.post(Uri.parse(url),
+    /*final response = http.post(Uri.parse(url),
         body: json.encode(
           {
             'id': _userId,
@@ -1756,12 +1748,14 @@ class Auth with ChangeNotifier {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        });
+        });*/
     _token = '';
     _userId = 0;
     _status = Status.Unauthenticated;
     RepositoryServiceTodo.updateTodoSesion(config);
     RepositoryServiceTodo.updateTodoRole(config);
+    RepositoryServiceTodo.updateTodoContract(config);
+    RepositoryServiceTodo.updateContractDetail(contract, "", "", "");
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs?.setBool("isLoggedIn", false);

@@ -174,8 +174,7 @@ class DatabaseCreator {
 
   Future<void> initDatabase() async {
     final path = await getDatabasePath('config');
-    db = await openDatabase(path, version: 3, onCreate: onCreate);
-    print(db);
+    db = await openDatabase(path, version: 4, onCreate: onCreate);
   }
 
   Future<void> onCreate(Database db, int version) async {

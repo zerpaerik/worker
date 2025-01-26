@@ -450,6 +450,18 @@ class _EditWorkdayInd2State extends State<EditWorkdayInd2> {
                         color: HexColor('EA6012')),
                   ),
                 )),
+            Container(
+                margin: EdgeInsets.only(left: 28, top: 5),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    ' ${widget.wr!.first_name} ${widget.wr!.last_name}',
+                    style: TextStyle(
+                        //fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: HexColor('EA6012')),
+                  ),
+                )),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.03,
             ),

@@ -1356,9 +1356,8 @@ class _ListClockInState extends State<ListClockIn> {
                     alignment: Alignment.topLeft,
                     child: Text(
                         workday_on != null
-                            ? workday_on!['clock_in_init']
-                                .toString()
-                                .substring(0, 10)
+                            ? DateFormat('MM-dd-y').format(DateTime.parse(
+                                workday_on!['clock_in_init'].toString()))
                             : '',
                         style: TextStyle(
                             fontSize: 15,
@@ -1792,39 +1791,6 @@ class _ListClockInState extends State<ListClockIn> {
                                         )),
                               );
                             }
-
-                            /*Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => QRSCAN(
-                                        user: user,
-                                        workday: widget.workday,
-                                        work: widget.work,
-                                        contract: widget.contract,
-                                        wk: workday_on,
-                                        us: widget.user,
-                                      )),
-                            );*/
-                            /*  if (!(await Geolocator()
-                                .isLocationServiceEnabled())) {
-                              _checkGps();
-                            } else {
-                              String codeSanner =
-                                  await BarcodeScanner.scan(); //barcode scnner
-                              setState(() {
-                                qrCodeResult = codeSanner;
-                              });
-                              print(qrCodeResult);
-                              if (userLocation != null) {
-                                bool scanResult = await scanQRWorker(
-                                    qrCodeResult,
-                                    userLocation.latitude.toString(),
-                                    userLocation.longitude.toString());
-                              } else {
-                                bool scanResult = await scanQRWorker(
-                                    qrCodeResult, '---', '---');
-                              }
-                            }*/
                           },
                           child: Text(
                             l10n.clockin_17,

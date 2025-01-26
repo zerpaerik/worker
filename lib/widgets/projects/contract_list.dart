@@ -14,6 +14,7 @@ import 'package:worker/providers/crew.dart';
 import '../global.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //import '../workers/index_g.dart';
+import '../workers/index_g.dart';
 import 'crew/init.dart';
 import 'crewsheets/detail.dart';
 import 'crewsheets/edit_general/step_1.dart';
@@ -988,69 +989,64 @@ class _ContractListState extends State<ContractList> {
                     // ignore: unrelated_type_equality_checks
 
                     Container(
-                      height: MediaQuery.of(context).size.height * 0.65,
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      child:
-                          /*MediaQuery.removePadding(
-                          removeTop: true,
-                          context: context,
-                          child: ListView.builder(
-                              itemCount: dataw.length,
-                              itemBuilder: (context, index) {
-                                return Column(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        _showWorker(dataw[index]);
-                                      },
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(left: 5),
-                                            child: Icon(
-                                              Icons.check,
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 5),
-                                            child: Text(
-                                              'ID#' +
-                                                  ' ' +
-                                                  '${dataw[index]['btn_id']}',
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Container(
-                                            child: Text(
-                                              '${dataw[index]['last_name']}' +
-                                                  ' ' +
-                                                  '${dataw[index]['first_name']}',
-                                              style: TextStyle(fontSize: 15),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                        ],
+                        height: MediaQuery.of(context).size.height * 0.65,
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        child: MediaQuery.removePadding(
+                            removeTop: true,
+                            context: context,
+                            child: ListView.builder(
+                                itemCount: dataw.length,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 10,
                                       ),
-                                    ),
-                                  ],
-                                );
-                              }))*/
-                          //Text('Data')
-                          Text('ListWorkersGeneral'),
-                      //ListWorkersGeneral(contract: widget.location),
-                    ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          _showWorker(dataw[index]);
+                                        },
+                                        child: Row(
+                                          children: <Widget>[
+                                            Container(
+                                              margin: EdgeInsets.only(left: 5),
+                                              child: Icon(
+                                                Icons.check,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(left: 5),
+                                              child: Text(
+                                                'ID#' +
+                                                    ' ' +
+                                                    '${dataw[index]['btn_id']}',
+                                                style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                '${dataw[index]['last_name']}' +
+                                                    ' ' +
+                                                    '${dataw[index]['first_name']}',
+                                                style: TextStyle(fontSize: 15),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }))),
 
                     Container(
                       height: MediaQuery.of(context).size.height * 0.65,

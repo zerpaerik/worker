@@ -374,7 +374,7 @@ class _EditWorkdayInd1State extends State<EditWorkdayInd1> {
                     style: TextStyle(
                         //fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: HexColor('EA6012')),
+                        color: Colors.black),
                   ),
                 )),
             SizedBox(
@@ -652,7 +652,7 @@ class _EditWorkdayInd1State extends State<EditWorkdayInd1> {
                 ],
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.23,
+                height: MediaQuery.of(context).size.height * 0.15,
               ),
               Container(
                 alignment: Alignment.topRight,

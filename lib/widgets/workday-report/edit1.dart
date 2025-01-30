@@ -14,22 +14,20 @@ import 'edit2.dart';
 
 class EditWorkdayReport1 extends StatefulWidget {
   static const routeName = '/new-workday';
-  final User? user;
   Map<String, dynamic>? contract;
   Map<String, dynamic>? report;
 
-  EditWorkdayReport1({this.user, this.contract, this.report});
+  EditWorkdayReport1({this.contract, this.report});
 
   @override
   _EditWorkdayReport1State createState() =>
-      _EditWorkdayReport1State(user!, contract!, report!);
+      _EditWorkdayReport1State(contract!, report!);
 }
 
 class _EditWorkdayReport1State extends State<EditWorkdayReport1> {
-  User? user;
   Map<String, dynamic>? contract;
   Map<String, dynamic>? report;
-  _EditWorkdayReport1State(this.user, this.contract, this.report);
+  _EditWorkdayReport1State(this.contract, this.report);
 
   // ignore: unused_field
   int _selectedIndex = 4;
@@ -317,7 +315,7 @@ class _EditWorkdayReport1State extends State<EditWorkdayReport1> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WorkDayPage(
-                                      user: user,
+                                      //  user: user,
                                       // workday: widget.workday,
                                       contract: widget.contract,
                                     )),

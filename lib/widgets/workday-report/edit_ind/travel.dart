@@ -417,7 +417,7 @@ class _EditWorkdayInd4State extends State<EditWorkdayInd4> {
                     style: TextStyle(
                         //fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: HexColor('EA6012')),
+                        color: Colors.black),
                   ),
                 )),
             SizedBox(
@@ -638,7 +638,7 @@ class _EditWorkdayInd4State extends State<EditWorkdayInd4> {
                 ],
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.23,
+                height: MediaQuery.of(context).size.height * 0.15,
               ),
               Container(
                 alignment: Alignment.topRight,
@@ -674,7 +674,7 @@ class _EditWorkdayInd4State extends State<EditWorkdayInd4> {
             ],
             if (selectedRadio1 == 2) ...[
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.33,
+                height: MediaQuery.of(context).size.height * 0.15,
               ),
               Container(
                 alignment: Alignment.topRight,

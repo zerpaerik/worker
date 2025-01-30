@@ -1125,22 +1125,6 @@ class _InitClockOutState extends State<InitClockOut> {
                       ),
                     ),
             ),
-            Container(
-              alignment: Alignment.topRight,
-              margin: EdgeInsets.only(
-                right: 30,
-              ),
-              //width: MediaQuery.of(context).size.width * 0.70,
-              child: ElevatedButton(
-                onPressed: () async {
-                  _showInputDialog(l10n.clockout_7);
-                },
-                child: Text(
-                  l10n.clockout_3,
-                  style: TextStyle(fontSize: 20, color: HexColor('EA6012')),
-                ),
-              ),
-            ),
           ],
           if (workday_on != null &&
               workday_on!['clock_out_init'] != '' &&

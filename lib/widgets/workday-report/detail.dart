@@ -1217,7 +1217,7 @@ class _DetailWorkDayState extends State<DetailWorkDay> {
                   //margin: EdgeInsets.only(left: 5),
                   child: Align(
                     alignment: Alignment.topCenter,
-                    child: Text('Enviando Reporte...',
+                    child: Text('Sending report...',
                         style: TextStyle(
                           color: Colors.green,
                           fontWeight: FontWeight.bold,
@@ -1550,7 +1550,7 @@ class _DetailWorkDayState extends State<DetailWorkDay> {
                 //margin: EdgeInsets.only(left: 5),
                 child: Align(
                   alignment: Alignment.topCenter,
-                  child: Text('Enviando Reporte...',
+                  child: Text('Sending report...',
                       style: TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.bold,

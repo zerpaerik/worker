@@ -985,9 +985,6 @@ class _ContractListState extends State<ContractList> {
                             : Center(
                                 child: Text(l10n.no_register),
                               ),
-
-                    // ignore: unrelated_type_equality_checks
-
                     Container(
                         height: MediaQuery.of(context).size.height * 0.65,
                         margin: EdgeInsets.only(left: 20, right: 20),
@@ -1047,7 +1044,6 @@ class _ContractListState extends State<ContractList> {
                                     ],
                                   );
                                 }))),
-
                     Container(
                       height: MediaQuery.of(context).size.height * 0.65,
                       child: MediaQuery.removePadding(

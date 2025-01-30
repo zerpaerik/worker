@@ -1497,7 +1497,7 @@ class _ListClockInState extends State<ListClockIn> {
                                                         ),
                                                       ),
                                                       Expanded(
-                                                          flex: 2,
+                                                          flex: 3,
                                                           child: Container(
                                                             alignment: Alignment
                                                                 .topLeft,
@@ -1505,7 +1505,7 @@ class _ListClockInState extends State<ListClockIn> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.25,
+                                                                0.30,
                                                             child: Container(
                                                               child: Text(
                                                                 'ID#${data[index]['btn_id']}',

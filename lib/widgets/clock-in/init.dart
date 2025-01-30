@@ -245,11 +245,14 @@ class _InitClockInState extends State<InitClockIn> {
   }
 
   Future<void> _submit() async {
-    print(widget.contract);
-    String contract = widget.contract!['contract_id'].toString();
+    print('print contract');
     setState(() {
       isLoading = true;
     });
+    await getSWData();
+    print(data);
+    String contract = data!['id'].toString();
+
     _getLocation().then((position) {
       userLocation = position;
     });

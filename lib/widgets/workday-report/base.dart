@@ -678,7 +678,7 @@ class _WorkDayPageState extends State<WorkDayPage> {
                         //margin: EdgeInsets.only(left: 5),
                         child: const Align(
                           alignment: Alignment.topCenter,
-                          child: Text('Enviando Reporte...',
+                          child: Text('Sending report...',
                               style: TextStyle(
                                 color: Colors.green,
                                 fontWeight: FontWeight.bold,
@@ -1050,7 +1050,7 @@ class _WorkDayPageState extends State<WorkDayPage> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               EditWorkdayReport1(
-                                                user: widget.user,
+                                                // user: widget.user,
                                                 //workday: widget.workday,
                                                 contract: widget.contract,
                                                 report: data[index],

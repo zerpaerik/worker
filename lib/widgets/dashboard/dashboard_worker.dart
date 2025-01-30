@@ -250,7 +250,7 @@ class _DashboardWorkerState extends State<DashboardWorker> {
                                       : '0',
                                   style: TextStyle(
                                       color: Colors.grey[700],
-                                      fontSize: 25,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold))),
                           SizedBox(
                             height: 2,
@@ -303,7 +303,7 @@ class _DashboardWorkerState extends State<DashboardWorker> {
                                       : '0',
                                   style: TextStyle(
                                       color: Colors.grey[700],
-                                      fontSize: 25,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold))),
                           SizedBox(
                             height: 2,
@@ -351,7 +351,7 @@ class _DashboardWorkerState extends State<DashboardWorker> {
                                       : '0',
                                   style: TextStyle(
                                       color: Colors.grey[700],
-                                      fontSize: 25,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold))),
                           SizedBox(
                             height: 2,
@@ -399,7 +399,7 @@ class _DashboardWorkerState extends State<DashboardWorker> {
                                       : '0',
                                   style: TextStyle(
                                       color: Colors.grey[700],
-                                      fontSize: 25,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold))),
                           SizedBox(
                             width: 6,
@@ -476,7 +476,7 @@ class _DashboardWorkerState extends State<DashboardWorker> {
                                       : '0',
                                   style: TextStyle(
                                       color: Colors.grey[700],
-                                      fontSize: 25,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold))),
                           SizedBox(
                             height: 2,
@@ -527,7 +527,7 @@ class _DashboardWorkerState extends State<DashboardWorker> {
                                       : '0',
                                   style: TextStyle(
                                       color: Colors.grey[700],
-                                      fontSize: 25,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold))),
                           SizedBox(
                             height: 2,
@@ -573,7 +573,7 @@ class _DashboardWorkerState extends State<DashboardWorker> {
                                       : '0',
                                   style: TextStyle(
                                       color: Colors.grey[700],
-                                      fontSize: 25,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold))),
                           SizedBox(
                             height: 2,
@@ -619,7 +619,7 @@ class _DashboardWorkerState extends State<DashboardWorker> {
                                   : '0',
                               style: TextStyle(
                                   color: Colors.grey[700],
-                                  fontSize: 25,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),

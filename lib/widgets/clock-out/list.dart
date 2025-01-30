@@ -903,7 +903,7 @@ class _ListClockOutState extends State<ListClockOut> {
                                                         ),
                                                       ),
                                                       Expanded(
-                                                          flex: 2,
+                                                          flex: 3,
                                                           child: Container(
                                                             alignment: Alignment
                                                                 .topLeft,

@@ -147,29 +147,64 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
     var resBody = json.decode(response.body);
     if (response.statusCode == 200 && resBody['first_name'] != null) {
       print('dio 200 scan list');
-      setState(() {
-        scanning = false;
-      });
-      User _user = User.fromJson(resBody);
-      setState(() {
-        qrText = "";
-        controller?.stopCamera();
-        Done_Button = false;
-      });
+      int code = resBody['code'];
+      print(resBody);
+      print('code');
+      print(code.toString());
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => DetailClockOut(
-                  user: _user,
-                  workday: this.widget.work,
-                  lat: lat,
-                  long: long,
-                  contract: this.widget.contract,
-                  wk: this.widget.wk,
-                  datas: resBody,
-                )),
-      );
+      if (code.toString() == "4") {
+        setState(() {
+          scanning = false;
+        });
+        //The worker not has already clocked-in
+        print('entro error no clockin');
+        _showErrorDialog('This user does not have Clock in');
+        setState(() {
+          qrText = "";
+          controller?.pauseCamera();
+          Done_Button = false;
+        });
+        //Navigator.pop(context);
+        controller?.pauseCamera();
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ListClockOut(
+                    user: widget.user,
+                    workday: widget.workday,
+                    contract: widget.contract,
+                    work: widget.work,
+                    wk: widget.wk,
+                  )),
+        );
+      } else {
+        print('entro a hacer clockout');
+        setState(() {
+          scanning = false;
+        });
+
+        User _user = User.fromJson(resBody);
+        setState(() {
+          qrText = "";
+          controller?.stopCamera();
+          Done_Button = false;
+        });
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DetailClockOut(
+                    user: _user,
+                    workday: widget.work,
+                    lat: lat,
+                    long: long,
+                    contract: widget.contract,
+                    wk: widget.wk,
+                    datas: resBody,
+                  )),
+        );
+      }
     } else {
       print('dio error');
       setState(() {
@@ -270,7 +305,7 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
         ),
         actions: <Widget>[
           IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.flash_on,
                 color: Colors.yellow,
               ),

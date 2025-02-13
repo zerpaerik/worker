@@ -1564,7 +1564,7 @@ class _DetailWorkDayState extends State<DetailWorkDay> {
                 //margin: EdgeInsets.only(left: 5),
                 child: const Align(
                   alignment: Alignment.topCenter,
-                  child: Text('Finalizando Jornada...',
+                  child: Text('Ending day...',
                       style: TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.bold,

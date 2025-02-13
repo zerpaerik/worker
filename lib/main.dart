@@ -24,9 +24,50 @@ import 'providers/users.dart';
 import 'providers/warnings.dart';
 import 'providers/workday.dart';
 import 'widgets/select_language/select.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'firebase_options.dart';
+
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+        print('Message received background: ${message.data}');
+
+  // Manejar mensajes en segundo plano
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+   await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Solicitar permisos para notificaciones
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission();
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+    print('User granted provisional permission');
+  } else {
+    print('User declined permission');
+  }
+
+  // Obtener el token de registro
+  String? token = await messaging.getToken();
+  print('Token de registro: $token');
+
+  // Manejar mensajes en primer plano
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    RemoteNotification? notification = message.notification;
+    AndroidNotification? android = message.notification?.android;
+    if (notification != null && android != null) {
+      // Mostrar notificación
+      print('Message received: ${notification.title}');
+    }
+  });
+
   await DatabaseCreator().initDatabase();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   SharedPreferences type = await SharedPreferences.getInstance();
@@ -81,7 +122,7 @@ void main() async {
         ),
       ],
       child: MyApp(
-        token: '1111',
+        token: token ?? '1111',
       )));
 }
 

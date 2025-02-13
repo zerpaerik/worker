@@ -201,9 +201,9 @@ class _DetailClockOutState extends State<DetailClockOut> {
   @override
   void initState() {
     _viewWorkDay();
-    _getLocation().then((position) {
+    /* _getLocation().then((position) {
       userLocation = position;
-    });
+    });*/
     super.initState();
   }
 

@@ -581,6 +581,12 @@ class _ListClockOutState extends State<ListClockOut> {
     });
   }
 
+   getTotalW(){
+      int? tot = totalp! + totala!;
+      return tot.toString();
+   
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -751,7 +757,7 @@ class _ListClockOutState extends State<ListClockOut> {
                   margin: EdgeInsets.only(left: 5),
                   child: Align(
                     alignment: Alignment.topLeft,
-                    child: Text(totalw.toString(),
+                    child: Text(getTotalW(),
                         style: TextStyle(
                             fontSize: 15,
                             color: HexColor('EA6012'),

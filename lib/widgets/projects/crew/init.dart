@@ -209,6 +209,35 @@ class _InitCrewReportState extends State<InitCrewReport> {
     return todo;
   }
 
+    void _showErrorDialog(String message) {
+    print(message);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: HexColor('EA6012'))),
+        titleTextStyle: TextStyle(
+            color: HexColor('373737'),
+            fontFamily: 'OpenSansRegular',
+            fontWeight: FontWeight.bold,
+            fontSize: 20),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     _getLocation().then((position) {

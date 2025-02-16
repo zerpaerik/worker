@@ -42,6 +42,8 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
   List categorys = [];
   var selectedValue;
   int? worker_category;
+    Map<String, dynamic>? crewCurrent;
+
 
   _QRSCANCREWState(this.workday, this.contract, this.crew);
   bool Done_Button = false;
@@ -91,6 +93,22 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
         ],
       ),
     );
+  }
+
+  
+  Future<String> getCrew() async {
+    String? token = await getToken();
+    setState(() {});
+    var res = await http.get(
+        Uri.parse('${ApiWebServer.server_name}/api/v-1/crew/current'),
+        headers: {"Authorization": "Token $token"});
+    var resBody = json.decode(res.body);
+
+    setState(() {
+      crewCurrent = resBody;
+    });
+
+    return '1';
   }
 
   Future<String> getSWData() async {
@@ -293,6 +311,8 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
   @override
   void initState() {
     super.initState();
+        getCrew();
+
     //this.getSWData();
   }
 

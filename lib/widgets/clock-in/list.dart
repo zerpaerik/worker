@@ -637,7 +637,7 @@ class _ListClockInState extends State<ListClockIn> {
     });
   }
 
-  Future<String?> getSWDataNO() async {
+  Future<dynamic> getSWDataNO() async {
     int? wd = widget.workday;
     setState(() {
       loading = true;
@@ -1154,12 +1154,21 @@ class _ListClockInState extends State<ListClockIn> {
     });
     getTodo(1);
   }
+  getTotalW(){
+      int? tot = totalw! + data1.length;
+      return tot.toString();
+   
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    totalw = data.length + datae.length;
+    if (data != null && datae != null) {
+      totalw = data.length + datae.length;
+    } else {
+      totalw = 0;
+    }
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -1328,7 +1337,7 @@ class _ListClockInState extends State<ListClockIn> {
                   margin: EdgeInsets.only(left: 5),
                   child: Align(
                     alignment: Alignment.topLeft,
-                    child: Text(totalw.toString(),
+                    child: Text(getTotalW(),
                         style: TextStyle(
                             fontSize: 15,
                             color: HexColor('EA6012'),

@@ -1473,7 +1473,7 @@ class Auth with ChangeNotifier {
     _status = Status.Authenticating;
     config = await getTodo(1);
     print('llego a pb');
-    String fcm = /*await _firebaseMessaging.getToken()*/ "2";
+    String? fcm = await FirebaseMessaging.instance.getToken();
     print(email.toLowerCase());
     print(password);
     print(fcm);

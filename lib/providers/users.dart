@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart' show DateFormat;
-//import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../local/database_creator.dart';
 import '../local/service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 import '../model/user.dart';
 import '../providers/auth.dart';
@@ -60,20 +62,12 @@ class Users with ChangeNotifier {
       language = 'es';
     }
     String gender;
-    /* if (user.gender == 'Male') {
-      gender = '1';
-    } else if (user.gender == 'Masculino') {
-      gender = '1';
-    } else if (user.gender == 'Female') {
-      gender = '2';
-    } else if (user.gender == 'Femenino') {
-      gender = '2';
-    } else {
-      gender = '3';
-    }*/
+  
 
     DateFormat format = DateFormat("yyyy-MM-dd");
     final url = ApiWebServer.API_REGISTER_USER;
+        String? fcm = await FirebaseMessaging.instance.getToken();
+
     try {
       final response = await http.post(Uri.parse(url),
           body: json.encode({
@@ -82,12 +76,11 @@ class Users with ChangeNotifier {
             'last_name': capitalize(last),
             'password1': passwd,
             'password2': passwd,
-            'birth_date': null,
+            //'birth_date': null,
             'gender': '1',
-            'birthplace': null,
+            'birthplace': "58",
             'language': 1,
-            'fcm_token': /*await _firebaseMessaging.getToken()^*/
-                'jhfh43v3h543h6f5h'
+            'fcm_token': fcm
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -106,7 +99,8 @@ class Users with ChangeNotifier {
       );
 
       _items.add(newUser);*/
-      print(json.decode(response.statusCode.toString()));
+      print('response emplooy register');
+      print(json.decode(response.body.toString()));
 
       if (response.statusCode == 201) {
         //CREANDO SESIÒN
@@ -125,6 +119,8 @@ class Users with ChangeNotifier {
         return success;
       }
     } catch (error) {
+      print('error');
+      print(error.toString());
       throw error;
     }
   }

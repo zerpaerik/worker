@@ -89,7 +89,7 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
     );
   }
 
-  void _showErrorDialog(String message) {
+   void _showErrorDialogg(String message) {
     print(message);
     showDialog(
       context: context,
@@ -107,26 +107,65 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
             fontSize: 20),
         actions: <Widget>[
           TextButton(
-            child: Text('Ok'),
+            child: Text('Continue'),
             onPressed: () {
               Navigator.of(ctx).pop();
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => QRSCANOUT(
-                          user: widget.user,
-                          workday: widget.workday,
-                          work: widget.work,
-                          contract: widget.contract,
-                          wk: widget.wk,
-                        )),
-              );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => QRSCANOUT(
+                        user: widget.user,
+                        workday: widget.workday,
+                        work: widget.work,
+                        contract: widget.contract,
+                        wk: widget.wk,
+                      )),
+            );
             },
           )
         ],
       ),
     );
   }
+
+ Future<void> _showErrorDialog(String message) async {
+  print(message);
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text('Error'),
+      content: Text(message,
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: HexColor('EA6012'))),
+      titleTextStyle: TextStyle(
+          color: HexColor('373737'),
+          fontFamily: 'OpenSansRegular',
+          fontWeight: FontWeight.bold,
+          fontSize: 20),
+      actions: <Widget>[
+        TextButton(
+          child: Text('Ok', style: TextStyle(color: HexColor('EA6012')),),
+          onPressed: () {
+            Navigator.of(ctx).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => QRSCANOUT(
+                        user: widget.user,
+                        workday: widget.workday,
+                        work: widget.work,
+                        contract: widget.contract,
+                        wk: widget.wk,
+                      )),
+            );
+          },
+        )
+      ],
+    ),
+  );
+}
 
   Future<bool?> scanQRWorkerOut(
       String? identification, String lat, String long) async {
@@ -145,40 +184,45 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
     //print(response.statusCode);
     //print(response.body);
     var resBody = json.decode(response.body);
-    if (response.statusCode == 200 && resBody['first_name'] != null) {
+    if (response.statusCode == 200 && resBody['first_name'] != null)  {
       print('dio 200 scan list');
       int code = resBody['code'];
       print(resBody);
       print('code');
       print(code.toString());
 
-      if (code.toString() == "4") {
-        setState(() {
-          scanning = false;
-        });
-        //The worker not has already clocked-in
-        print('entro error no clockin');
-        _showErrorDialog('This user does not have Clock in');
-        setState(() {
+      if (code == 4) {
+        print('entro error');
+        
+
+        //_showErrorDialogg('This user does not have Clock in');
+        print('paso 1');
+    // Mostrar el mensaje de error
+    await _showErrorDialog('This user does not have Clock in');
+    print('paso 2');
+     setState(() {
           qrText = "";
           controller?.pauseCamera();
           Done_Button = false;
         });
         //Navigator.pop(context);
         controller?.pauseCamera();
+    
+  
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ListClockOut(
-                    user: widget.user,
-                    workday: widget.workday,
-                    contract: widget.contract,
-                    work: widget.work,
-                    wk: widget.wk,
-                  )),
-        );
-      } else {
+    // Navegar al siguiente widget
+    /*Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ListClockOut(
+                user: widget.user,
+                workday: widget.workday,
+                contract: widget.contract,
+                work: widget.work,
+                wk: widget.wk,
+              )),
+    );*/
+} else {
         print('entro a hacer clockout');
         setState(() {
           scanning = false;

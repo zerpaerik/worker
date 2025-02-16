@@ -124,11 +124,18 @@ class _ListCrewState extends State<ListCrew> {
     return workday_on;
   }
 
+
+   
+
   Future<String?> getToken() async {
     SharedPreferences token = await SharedPreferences.getInstance();
     String? stringValue = token.getString('stringValue');
     return stringValue;
   }
+
+  
+
+ 
 
   Future<bool> scanQRWorker(
       String identification, String lat, String long) async {
@@ -213,6 +220,7 @@ class _ListCrewState extends State<ListCrew> {
     return true;
   }
 
+  
   Future<dynamic> getSWData() async {
     int? wd = widget.workday;
     setState(() {
@@ -320,8 +328,35 @@ class _ListCrewState extends State<ListCrew> {
     } catch (error) {}
   }
 
+    static showSnackBarMessage(BuildContext? context, String message,
+      {int messageDuration = 3,
+      int? type,
+      bool? isFloating,
+      VoidCallback? onClose}) async {
+    var snackBar = ScaffoldMessenger.of(context!).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: (isFloating ?? false) ? SnackBarBehavior.floating : null,
+        backgroundColor: HexColor('EA6012'),
+        duration: Duration(seconds: messageDuration),
+      ),
+    );
+    var snackBarClosedReason = await snackBar.closed;
+    if (SnackBarClosedReason.values.contains(snackBarClosedReason)) {
+      onClose?.call();
+    }
+  }
+
   Future<dynamic> endOut() async {
+    print('sssss');
+
+    if (data != null && data!.any((item) => item['check_out'] == null)) {
+      showSnackBarMessage(context, 'There are still users not Checked Out');
+      
+    } else {
+      
     print('llego a pv');
+    print(data);
 
     setState(() {
       isLoading = true;
@@ -346,7 +381,17 @@ class _ListCrewState extends State<ListCrew> {
         });
       });
     } catch (error) {}
+
+    }
+
+
+
   }
+
+  
+
+
+  
 
   Future<dynamic> editCrew() async {
     print('llego a pv');

@@ -14,22 +14,24 @@ import 'package:provider/provider.dart';
 import 'package:worker/providers/workday.dart';
 
 import '../../global.dart';
+import '../contract_list.dart';
+import 'detal_in.dart';
 import 'detal_scan.dart';
 import 'list.dart';
 
-class QRSCANCREW extends StatefulWidget {
+class QRSCANCREWIN extends StatefulWidget {
   final int? workday;
   Map<String, dynamic>? contract;
   Map<String, dynamic>? crew;
 
-  QRSCANCREW({required this.workday, this.contract, this.crew});
+  QRSCANCREWIN({required this.workday, this.contract, this.crew});
 
   @override
   State<StatefulWidget> createState() =>
-      _QRSCANCREWState(workday, contract, crew);
+      _QRSCANCREWINState(workday, contract, crew);
 }
 
-class _QRSCANCREWState extends State<QRSCANCREW> {
+class _QRSCANCREWINState extends State<QRSCANCREWIN> {
   User? user;
   int? workday;
   DateTime? workdayDate;
@@ -45,7 +47,7 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
     Map<String, dynamic>? crewCurrent;
 
 
-  _QRSCANCREWState(this.workday, this.contract, this.crew);
+  _QRSCANCREWINState(this.workday, this.contract, this.crew);
   bool Done_Button = false;
   var qrText = "";
   QRViewController? controller;
@@ -85,7 +87,7 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => QRSCANCREW(
+                    builder: (context) => QRSCANCREWIN(
                         workday: widget.workday, contract: widget.contract)),
               );
             },
@@ -149,19 +151,16 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
     print('datos de scan crew');
     print(identification);
     print(crew);
-
-    try {
-         final response = await http.get(
+    final response = await http.get(
         Uri.parse(
-            '${ApiWebServer.server_name}/api/v-1/crew/$crew/user/$identification?clock_type=$type'),
+            '${ApiWebServer.server_name}/api/v-1/crew/$crew/user/$identification?clock_type=IN'),
         headers: {"Authorization": "Token $token"});
     setState(() {});
+    print('response scan crew in');
     print(response.statusCode);
     print(response.body);
 
     var resBody = json.decode(response.body);
-    print('response scan crew');
-    print(response.statusCode);
 
     if (response.statusCode == 200 && resBody['first_name'] != null) {
       print('dio 200 scan list');
@@ -175,15 +174,12 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
         Done_Button = false;
       });
 
-      if(type == "OUT" && resBody['checked_in'] == false){
-        _showErrorDialog('This user has not been Checked in');
-
-      } else {
+  
           // ignore: use_build_context_synchronously
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => DetailCrew(
+            builder: (context) => DetailCrewIn(
                   datas: resBody,
                   user: _user,
                   workday: widget.workday,
@@ -194,29 +190,21 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
                 )),
       );
 
-      }
+      
 
+    
     } else if (response.statusCode.toString() == '403') {
-      print(resBody['detail']);
+        print(resBody['detail']);
       setState(() {
         qrText = "";
         controller?.pauseCamera();
         Done_Button = false;
       });
       _showErrorDialog(resBody['detail']);
-  
-      // ignore: use_build_context_synchronously
-     /* Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => QRSCANCREW(
-                  crew: widget.crew,
-                  workday: widget.workday,
-                  contract: widget.contract)),
-        );*/
     
-    } else if (response.statusCode == 404) {
-      _showErrorDialog('Error');
+
+      } else if (response.statusCode == 400) {
+      _showErrorDialog('The worker has already check-in');
       setState(() {
         qrText = "";
         controller?.pauseCamera();
@@ -224,11 +212,13 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
       });
       // ignore: use_build_context_synchronously
       Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                ListCrew(workday: widget.workday, contract: widget.contract)),
-      );
+          context,
+          MaterialPageRoute(
+              builder: (context) => QRSCANCREWIN(
+                  crew: widget.crew,
+                  workday: widget.workday,
+                  contract: widget.contract)),
+        );
     } else {
       print('dio error');
       setState(() {
@@ -255,7 +245,7 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => QRSCANCREW(
+              builder: (context) => QRSCANCREWIN(
                   crew: widget.crew,
                   workday: widget.workday,
                   contract: widget.contract)),
@@ -278,25 +268,6 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
         );
       }
     }
-      
-    } catch (e) {
-        setState(() {
-        scanning = false;
-      });
-      setState(() {
-        qrText = "";
-        controller?.stopCamera();
-        Done_Button = false;
-      });
-      print('error 500');
-      print(e);
-      
-      
-    }
-
-
-
- 
 
     return true;
   }
@@ -366,7 +337,7 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
   @override
   void initState() {
     super.initState();
-       // getCrew();
+        getCrew();
 
     //this.getSWData();
   }
@@ -400,10 +371,10 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ListCrew(
-                        crew: widget.crew,
-                        workday: widget.workday,
-                        contract: widget.contract)),
+                    builder: (context) => ContractList(
+                      location: widget.contract,
+
+                        )),
               );
             },
           ),

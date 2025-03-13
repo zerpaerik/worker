@@ -68,7 +68,7 @@ class WorkDay with ChangeNotifier {
   }
 
   Future<dynamic> addWorkday(
-      contract, geo, temp, valid_temp, start, time) async {
+      contract, geo, temp, valid_temp, start, time, auto) async {
     print('llego pv wkd');
     String? token = await getToken();
     DateTime now = DateTime.now();
@@ -96,6 +96,7 @@ class WorkDay with ChangeNotifier {
               'clock_in_start': fec.toIso8601String().toString(),
               'geographical_coordinates': geo,
               'supervisor_temperature': temp,
+              'supervisor_clock': auto,
               'default_entry_time': fec.toIso8601String().toString()
             }),
             headers: {
@@ -130,6 +131,7 @@ class WorkDay with ChangeNotifier {
               'clock_in_start': fec.toIso8601String().toString(),
               'geographical_coordinates': geo,
               'supervisor_temperature': 0,
+              'supervisor_clock': auto,
               'default_entry_time': fec.toIso8601String().toString()
             }),
             headers: {
@@ -354,7 +356,7 @@ class WorkDay with ChangeNotifier {
     }
   }
 
-  Future<dynamic> editWorkday(workdayy, geo, start, time) async {
+  Future<dynamic> editWorkday(workdayy, geo, start, time, auto) async {
     String? token = await getToken();
     DateTime now = DateTime.now();
     int wk = workdayy;
@@ -373,6 +375,7 @@ class WorkDay with ChangeNotifier {
           body: json.encode({
             'clock_out_start': fec.toIso8601String().toString(),
             'geographical_coordinates': geo,
+            'supervisor_clock': auto,
             'default_exit_time': fec.toIso8601String().toString()
           }),
           headers: {
@@ -1130,10 +1133,7 @@ class WorkDay with ChangeNotifier {
           json.decode(utf8.decode(response.bodyBytes));
       print('wddta');
       print(wdData);
-      //  print(wdData);
-      /*if (wdData['id'] != null) {
-        print('a');
-        print(wdData['clock_out_end']);*/
+
       RepositoryServiceTodo.updateWorkdaySync(
         workday,
         wdData['id'] != null ? wdData['id'] : '',
@@ -1157,6 +1157,38 @@ class WorkDay with ChangeNotifier {
       );
       //}
       return new Workday.fromJson(wdData);
+    } else {
+      return Workday.fromJson({});
+    }
+  }
+
+  Future<dynamic> fetchWorkDayMap() async {
+    String? token = await getToken();
+    workday = await getWorkday(1);
+
+    print('token de auth');
+    print(token);
+    print('${ApiWebServer.server_name}/api/v-1/workday/get-current');
+
+    final response = await http.get(
+        Uri.parse('${ApiWebServer.server_name}/api/v-1/workday/get-current'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': "Token $token"
+        });
+
+    if (response.statusCode == 200 && response.body.isNotEmpty) {
+      //Map<String, dynamic> wdData = json.decode(response.body);
+
+      // Map<String, dynamic> wdData = json.decode(response.body);
+
+      Map<String, dynamic> wdData =
+          json.decode(utf8.decode(response.bodyBytes));
+      print('wddta');
+      print(wdData);
+
+      return wdData;
     } else {
       return Workday.fromJson({});
     }

@@ -19,31 +19,29 @@ import '../global.dart';
 import '../widgets.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
-import 'cam_scan_out_in.dart';
-import 'init_out.dart';
 import 'list.dart';
 
-class InitClockOut extends StatefulWidget {
+class InitClockOutAut extends StatefulWidget {
   User? user;
   Workday? work;
   Map<String, dynamic>? contract;
   Map<String, dynamic>? wk;
 
-  InitClockOut({super.key, this.user, this.work, this.contract, this.wk});
+  InitClockOutAut({super.key, this.user, this.work, this.contract, this.wk});
 
   @override
-  _InitClockOutState createState() =>
+  _InitClockOutAutState createState() =>
       // ignore: no_logic_in_create_state
-      _InitClockOutState(user!, work!, contract!, wk!);
+      _InitClockOutAutState(user!, work!, contract!, wk!);
 }
 
-class _InitClockOutState extends State<InitClockOut> {
+class _InitClockOutAutState extends State<InitClockOutAut> {
   User? user;
   Workday? work;
   Map<String, dynamic>? contract;
   Map<String, dynamic>? wk;
 
-  _InitClockOutState(this.user, this.work, this.contract, this.wk);
+  _InitClockOutAutState(this.user, this.work, this.contract, this.wk);
   final GlobalKey<FormState> _formKey = GlobalKey();
   bool isLoading = false;
   Geolocator? geolocator = Geolocator();
@@ -939,164 +937,91 @@ class _InitClockOutState extends State<InitClockOut> {
             )
           ],
           if (workday_on != null && workday_on!['clock_out_init'] == '') ...[
-            if (workday_on!['has_clockin'].toString() == 'false') ...[
-              Container(
-                  margin: EdgeInsets.only(left: 30, right: 30, top: 10),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      l10n.clockout_5,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  )),
-              Container(
-                alignment: Alignment.topRight,
-                margin: EdgeInsets.only(right: 30, top: 100),
-                //width: MediaQuery.of(context).size.width * 0.70,
-                child: isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : ElevatedButton(
-                        onPressed: () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => QRSCANINOUT(
-                                      user: user,
-                                      workday: workday_on!['id'],
-                                      // workday: widget.wk!['workday_id'],
-                                      contract: widget.contract,
-                                      work: widget.work,
-                                      wk: workday_on,
-                                      us: user,
-                                    )),
-                          );
-                        },
-                        child: Text(
-                          'Make clock in',
-                          style: TextStyle(
-                              fontSize: 20, color: HexColor('EA6012')),
-                        ),
-                      ),
-              ),
-              Container(
-                alignment: Alignment.topRight,
-                margin: EdgeInsets.only(right: 30, top: 10),
-                //width: MediaQuery.of(context).size.width * 0.70,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InitClockOutAut(
-                                user: user,
-                                // workday: widget.wk!['workday_id'],
-                                contract: widget.contract,
-                                work: widget.work,
-                                wk: workday_on,
-                              )),
-                    );
-                  },
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 30, bottom: 10),
+                child: Align(
+                  alignment: Alignment.topLeft,
                   child: Text(
-                    'Init clock out',
-                    style: TextStyle(fontSize: 20, color: HexColor('EA6012')),
+                    l10n.clockout_1,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white),
                   ),
+                )),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 30),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.10,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 5, top: 5),
+                            child: Text(
+                              l10n.wr_5,
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          )
+                        ],
+                      )),
                 ),
-              )
-            ],
-            if (workday_on != null &&
-                workday_on!['has_clockin'].toString() == 'true') ...[
-              Container(
-                  margin: EdgeInsets.only(left: 30, right: 30, bottom: 10),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      l10n.clockout_1,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  )),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                        //color: HexColor('009444'),
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(left: 30),
-                        //height: MediaQuery.of(context).size.width * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.10,
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(left: 5, top: 5),
-                              child: Text(
-                                l10n.wr_5,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                              ),
-                            )
-                          ],
-                        )),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                        //color: HexColor('009444'),
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(left: 10),
-                        //height: MediaQuery.of(context).size.width * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.50,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              DateFormat("MMMM d yyyy").format(
-                                  DateTime.parse(start_time.toString())),
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                            Text(
-                              _time!,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ],
-                        )),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                        //color: HexColor('009444'),
-                        alignment: Alignment.topRight,
-                        margin: EdgeInsets.only(left: 30),
-                        //height: MediaQuery.of(context).size.width * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.40,
-                        child: Row(
-                          children: <Widget>[
-                            SizedBox(
-                              width: 35,
-                              child: IconButton(
-                                icon: Icon(Icons.calendar_today),
-                                color: Colors.white,
-                                onPressed: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(1950),
-                                      //DateTime.now() - not to allow to choose before today.
-                                      lastDate: DateTime(2100));
-                                  print(pickedDate);
-                                  setState(() {
-                                    start_time = pickedDate;
-                                  });
-                                  /* DatePicker.showDatePicker(context,
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 10),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            DateFormat("MMMM d yyyy")
+                                .format(DateTime.parse(start_time.toString())),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          Text(
+                            _time!,
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ],
+                      )),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topRight,
+                      margin: EdgeInsets.only(left: 30),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.40,
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 35,
+                            child: IconButton(
+                              icon: Icon(Icons.calendar_today),
+                              color: Colors.white,
+                              onPressed: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1950),
+                                    //DateTime.now() - not to allow to choose before today.
+                                    lastDate: DateTime(2100));
+                                print(pickedDate);
+                                setState(() {
+                                  start_time = pickedDate;
+                                });
+                                /* DatePicker.showDatePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (start) {
                                     print('confirm start $start');
@@ -1108,37 +1033,36 @@ class _InitClockOutState extends State<InitClockOut> {
                                       locale: LocaleType.en);
 
                                   setState(() {});*/
-                                },
-                              ),
+                              },
                             ),
-                            SizedBox(
-                              width: 35,
-                              child: IconButton(
-                                icon: Icon(Icons.timer),
-                                color: Colors.white,
-                                onPressed: () async {
-                                  TimeOfDay? picketTime = await showTimePicker(
-                                    initialTime: TimeOfDay.now(),
-                                    context: context,
-                                  );
+                          ),
+                          SizedBox(
+                            width: 35,
+                            child: IconButton(
+                              icon: Icon(Icons.timer),
+                              color: Colors.white,
+                              onPressed: () async {
+                                TimeOfDay? picketTime = await showTimePicker(
+                                  initialTime: TimeOfDay.now(),
+                                  context: context,
+                                );
 
-                                  if (picketTime != null) {
-                                    DateTime selectedDateTime = DateTime(
-                                      DateTime.now().year,
-                                      DateTime.now().month,
-                                      DateTime.now().day,
-                                      picketTime.hour,
-                                      picketTime.minute,
-                                    );
-                                    String formattedTime =
-                                        DateFormat('hh:mm aa')
-                                            .format(selectedDateTime);
-                                    _time = formattedTime;
-                                    setState(() {
-                                      hourClock = selectedDateTime;
-                                    }); // You can use the selectedDateTime as needed.
-                                  }
-                                  /* DatePicker.showTimePicker(context,
+                                if (picketTime != null) {
+                                  DateTime selectedDateTime = DateTime(
+                                    DateTime.now().year,
+                                    DateTime.now().month,
+                                    DateTime.now().day,
+                                    picketTime.hour,
+                                    picketTime.minute,
+                                  );
+                                  String formattedTime = DateFormat('hh:mm aa')
+                                      .format(selectedDateTime);
+                                  _time = formattedTime;
+                                  setState(() {
+                                    hourClock = selectedDateTime;
+                                  }); // You can use the selectedDateTime as needed.
+                                }
+                                /* DatePicker.showTimePicker(context,
                                       showTitleActions: true,
                                       onConfirm: (time) {
                                     print('confirm $time');
@@ -1151,230 +1075,83 @@ class _InitClockOutState extends State<InitClockOut> {
                                       currentTime: DateTime.now(),
                                       locale: LocaleType.en);
                                   setState(() {});*/
-                                },
-                              ),
-                            )
-                          ],
-                        )),
-                  )
-                ],
-              ),
-            ],
-          ],
-          if (workday_on != null && workday_on!['clock_out_init'] != '') ...[
-            if (workday_on!['has_clockin'].toString() == 'false') ...[
-              Container(
-                  margin: EdgeInsets.only(left: 30, right: 30),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      l10n.clockout_9,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  )),
-              Container(
-                alignment: Alignment.topRight,
-                margin: EdgeInsets.only(right: 10, top: 60),
-                //width: MediaQuery.of(context).size.width * 0.70,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ListClockOut(
-                                user: user,
-                                workday: workday_on!['workday_id'],
-                                contract: widget.contract,
-                                wk: workday_on,
-                                work: widget.work,
-                              )),
-                    );
-                  },
-                  child: Text(
-                    l10n.clockin_6,
-                    style: TextStyle(fontSize: 20, color: HexColor('EA6012')),
-                  ),
-                ),
-              ),
-              /* Container(
-                alignment: Alignment.topRight,
-                margin: EdgeInsets.only(right: 10),
-                //width: MediaQuery.of(context).size.width * 0.70,
-                child: isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : ElevatedButton(
-                        onPressed: () async {
-                          _showInputTempClockin(
-                              '¡Antes de iniciar el proceso de clock in, debes registrar tu temperatura!');
-                          //_submitClockIn();
-                        },
-                        child: Text(
-                          'Hacer clock in',
-                          style: TextStyle(
-                              fontSize: 20, color: HexColor('EA6012')),
-                        ),
-                      ),
-              ),*/
-            ],
-            if (workday_on != null &&
-                workday_on!['has_clockout'].toString() == 'true') ...[
-              Container(
-                  margin: EdgeInsets.only(left: 30, right: 30),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      l10n.clockout_4,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  ))
-            ],
-            if (workday_on != null &&
-                workday_on!['has_clockout'].toString() == 'false' &&
-                workday_on!['has_clockin'].toString() == 'true') ...[
-              Container(
-                  margin: EdgeInsets.only(left: 30, right: 30),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      l10n.clockout_8,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  ))
-            ],
+                              },
+                            ),
+                          ),
+                          Container(
+                              //margin: EdgeInsets.only(left: 20),
+                              alignment: Alignment.center,
+                              //height: MediaQuery.of(context).size.width * 0.1,
+                              width: MediaQuery.of(context).size.width * 0.50,
+                              child: isLoading
+                                  ? Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : Container(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 1.0),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.35,
+                                      child: OutlinedButton(
+                                        onPressed: () async {
+                                          _submit(false);
+                                        },
+                                        style: OutlinedButton.styleFrom(
+                                          side: BorderSide(
+                                              width: 5.0,
+                                              color: HexColor('EA6012')),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0)),
+                                        ),
+                                        child: Text(
+                                          'Submit',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17,
+                                              color: HexColor('EA6012')),
+                                        ),
+                                      ),
+                                    )),
+                        ],
+                      )),
+                )
+              ],
+            ),
           ],
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.20,
           ),
-          if (workday_on != null &&
-              workday_on!['clock_out_init'] == '' &&
-              workday_on!['has_clockin'].toString() == 'true') ...[
-            Container(
-              alignment: Alignment.topRight,
-              margin: EdgeInsets.only(right: 30),
-              //width: MediaQuery.of(context).size.width * 0.70,
+          Container(
+              //margin: EdgeInsets.only(left: 20),
+              alignment: Alignment.center,
+              //height: MediaQuery.of(context).size.width * 0.1,
+              width: MediaQuery.of(context).size.width * 0.50,
               child: isLoading
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
-                  : ElevatedButton(
-                      onPressed: () async {
-                        //_submit();
-                        _showInputSelf('Init clock-out');
-                      },
-                      child: Text(
-                        l10n.clockout_2,
-                        style:
-                            TextStyle(fontSize: 20, color: HexColor('EA6012')),
-                      ),
-                    ),
-            ),
-          ],
-          if (workday_on != null &&
-              workday_on!['clock_out_init'] != '' &&
-              workday_on!['has_clockin'].toString() == 'true') ...[
-            if (workday_on != null &&
-                workday_on!['has_clockout'].toString() == 'true' &&
-                workday_on!['has_clockin'].toString() == 'true') ...[
-              Container(
-                alignment: Alignment.topRight,
-                margin: EdgeInsets.only(right: 10),
-                //width: MediaQuery.of(context).size.width * 0.70,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ListClockOut(
-                                user: user,
-                                workday: workday_on!['workday_id'],
-                                contract: widget.contract,
-                                wk: workday_on,
-                                work: widget.work,
-                              )),
-                    );
-                  },
-                  child: Text(
-                    l10n.clockin_6,
-                    style: TextStyle(fontSize: 20, color: HexColor('EA6012')),
-                  ),
-                ),
-              )
-            ],
-            if (workday_on != null &&
-                workday_on!['has_clockout'].toString() == 'false' &&
-                workday_on!['has_clockin'].toString() == 'true') ...[
-              Container(
-                alignment: Alignment.topRight,
-                margin: EdgeInsets.only(right: 10),
-                //width: MediaQuery.of(context).size.width * 0.70,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ListClockOut(
-                                user: user,
-                                workday: workday_on!['workday_id'],
-                                contract: widget.contract,
-                                wk: workday_on,
-                                work: widget.work,
-                              )),
-                    );
-                  },
-                  child: Text(
-                    l10n.clockin_6,
-                    style: TextStyle(fontSize: 20, color: HexColor('EA6012')),
-                  ),
-                ),
-              ),
-              Container(
-                alignment: Alignment.topRight,
-                margin: EdgeInsets.only(right: 10),
-                //width: MediaQuery.of(context).size.width * 0.70,
-                child: isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : ElevatedButton(
+                  : Container(
+                      padding: EdgeInsets.symmetric(vertical: 1.0),
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      child: OutlinedButton(
                         onPressed: () async {
-                          _submits();
+                          _submit(false);
                         },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(width: 5.0, color: Colors.white),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
                         child: Text(
-                          l10n.clockout_6,
+                          'Submit',
                           style: TextStyle(
-                              fontSize: 20, color: HexColor('EA6012')),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                              color: Colors.white),
                         ),
                       ),
-              )
-            ],
-            Container(
-              alignment: Alignment.topRight,
-              margin: EdgeInsets.only(
-                right: 10,
-              ),
-              //width: MediaQuery.of(context).size.width * 0.70,
-              child: ElevatedButton(
-                onPressed: () async {
-                  _showInputDialog(l10n.clockout_7);
-                },
-                child: Text(
-                  l10n.clockout_3,
-                  style: TextStyle(fontSize: 20, color: HexColor('EA6012')),
-                ),
-              ),
-            ),
-          ]
+                    )),
         ],
       ),
     )));

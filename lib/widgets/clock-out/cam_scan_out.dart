@@ -186,7 +186,9 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
     var resBody = json.decode(response.body);
     if (response.statusCode == 200 && resBody['first_name'] != null)  {
       print('dio 200 scan list');
-      int code = resBody['code'];
+      print(resBody);
+       int code = resBody['code'] ?? 0; // Asigna 0 si resBody['code'] es null
+     
       print(resBody);
       print('code');
       print(code.toString());

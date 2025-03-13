@@ -1102,10 +1102,10 @@ class _ListCrewState extends State<ListCrew> {
               crewCurrent!['clock_out_end'] == null) ...[
             Container(
               alignment: Alignment.topRight,
-              margin: EdgeInsets.only(right: 20),
+              margin:const EdgeInsets.only(right: 20),
               // margin: EdgeInsets.only(left:15),
               child: isLoading
-                  ? Center(
+                  ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
@@ -1116,7 +1116,7 @@ class _ListCrewState extends State<ListCrew> {
                       onPressed: () async {
                         endOut();
                       },
-                      child: Text(
+                      child:const Text(
                         'Finalizar Check-out',
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),

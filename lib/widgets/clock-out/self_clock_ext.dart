@@ -172,7 +172,7 @@ class _SelfClockOutState extends State<SelfClockOut> {
     }
     try {
       Provider.of<WorkDay>(context, listen: false)
-          .editWorkday(wk, geo, "", "")
+          .editWorkday(wk, geo, "", "", true)
           .then((response) {
         setState(() {
           isLoading = false;

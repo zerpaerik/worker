@@ -9,30 +9,32 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:worker/model/config.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:worker/widgets/projects/crew/cam_scan_in.dart';
 import '../../../local/database_creator.dart';
 import 'dart:convert';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../global.dart';
 import '../../../providers/crew.dart';
 import 'cam_scan.dart';
+import 'cam_scan_out.dart';
 
-class UpdateInitCrew extends StatefulWidget {
+class UpdateInitCrewOut extends StatefulWidget {
   Map<String, dynamic>? contract;
   int? workday;
   int? typeC;
 
-  UpdateInitCrew({this.contract, this.workday, this.typeC});
+  UpdateInitCrewOut({this.contract, this.workday, this.typeC});
 
   @override
-  _UpdateInitCrewState createState() =>
-      _UpdateInitCrewState(contract, workday, typeC);
+  _UpdateInitCrewOutState createState() =>
+      _UpdateInitCrewOutState(contract, workday, typeC);
 }
 
-class _UpdateInitCrewState extends State<UpdateInitCrew> {
+class _UpdateInitCrewOutState extends State<UpdateInitCrewOut> {
   Map<String, dynamic>? contract;
   int? typeC;
   int? workday;
-  _UpdateInitCrewState(this.contract, this.workday, this.typeC);
+  _UpdateInitCrewOutState(this.contract, this.workday, this.typeC);
 
   Geolocator geolocator = Geolocator();
 
@@ -138,11 +140,11 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
 
     try {
       Provider.of<CrewProvider>(context, listen: false)
-          .editCrewIn(crewCurrent!['id'], _time, hourClock, widget.typeC)
+          .editCrewOut(crewCurrent!['id'], _time, hourClock, widget.typeC)
           .then((response) async {
         print('response edit crew in');
         print(response);
-       // await getCrew();
+        await getCrew();
         setState(() {
           isLoading = false;
         });
@@ -150,7 +152,7 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => QRSCANCREW(
+                builder: (context) => QRSCANCREWOUT(
                       workday: widget.workday,
                       crew: crewCurrent,
                       contract: widget.contract,
@@ -160,7 +162,7 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => QRSCANCREW(
+                builder: (context) => QRSCANCREWOUT(
                       workday: widget.workday,
                       crew: crewCurrent,
                       contract: widget.contract,
@@ -205,6 +207,9 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
 
   @override
   void initState() {
+    print('widget type');
+    print(widget.typeC);
+
     getTodo(1);
     getCategory();
     getCrew();
@@ -229,7 +234,17 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
         body: SingleChildScrollView(
             child: Container(
       width: double.infinity,
-   
+      /*decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+            HexColor('FE7E1F'),
+            HexColor('F57E07'),
+            HexColor('F8AF04'),
+            HexColor('F5AE07'),
+            HexColor('FD821E'),
+          ])),*/
       child: Column(
         children: <Widget>[
           SizedBox(

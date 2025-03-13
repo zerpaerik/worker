@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:worker/model/config.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:worker/widgets/projects/crew/cam_scan_in.dart';
 import '../../../local/database_creator.dart';
 import 'dart:convert';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -16,23 +17,23 @@ import '../../global.dart';
 import '../../../providers/crew.dart';
 import 'cam_scan.dart';
 
-class UpdateInitCrew extends StatefulWidget {
+class UpdateInitCrewIn extends StatefulWidget {
   Map<String, dynamic>? contract;
   int? workday;
   int? typeC;
 
-  UpdateInitCrew({this.contract, this.workday, this.typeC});
+  UpdateInitCrewIn({this.contract, this.workday, this.typeC});
 
   @override
-  _UpdateInitCrewState createState() =>
-      _UpdateInitCrewState(contract, workday, typeC);
+  _UpdateInitCrewInState createState() =>
+      _UpdateInitCrewInState(contract, workday, typeC);
 }
 
-class _UpdateInitCrewState extends State<UpdateInitCrew> {
+class _UpdateInitCrewInState extends State<UpdateInitCrewIn> {
   Map<String, dynamic>? contract;
   int? typeC;
   int? workday;
-  _UpdateInitCrewState(this.contract, this.workday, this.typeC);
+  _UpdateInitCrewInState(this.contract, this.workday, this.typeC);
 
   Geolocator geolocator = Geolocator();
 
@@ -142,7 +143,7 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
           .then((response) async {
         print('response edit crew in');
         print(response);
-       // await getCrew();
+        await getCrew();
         setState(() {
           isLoading = false;
         });
@@ -150,7 +151,7 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => QRSCANCREW(
+                builder: (context) => QRSCANCREWIN(
                       workday: widget.workday,
                       crew: crewCurrent,
                       contract: widget.contract,
@@ -160,7 +161,7 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => QRSCANCREW(
+                builder: (context) => QRSCANCREWIN(
                       workday: widget.workday,
                       crew: crewCurrent,
                       contract: widget.contract,
@@ -205,6 +206,9 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
 
   @override
   void initState() {
+    print('widget type');
+    print(widget.typeC);
+
     getTodo(1);
     getCategory();
     getCrew();
@@ -229,7 +233,17 @@ class _UpdateInitCrewState extends State<UpdateInitCrew> {
         body: SingleChildScrollView(
             child: Container(
       width: double.infinity,
-   
+      /*decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+            HexColor('FE7E1F'),
+            HexColor('F57E07'),
+            HexColor('F8AF04'),
+            HexColor('F5AE07'),
+            HexColor('FD821E'),
+          ])),*/
       child: Column(
         children: <Widget>[
           SizedBox(

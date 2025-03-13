@@ -7,15 +7,21 @@ import 'package:intl/intl.dart' show DateFormat;
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:worker/widgets/projects/crew/cam_scan_out.dart';
+import 'package:worker/widgets/projects/crew/update_init_crew_in.dart';
 import 'package:worker/widgets/projects/project_list.dart';
 //import 'package:worker/widgets/workers/index_g.dart';
 import 'package:worker/providers/crew.dart';
 
+import '../../local/database_creator.dart';
 import '../global.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //import '../workers/index_g.dart';
 import '../workers/index_g.dart';
+import 'crew/cam_scan_in.dart';
 import 'crew/init.dart';
+import 'crew/list.dart';
+import 'crew/update_init_crew_out.dart';
 import 'crewsheets/detail.dart';
 import 'crewsheets/edit_general/step_1.dart';
 import 'detail.dart';
@@ -43,6 +49,10 @@ class _ContractListState extends State<ContractList> {
   var rows = [];
   List results = [];
   String query = '';
+    Map<String, dynamic>? crewCurrent;
+      Map<String, dynamic>? workday_on;
+
+
 
   getToken() async {
     SharedPreferences token = await SharedPreferences.getInstance();
@@ -98,6 +108,24 @@ class _ContractListState extends State<ContractList> {
         isDataR = 'N';
       }
     });
+  }
+
+    Future<String> getCrew() async {
+    String token = await getToken();
+    setState(() {});
+    var res = await http.get(
+        Uri.parse(ApiWebServer.server_name + '/api/v-1/crew/current'),
+        headers: {"Authorization": "Token $token"});
+    var resBody = json.decode(utf8.decode(res.bodyBytes));
+
+    print('es crew');
+    print(resBody);
+
+    setState(() {
+      crewCurrent = resBody;
+    });
+
+    return "Sucess";
   }
 
   Future<dynamic> getWorkers() async {
@@ -461,10 +489,29 @@ class _ContractListState extends State<ContractList> {
   @override
   void initState() {
     super.initState();
+    getCrew();
+    getWorkdayOn(1);
     getProjects();
     getCrewSheets();
     getWorkers();
   }
+
+  
+  getWorkdayOn(int id) async {
+    final sql = '''SELECT * FROM ${DatabaseCreator.todoTable6}
+    WHERE ${DatabaseCreator.id} = ?''';
+
+    List<dynamic> params = [id];
+    final data = await db.rawQuery(sql, params);
+
+    final todo = data.first;
+    setState(() {
+      workday_on = todo;
+    });
+
+    return workday_on;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -510,7 +557,7 @@ class _ContractListState extends State<ContractList> {
                       alignment: Alignment.topRight,
                       margin: EdgeInsets.only(right: 20),
                       width: MediaQuery.of(context).size.width * 0.50,
-                      child: Container(
+                      child:/* Container(
                         child: ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor:
@@ -533,7 +580,7 @@ class _ContractListState extends State<ContractList> {
                                 color: Colors.white),
                           ),
                         ),
-                      ),
+                      )*/Text(''),
                     ),
                   )
                 ],
@@ -654,9 +701,293 @@ class _ContractListState extends State<ContractList> {
                             child: CircularProgressIndicator(),
                           )
                         : isDataR == 'Y'
-                            ? Container(
+                            ? MediaQuery.removePadding(
+                                    removeTop: true,
+                                    context: context,
+                                    child:
+                            
+                            ListView(
+                              children: [
+                                SizedBox(height: 5,),
+                              Container(
+                                  height:
+                                    MediaQuery.of(context).size.height * 0.12,
+                                    child: GestureDetector(
+                                            onTap: () {
+                                            
+                                            },
+                                            child:Card(
+                                                    margin: EdgeInsets.only(
+                                                        left: 20, right: 20),
+                                                    color: Colors.white,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            side: BorderSide(
+                                                                color: HexColor(
+                                                                    'EA6012'),
+                                                                width: 1),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                                  if (crewCurrent != null && crewCurrent!['location'] == null || crewCurrent != null &&
+              crewCurrent!['location'] != null &&
+              crewCurrent!['has_report'] == true) ...[
+                                const SizedBox(height: 14,),
+                                GestureDetector(
+                                  onTap: ()	{
+                                      Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => InitCrewReport(
+                                                contract: widget.location,
+                                              )),
+                                    );
+                                  },
+                                  child: Text('Add new crew +', style: TextStyle(color: HexColor(
+                                                                    'EA6012'), fontWeight: FontWeight.bold, fontSize: 16)),),
+                               const SizedBox(height: 5,),
+                               GestureDetector(
+                                onTap:(){ Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => InitCrewReport(
+                                                contract: widget.location,
+                                              )),
+                                    );},
+                                child: Text('Click here to register your new work crew'),)                                     
+],
+                                                                  if (crewCurrent != null &&
+              crewCurrent!['location'] != null &&
+              crewCurrent!['has_report'] == false) ...[
+                SizedBox(height: 7,),
+                Text('Crew in progress', style: TextStyle(color: HexColor(
+                                                                    'EA6012'), fontWeight: FontWeight.bold, fontSize: 14),),
+                                                                    
+                                                        SizedBox(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              0.04,
+                                                        ),
+                                                      
+                                                     
+                                                        Row(
+                                                          children: <Widget>[
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Container(
+                                                                color: HexColor(
+                                                                    'F1F1F2'),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.1,
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.33,
+                                                                child:
+                                                                    TextButton(
+                                                                        child: Text('Check-in',
+                                                                            style: TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Colors.green,
+                                                                                fontWeight: FontWeight.bold)),
+                                                                        onPressed: () async {
+
+                                                                             await getWorkdayOn(1);
+
+                   
+                        DateTime now = DateTime.now();
+                        print('ult clock');
+                        print(workday_on);
+                        print(workday_on!['ult_clock']);
+
+                        DateTime init = workday_on!['ult_clock'].toString().isNotEmpty ?
+                            DateTime.parse(workday_on!['ult_clock'].toString()): now;
+                        print(now);
+                        print(init);
+                        print(now.difference(init).toString());
+                        int type = 1;
+
+                        if (crewCurrent != null &&
+                            crewCurrent!['clock_in_end'] == null) {
+                          type = 1;
+                        } else {
+                          type = 2;
+                        }
+
+                        if (now.difference(init) > Duration(minutes: 1)) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UpdateInitCrewIn(
+                                      contract: widget.location,
+                            workday: crewCurrent!['id'],
+                                      typeC: type,
+                                    )),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => QRSCANCREWIN(
+                                      crew: crewCurrent,
+                                      workday: crewCurrent!['id'],
+                                      contract: widget.location,
+                                    )),
+                          );
+                        }
+
+
+
+
+                                                                        
+                                                                        }),
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Container(
+                                                                color: HexColor(
+                                                                    'F1F1F2'),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.1,
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.33,
+                                                                child:
+                                                                    TextButton(
+                                                                  child: Text(
+                                                                      'List',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: HexColor(
+                                                                              'EA6012'),
+                                                                          fontWeight:
+                                                                              FontWeight.bold)),
+                                                                  onPressed:
+                                                                      () {
+                                                                            Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) => ListCrew(
+                                                                                    crew: crewCurrent,
+                                                                                    workday: crewCurrent!['id'],
+                                                                                                contract: widget.location,
+                                                                                    shift: crewCurrent!['shift'])),
+                                                                          );
+                                                                                                                        
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Container(
+                                                                color: HexColor(
+                                                                    'F1F1F2'),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.1,
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.33,
+                                                                child:
+                                                                    TextButton(
+                                                                  child: Text('Check-out',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: Colors.red,
+                                                                          fontWeight: FontWeight.bold)),
+                                                                  onPressed:
+                                                                      () async {
+
+                                                                              await getWorkdayOn(1);
+                        DateTime now = DateTime.now();
+                        DateTime init =
+                            DateTime.parse(workday_on!['ult_clock'].toString());
+                        print(now);
+                        print(init);
+                        print(now.difference(init).toString());
+                        int type = 1;
+
+                        if (crewCurrent != null &&
+                            crewCurrent!['clock_in_end'] == null) {
+                          type = 1;
+                        } else {
+                          type = 2;
+                        }
+
+                        if (now.difference(init) > Duration(minutes: 1)) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UpdateInitCrewOut(
+                                      contract: widget.location,
+                            workday: crewCurrent!['id'],
+                                      typeC: type,
+                                    )),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => QRSCANCREWOUT(
+                                      crew: crewCurrent,
+                                      workday: crewCurrent!['id'],
+                                      contract: widget.location,
+                                    )),
+                          );
+                        }
+
+
+                                                                  
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),],
+           
+
+                                                      ],
+                                                    )),
+                                               
+                                          
+                                          
+                                          )
+
+                              ),
+                               Container(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.65,
+                                    MediaQuery.of(context).size.height * 0.55,
                                 child: MediaQuery.removePadding(
                                     removeTop: true,
                                     context: context,
@@ -982,6 +1313,8 @@ class _ContractListState extends State<ContractList> {
                                           );
                                         })),
                               )
+
+                            ],))
                             : Center(
                                 child: Text(l10n.no_register),
                               ),

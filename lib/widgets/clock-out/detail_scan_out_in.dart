@@ -7,80 +7,79 @@ import 'package:worker/model/workday.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:worker/widgets/projects/crew/cam_scan.dart';
-import 'dart:convert';
-import '../../global.dart';
+import 'package:worker/widgets/clock-in/cam_scan.dart';
+import 'package:worker/local/database_creator.dart';
+import 'package:worker/model/config.dart';
 
-import '../../../model/user.dart';
-import 'package:http/http.dart' as http;
-import '../../../providers/crew.dart';
-import '../../widgets.dart';
+import '../../model/user.dart';
+import '../../providers/workday.dart';
+import '../widgets.dart';
+import 'init.dart';
 
 // ignore: must_be_immutable
-class DetailCrew extends StatefulWidget {
+class DetailClockInOut extends StatefulWidget {
   final User? user;
   final int? workday;
   final String? lat;
   final String? long;
   Map<String, dynamic>? contract;
+  Map<String, dynamic>? wk;
+  final Workday? work;
+  final User? us;
   Map<String, dynamic>? datas;
-  Map<String, dynamic>? crew;
 
-  DetailCrew(
+  DetailClockInOut(
       {required this.user,
       this.workday,
       this.lat,
       this.long,
       this.contract,
-      this.datas,
-      this.crew});
+      this.wk,
+      this.work,
+      this.us,
+      this.datas});
 
   @override
-  _DetailCrewState createState() =>
-      _DetailCrewState(user, workday, lat, long, contract, datas, crew);
+  _DetailClockInState createState() => _DetailClockInState(
+      user!, workday!, lat!, long!, contract!, wk!, work!, us!, datas!);
 }
 
-class _DetailCrewState extends State<DetailCrew> {
+class _DetailClockInState extends State<DetailClockInOut> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   User? user;
-  int? workday;
-  Workday? work;
-  String? lat;
-  String? long;
-  Map<String, dynamic>? wk;
-  Map<String, dynamic>? datas;
+  int workday;
+  Workday work;
+  String lat;
+  String long;
+  Map<String, dynamic> wk;
 
-  Map<String, dynamic>? contract;
-  User? us;
-  Map<String, dynamic>? crew;
+  Map<String, dynamic> contract;
+  User us;
+  Map<String, dynamic> datas;
 
-  _DetailCrewState(this.user, this.workday, this.lat, this.long, this.contract,
-      this.datas, this.crew);
+  _DetailClockInState(this.user, this.workday, this.lat, this.long,
+      this.contract, this.wk, this.work, this.us, this.datas);
   Geolocator geolocator = Geolocator();
+  Map<String, dynamic>? workday_on;
 
   Position? userLocation;
   Workday? _wd;
   //DateFormat format = DateFormat("yyyy-MM-dd");
   bool isLoading = false;
   // DateTime hour = DateFormat('HH:mm').format(DateTime.now()) as DateTime;
-  final hour = DateTime.now();
+  final hour = new DateTime.now();
   DateFormat? dateFormat = DateFormat("HH:mm:ss");
-  String _time = "Sin Cambios";
+  String? _time = "Sin Cambios";
   DateTime? hourClock;
   String qrCodeResult = "Not Yet Scanned";
-  String temp = '';
+  String? temp = '';
   int? tm;
 
   String? geo;
-  String _locationMessage = "";
-  Map<String, dynamic>? crewCurrent;
-  List? dataCategory = [];
-  String? cate = "";
-  var selectedValue;
-  String? namec;
-  int? category;
-  String type = "IN";
+
+  String? _locationMessage = "";
+  Map<String, dynamic>? contractDetail;
 
   // String formatter = DateFormat('yMd').format(hour);
   //int time = DateTime.now().millisecondsSinceEpoch;
@@ -93,9 +92,9 @@ class _DetailCrewState extends State<DetailCrew> {
   }
 
   todayDateTimeWork() {
-    //var now = this.widget.wk['clock_in_init'];
-    // String formattedTime = DateFormat('hh:mm:aa').format(now);
-    //return formattedTime;
+    var now = widget.wk!['clock_in_init'];
+    String formattedTime = DateFormat('hh:mm:aa').format(now);
+    return formattedTime;
   }
 
   Future<Position> _getLocation() async {
@@ -116,49 +115,26 @@ class _DetailCrewState extends State<DetailCrew> {
     return intValue;
   }
 
+  getContractFull(int id) async {
+    final sql = '''SELECT * FROM ${DatabaseCreator.todoTable5}
+    WHERE ${DatabaseCreator.id} = ?''';
+
+    List<dynamic> params = [id];
+    final data = await db.rawQuery(sql, params);
+
+    final todo = data.first;
+    setState(() {
+      contractDetail = todo;
+    });
+    return contractDetail;
+  }
+
   void _showErrorDialog(String message) {
     print(message);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('Error'),
-        content: Text(message,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: HexColor('EA6012'))),
-        titleTextStyle: TextStyle(
-            color: HexColor('373737'),
-            fontFamily: 'OpenSansRegular',
-            fontWeight: FontWeight.bold,
-            fontSize: 20),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Ok'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => QRSCANCREW(
-                          workday: widget.workday,
-                          contract: widget.contract,
-                          crew: widget.crew,
-                        )),
-              );
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  void _showInfoDialog(String message) {
-    print(message);
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Atenciòn, verifique por favor!'),
         content: Text(message),
         titleTextStyle: TextStyle(
             color: HexColor('373737'),
@@ -170,7 +146,18 @@ class _DetailCrewState extends State<DetailCrew> {
             child: Text('Ok'),
             onPressed: () {
               Navigator.of(ctx).pop();
-              _submit();
+              //_scan();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => QRSCAN(
+                          user: widget.user,
+                          workday: widget.workday,
+                          work: widget.work,
+                          contract: widget.contract,
+                          wk: widget.wk,
+                        )),
+              );
             },
           )
         ],
@@ -182,42 +169,44 @@ class _DetailCrewState extends State<DetailCrew> {
     setState(() {
       isLoading = true;
     });
-    await getCrew();
-    if (crewCurrent!['clock_in_end'] == null) {
-      type = "IN";
-    } else {
-      type = "OUT";
-    }
 
-    print('se va a pv');
-    print(type);
+    _locationMessage = '--- ---';
 
     try {
-      Provider.of<CrewProvider>(context, listen: false)
-          .addClockIn(widget.user!.id, _locationMessage, widget.workday, null,
-              type, crewCurrent)
+      Provider.of<WorkDay>(context, listen: false)
+          .addClockIn(widget.user!.id, hourClock, _locationMessage, workday_on,
+              temp, contractDetail!['contract_temp'].toString())
           .then((response) {
         setState(() {
           isLoading = false;
         });
-        print('response escan');
         if (response == '201') {
           //_scan();
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => QRSCANCREW(
-                      workday: widget.workday,
+                builder: (context) => InitClockOut(
+                      user: widget.user,
+                      work: widget.work,
                       contract: widget.contract,
-                      crew: widget.crew,
+                      wk: widget.wk,
                     )),
           );
+          /*  Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ListClockIn(
+                    user: user,
+                    workday: this.widget.workday.id,
+                    contract: this.widget.contract,
+                    workdayDate: this.widget.workday.clock_in_end,
+                    work: this.widget.workday)),
+          );*/
         } else {
-          _showErrorDialog("Worker has not checked in for this crew");
+          _showErrorDialog('Error');
         }
       });
     } catch (error) {}
-
     /* Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ProfilePartOblig2()),
@@ -244,12 +233,7 @@ class _DetailCrewState extends State<DetailCrew> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    // ignore: prefer_interpolation_to_compose_strings
-                    "Foto de"
-                            ' ' +
-                        user!.first_name! +
-                        ' ' +
-                        user!.last_name!,
+                    'Picture of:  ${user!.first_name} ${user!.last_name}',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -313,36 +297,39 @@ class _DetailCrewState extends State<DetailCrew> {
     );
   }
 
-  Future<String?> getToken() async {
-    SharedPreferences token = await SharedPreferences.getInstance();
-    String? stringValue = token.getString('stringValue');
-    return stringValue;
-  }
+  getWorkdayOn(int id) async {
+    final sql = '''SELECT * FROM ${DatabaseCreator.todoTable6}
+    WHERE ${DatabaseCreator.id} = ?''';
 
-  Future<String> getCrew() async {
-    String? token = await getToken();
-    setState(() {});
-    var res = await http.get(
-        Uri.parse('${ApiWebServer.server_name}/api/v-1/crew/current'),
-        headers: {"Authorization": "Token $token"});
-    var resBody = json.decode(res.body);
+    List<dynamic> params = [id];
+    final data = await db.rawQuery(sql, params);
 
+    final todo = data.first;
     setState(() {
-      crewCurrent = resBody;
-      dataCategory = crewCurrent!['project_categories'];
+      workday_on = todo;
     });
 
-    return '1';
+    print('response workday_on');
+    print(workday_on);
+    return workday_on;
+  }
+
+  void _viewWorkDay() {
+    Provider.of<WorkDay>(context, listen: false).fetchWorkDay().then((value) {
+      setState(() {
+        _wd = value;
+      });
+      getWorkdayOn(1);
+    });
   }
 
   @override
   void initState() {
-    print('widget datas');
-    print(widget.datas);
+    _viewWorkDay();
+    getContractFull(1);
     _getLocation().then((position) {
       userLocation = position;
     });
-    getCrew();
     super.initState();
   }
 
@@ -393,7 +380,7 @@ class _DetailCrewState extends State<DetailCrew> {
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              l10n.crew_detail1,
+                              l10n.detail_ci,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 25,
@@ -406,6 +393,28 @@ class _DetailCrewState extends State<DetailCrew> {
                   ),
                 ),
               ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            Container(
+              margin: EdgeInsets.only(left: 20),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(widget.contract!['contract_name'],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: HexColor('EA6012'))),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 20),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(widget.datas!['company_name'],
+                    style: TextStyle(
+                      fontSize: 17,
+                    )),
+              ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Container(
@@ -423,21 +432,7 @@ class _DetailCrewState extends State<DetailCrew> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text(widget.datas!['company_name'],
-                    style: TextStyle(
-                        //fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: HexColor('EA6012'))),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text('Emplooy ID:${user!.btn_id!}',
+                child: Text('Emplooy ID:${user!.btn_id}',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -482,7 +477,7 @@ class _DetailCrewState extends State<DetailCrew> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text('Detalle de chequeo',
+                child: Text(l10n.clockin_23,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -525,24 +520,21 @@ class _DetailCrewState extends State<DetailCrew> {
                         fontWeight: FontWeight.bold),
                   )),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.01,
-            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             Row(
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(left: 20),
                   child: Image.asset(
-                    'assets/verificado.png',
-                    width: 28,
+                    'assets/clock1.png',
+                    width: 30,
                     color: Colors.black,
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.only(left: 10),
                   child: Text(
-                    l10n.hour_register + ': ',
+                    l10n.hour_register,
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -552,60 +544,100 @@ class _DetailCrewState extends State<DetailCrew> {
                 ),
               ],
             ),
-            if (crewCurrent != null &&
-                crewCurrent!['clock_in_end'] == null) ...[
+            if (workday_on != null) ...[
               Container(
-                  margin: EdgeInsets.only(left: 60),
-                  child: Align(
+                margin: EdgeInsets.only(left: 60, right: 20),
+                child: Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      DateFormat("hh:mm:aa").format(DateTime.parse(
-                          crewCurrent!['default_entry_time'].toString())),
+                      DateFormat('hh:mm:aa').format(DateTime.parse(
+                          workday_on!['default_init'].toString())),
                       style: TextStyle(
                           fontSize: 25,
                           color: HexColor('EA6012'),
                           fontWeight: FontWeight.bold),
-                    ),
-                  ))
+                    )),
+              )
             ],
-            if (crewCurrent != null &&
-                crewCurrent!['clock_in_end'] != null) ...[
-              Container(
-                  margin: EdgeInsets.only(left: 60),
-                  child: Align(
-                    alignment: Alignment.topLeft,
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            if (contractDetail!['contract_temp'].toString() == 'true') ...[
+              Row(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(left: 20),
+                    child: Image.asset(
+                      'assets/termometro.png',
+                      width: 30,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 10),
                     child: Text(
-                      DateFormat("hh:mm:aa").format(DateTime.parse(
-                          crewCurrent!['default_exit_time'].toString())),
+                      l10n.clockin_8,
                       style: TextStyle(
-                          fontSize: 25,
-                          color: HexColor('EA6012'),
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ))
-            ],
-            Container(
-              alignment: Alignment.topRight,
-              margin: EdgeInsets.only(right: 30, bottom: 15, top: 40),
-              // margin: EdgeInsets.only(left:15),
-              child: isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(HexColor('EA6012')),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
                       ),
-                      onPressed: () {
-                        _submit();
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 10),
+                    width: 50,
+                    child: TextFormField(
+                      textInputAction: TextInputAction.done,
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                      onChanged: (value) {
+                        setState(() {
+                          temp = value;
+                          tm = int.parse(temp!);
+                        });
                       },
-                      child: Text(
-                        l10n.accept,
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
                     ),
+                  ),
+                  Text('F°')
+                ],
+              )
+            ],
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.10,
             ),
+            if (workday_on != null) ...[
+              Container(
+                alignment: Alignment.topRight,
+                margin: EdgeInsets.only(right: 30, bottom: 15),
+                // margin: EdgeInsets.only(left:15),
+                child: isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
+                        onPressed: () {
+                          if (temp == '' &&
+                              widget.contract!['contract_temp'] == 'true') {
+                            _showErrorDialog(l10n.temp_ob);
+                          } else if (widget.contract!['contract_temp'] ==
+                                  'true' &&
+                              tm! >= 100) {
+                            _showErrorDialog(l10n.temp_el);
+                          } else {
+                            _submit();
+                          }
+                        },
+                        child: Text(
+                          l10n.accept,
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                      ),
+              ),
+            ]
           ])))),
     );
   }

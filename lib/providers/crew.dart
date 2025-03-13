@@ -167,7 +167,6 @@ class CrewProvider with ChangeNotifier {
     final url = ApiWebServer.server_name + '/api/v-1/crew/$crew/update';
 
     try {
-      if (type == 1) {
         final response = await http.patch(Uri.parse(url),
             body: json.encode({
               'default_entry_time': fec.toIso8601String().toString(),
@@ -192,7 +191,28 @@ class CrewProvider with ChangeNotifier {
         print(success);
 
         return success;
-      } else {
+   
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
+  Future<dynamic> editCrewOut(crew, time, hour, type) async {
+    print('agregando edicion de crew');
+    print(time);
+    print(hour);
+    print(type);
+    String? token = await getToken();
+    String s_d = hour.toString().substring(0, 11) +
+        hour.toString().substring(10, 23).replaceAll(" ", "");
+
+    DateTime fec = DateTime.parse(s_d);
+
+    final url = ApiWebServer.server_name + '/api/v-1/crew/$crew/update';
+
+    try {
+    
         final response = await http.patch(Uri.parse(url),
             body: json.encode({
               'default_exit_time': fec.toIso8601String().toString(),
@@ -217,7 +237,7 @@ class CrewProvider with ChangeNotifier {
         print(success);
 
         return success;
-      }
+    
     } catch (error) {
       print(error);
       throw error;
@@ -406,6 +426,92 @@ class CrewProvider with ChangeNotifier {
                 ? DateTime.parse(crew['default_entry_time'].toString())
                     .toIso8601String()
                 : DateTime.parse(crew['default_exit_time'].toString())
+                    .toIso8601String(),
+            'geographical_coordinates': '111 1111',
+            'project_category': null
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': "Token $token"
+          });
+      //final responseData = json.decode(response.body);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      print(response.statusCode);
+      // print(responseData);
+      notifyListeners();
+      await RepositoryServiceTodo.updateUltClock(
+          1, DateTime.now().toIso8601String().toString());
+
+      return response.statusCode.toString();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
+    Future<dynamic> addClockInIn(worker, geo, wd, category, type, crew) async {
+    print('llego pv clockin crew');
+    DateTime now = DateTime.now();
+    DateTime clockin;
+    String? token = await getToken();
+    clockin = now.toUtc();
+
+    print('crew');
+    print(crew);
+
+    final url = ApiWebServer.server_name + '/api/v-1/crew/register/create';
+    try {
+      final response = await http.post(Uri.parse(url),
+          body: json.encode({
+            'crew': wd,
+            'worker_accepted': worker,
+            'clock_type': 'IN',
+            'clock_datetime': type == DateTime.parse(crew['default_entry_time'].toString())
+                    .toIso8601String(),
+            'geographical_coordinates': '111 1111',
+            'project_category': null
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': "Token $token"
+          });
+      //final responseData = json.decode(response.body);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      print(response.statusCode);
+      // print(responseData);
+      notifyListeners();
+      await RepositoryServiceTodo.updateUltClock(
+          1, DateTime.now().toIso8601String().toString());
+
+      return response.statusCode.toString();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
+   Future<dynamic> addClockInOut(worker, geo, wd, category, type, crew) async {
+    print('llego pv clockin crew');
+    DateTime now = DateTime.now();
+    DateTime clockin;
+    String? token = await getToken();
+    clockin = now.toUtc();
+
+    print('crew');
+    print(crew);
+
+    final url = ApiWebServer.server_name + '/api/v-1/crew/register/create';
+    try {
+      final response = await http.post(Uri.parse(url),
+          body: json.encode({
+            'crew': wd,
+            'worker_accepted': worker,
+            'clock_type': 'OUT',
+            'clock_datetime':DateTime.parse(crew['default_exit_time'].toString())
                     .toIso8601String(),
             'geographical_coordinates': '111 1111',
             'project_category': null

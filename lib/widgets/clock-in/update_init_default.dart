@@ -233,7 +233,8 @@ class _UpdateInitState extends State<UpdateInit> {
               temp,
               contractDetail!['contract_temp'].toString(),
               start_time,
-              hourClock)
+              hourClock,
+              true)
           .then((response) {
         setState(() {
           isLoading = false;

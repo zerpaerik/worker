@@ -244,7 +244,7 @@ class _InitClockInState extends State<InitClockIn> {
     return "Sucess";
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(bool auto) async {
     print('print contract');
     setState(() {
       isLoading = true;
@@ -269,7 +269,8 @@ class _InitClockInState extends State<InitClockIn> {
               temp,
               contractDetail!['contract_temp'].toString(),
               start_time,
-              hourClock)
+              hourClock,
+              auto)
           .then((response) {
         setState(() {
           isLoading = false;
@@ -513,7 +514,7 @@ class _InitClockInState extends State<InitClockIn> {
                                             _showErrorDialog('Temp elev');
                                           } else {
                                             Navigator.of(context).pop();
-                                            _submit();
+                                            _submit(false);
                                           }
                                         },
                                         style: OutlinedButton.styleFrom(
@@ -687,7 +688,7 @@ class _InitClockInState extends State<InitClockIn> {
                                             _showErrorDialog('Temp elev');
                                           } else {
                                             Navigator.of(context).pop();
-                                            _submit();
+                                            _submit(true);
                                           }
                                         },
                                         style: OutlinedButton.styleFrom(
@@ -715,6 +716,123 @@ class _InitClockInState extends State<InitClockIn> {
                           ),
                         ],
                       ))));
+        });
+  }
+
+  void _showInputSelf(String title) {
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        //isScrollControlled: true,
+        context: context,
+        builder: (ctx) {
+          return Scaffold(
+              body: Column(
+            //mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                height: 30,
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 10, right: 10),
+                child: Text(title,
+                    style: TextStyle(
+                      // fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              Container(
+                margin: EdgeInsets.only(left: 10, top: 5),
+                child: Text(
+                  'Do you want to become an automatic clockin?',
+                  style: TextStyle(
+                    color: HexColor('EA6012'),
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                        //margin: EdgeInsets.only(left: 20),
+                        alignment: Alignment.center,
+                        //height: MediaQuery.of(context).size.width * 0.1,
+                        width: MediaQuery.of(context).size.width * 0.50,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 1.0),
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          child: OutlinedButton(
+                            //onPressed: () => select("English"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _submit(false);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                  width: 5.0, color: HexColor('EA6012')),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                            ),
+                            child: Text(
+                              'No',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                  color: HexColor('EA6012')),
+                            ),
+                          ),
+                        )),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                        //margin: EdgeInsets.only(left: 20),
+                        alignment: Alignment.center,
+                        //height: MediaQuery.of(context).size.width * 0.1,
+                        width: MediaQuery.of(context).size.width * 0.50,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 1.0),
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          child: OutlinedButton(
+                            onPressed: () async {
+                              /* if (temp == '') {
+                                _showErrorDialog('Temp ob');
+                              } else if (tm! >= 100) {
+                                _showErrorDialog('Temp elev');
+                              } else {*/
+                              Navigator.of(context).pop();
+                              _submit(true);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                  width: 5.0, color: HexColor('EA6012')),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                            ),
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                  color: HexColor('EA6012')),
+                            ),
+                          ),
+                        )),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          ));
         });
   }
 
@@ -1046,12 +1164,14 @@ class _InitClockInState extends State<InitClockIn> {
                               MaterialStateProperty.all(HexColor('EA6012')),
                         ),
                         onPressed: () async {
-                          if (contractDetail!['contract_temp'].toString() ==
+                          _showInputSelf('Init clock-in');
+
+                          /*if (contractDetail!['contract_temp'].toString() ==
                               'true') {
                             _showInputDialog1(l10n.clockin_4);
                           } else {
                             _submit();
-                          }
+                          }*/
                         },
                         child: Text(
                           l10n.clockin_5,
@@ -1131,7 +1251,7 @@ class _InitClockInState extends State<InitClockIn> {
                           ),
                         ),
                 ),
-                Container(
+                /*Container(
                   alignment: Alignment.topRight,
                   margin: EdgeInsets.only(right: 30),
                   //width: MediaQuery.of(context).size.width * 0.70,
@@ -1141,12 +1261,13 @@ class _InitClockInState extends State<InitClockIn> {
                         )
                       : TextButton(
                           onPressed: () async {
-                            if (contractDetail!['contract_temp'].toString() ==
+                            _showInputSelf('Clock-in');
+                            /*if (contractDetail!['contract_temp'].toString() ==
                                 'true') {
                               _showInputDialog1(l10n.clockin_4);
                             } else {
                               _submit();
-                            }
+                            }*/
                           },
                           child: Text(
                             l10n.clockin_7,
@@ -1154,7 +1275,7 @@ class _InitClockInState extends State<InitClockIn> {
                                 fontSize: 20, color: HexColor('EA6012')),
                           ),
                         ),
-                ),
+                ),*/
               ],
             ]
           ],

@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../model/user.dart';
 import '../widgets.dart';
 import '../../model/workday.dart';
+import 'cam_scan.dart';
 import 'finish.dart';
 
 class ConfirmClockIn extends StatefulWidget {
@@ -32,6 +33,8 @@ class _ConfirmClockInState extends State<ConfirmClockIn> {
   String geo;
   Map<String, dynamic> contract;
   Workday work;
+
+  Map<String, dynamic>? workdayMap;
 
   _ConfirmClockInState(
       this.user, this.workday, this.geo, this.contract, this.work);
@@ -80,8 +83,21 @@ class _ConfirmClockInState extends State<ConfirmClockIn> {
     });
   }
 
+  void _viewWorkDay() {
+    Provider.of<WorkDay>(context, listen: false)
+        .fetchWorkDayMap()
+        .then((value) {
+      setState(() {
+        workdayMap = value;
+      });
+      print(workdayMap);
+      //  getWorkdayOn(1);
+    });
+  }
+
   @override
   void initState() {
+    _viewWorkDay();
     _viewUser();
     super.initState();
   }
@@ -138,7 +154,9 @@ class _ConfirmClockInState extends State<ConfirmClockIn> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.04,
           ),
-          Container(
+
+          if(workdayMap != null && workdayMap!['has_clocked_in'] == true)...[
+               Container(
               margin: EdgeInsets.only(left: 30, right: 39),
               child: Align(
                 alignment: Alignment.topLeft,
@@ -240,6 +258,126 @@ class _ConfirmClockInState extends State<ConfirmClockIn> {
               ],
             ),
           ]
+          ],
+
+          if(workdayMap != null && workdayMap!['has_clocked_in'] == false)...[
+             Container(
+              margin: EdgeInsets.only(left: 30, right: 39),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'You havent been clockin all day',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.white),
+                ),
+              )),
+          Container(
+              margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text('You must decide whether to close the process or perform your clockin process',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+              )),
+                SizedBox(
+            height: MediaQuery.of(context).size.height * 0.04,
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 30, right: 30),
+            child: Align(
+                alignment: Alignment.center,
+                child: Image.asset(
+                  'assets/alerta.png',
+                  width: 180,
+                )),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.10,
+          ),
+          if (_user != null) ...[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20, top: 10),
+                    alignment: Alignment.topLeft,
+                    //height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      //width: MediaQuery.of(context).size.width * 0.70,
+                      child: isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : ElevatedButton(
+                              onPressed: _submit,
+                              child: Text(
+                                'End process',
+                                style: TextStyle(
+                                  color: HexColor('EA6012'),
+                                  letterSpacing: 1,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'OpenSans',
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 20, top: 10),
+                    alignment: Alignment.topRight,
+                    //height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      //width: MediaQuery.of(context).size.width * 0.70,
+                      child: isLoading
+                          ? null
+                          : ElevatedButton(
+                              onPressed: () {
+                                 Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => QRSCAN(
+                                          user: widget.user,
+                                          workday: widget.workday,
+                                          work: widget.work,
+                                          contract: widget.contract,
+                                          wk: workdayMap,
+                                          us: _user,
+                                        )),
+                              );           
+                              },
+                              child: Text(
+                                'Make clockin',
+                                style: TextStyle(
+                                  color: HexColor('EA6012'),
+                                  letterSpacing: 1,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'OpenSans',
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ]
+
+          ]
+
+
+       
         ],
       ),
     )));

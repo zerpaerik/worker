@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:worker/providers/auth.dart';
+import 'package:worker/widgets/clock-out/cam_scan_out.dart';
 import '../../providers/workday.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +10,7 @@ import '../../model/user.dart';
 import '../../model/workday.dart';
 import '../widgets.dart';
 import 'finish.dart';
+import 'list.dart';
 
 class ConfirmClockOut extends StatefulWidget {
   final User? user;
@@ -36,6 +38,7 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
       this.user, this.workday, this.geo, this.contract, this.work);
   bool isLoading = false;
   User? _user;
+  Map<String, dynamic>? workdayMap;
 
   Future<dynamic> _submit() async {
     setState(() {
@@ -73,9 +76,22 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
     });
   }
 
+  void _viewWorkDay() {
+    Provider.of<WorkDay>(context, listen: false)
+        .fetchWorkDayMap()
+        .then((value) {
+      setState(() {
+        workdayMap = value;
+      });
+      print(workdayMap);
+      //  getWorkdayOn(1);
+    });
+  }
+
   @override
   void initState() {
     _viewUser();
+    _viewWorkDay();
     super.initState();
   }
 
@@ -130,108 +146,357 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.04,
           ),
-          Container(
-              margin: EdgeInsets.only(left: 30, right: 20),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  l10n.clockout_23,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                      color: Colors.white),
-                ),
-              )),
-          Container(
-              margin: EdgeInsets.only(left: 30, right: 30, top: 5),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  l10n.clockout_24,
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              )),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.04,
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 30, right: 30),
-            child: Align(
-                alignment: Alignment.center,
-                child: Image.asset(
-                  'assets/alerta.png',
-                  width: 180,
+          if (workdayMap != null && workdayMap!['has_clocked_out'] == true) ...[
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 20),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    l10n.clockout_23,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white),
+                  ),
                 )),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.10,
-          ),
-          if (_user != null) ...[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 20, top: 10),
-                    alignment: Alignment.topLeft,
-                    //height: MediaQuery.of(context).size.width * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.50,
-                    child: Container(
-                      alignment: Alignment.topCenter,
-                      //width: MediaQuery.of(context).size.width * 0.70,
-                      child: isLoading
-                          ? Center(
-                              child: CircularProgressIndicator(),
-                            )
-                          : ElevatedButton(
-                              onPressed: _submit,
-                              child: Text(
-                                l10n.si,
-                                style: TextStyle(
-                                  color: HexColor('EA6012'),
-                                  letterSpacing: 1,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'OpenSans',
-                                ),
-                              ),
-                            ),
-                    ),
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 30, top: 5),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    l10n.clockout_24,
+                    style: TextStyle(fontSize: 14, color: Colors.white),
                   ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.only(right: 20, top: 10),
-                    alignment: Alignment.topRight,
-                    //height: MediaQuery.of(context).size.width * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.50,
-                    child: Container(
-                      alignment: Alignment.topCenter,
-                      //width: MediaQuery.of(context).size.width * 0.70,
-                      child: isLoading
-                          ? null
-                          : ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                l10n.no,
-                                style: TextStyle(
-                                  color: HexColor('EA6012'),
-                                  letterSpacing: 1,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'OpenSans',
-                                ),
-                              ),
-                            ),
-                    ),
-                  ),
-                ),
-              ],
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.04,
             ),
+            Container(
+              margin: EdgeInsets.only(left: 30, right: 30),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/alerta.png',
+                    width: 180,
+                  )),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.10,
+            ),
+            if (_user != null) ...[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20, top: 10),
+                      alignment: Alignment.topLeft,
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        //width: MediaQuery.of(context).size.width * 0.70,
+                        child: isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : ElevatedButton(
+                                onPressed: _submit,
+                                child: Text(
+                                  l10n.si,
+                                  style: TextStyle(
+                                    color: HexColor('EA6012'),
+                                    letterSpacing: 1,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      margin: EdgeInsets.only(right: 20, top: 10),
+                      alignment: Alignment.topRight,
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        //width: MediaQuery.of(context).size.width * 0.70,
+                        child: isLoading
+                            ? null
+                            : ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  l10n.no,
+                                  style: TextStyle(
+                                    color: HexColor('EA6012'),
+                                    letterSpacing: 1,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ]
+          ],
+          if (workdayMap != null &&
+              workdayMap!['has_clocked_in'] == true &&
+              workdayMap!['has_clocked_out'] == false ) ...[
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 39),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'You havent been clockout all day',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white),
+                  ),
+                )),
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'You must decide whether to close the process or perform your clockout process',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.04,
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 30, right: 30),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/alerta.png',
+                    width: 180,
+                  )),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.10,
+            ),
+            if (_user != null) ...[
+              Row(
+                children: <Widget>[
+                /*  Expanded(
+                    flex: 1,
+                    child: Container(
+                      margin:const EdgeInsets.only(left: 20, top: 10),
+                      alignment: Alignment.topLeft,
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        //width: MediaQuery.of(context).size.width * 0.70,
+                        child: isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : ElevatedButton(
+                                onPressed: _submit,
+                                child: Text(
+                                  'End process',
+                                  style: TextStyle(
+                                    color: HexColor('EA6012'),
+                                    letterSpacing: 1,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),*/
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      margin: EdgeInsets.only(right: 20, top: 10),
+                      alignment: Alignment.topRight,
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        //width: MediaQuery.of(context).size.width * 0.70,
+                        child: isLoading
+                            ? null
+                            : ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => QRSCANOUT(
+                                              user: widget.user,
+                                              workday: widget.workday,
+                                              work: widget.work,
+                                              contract: widget.contract,
+                                              wk: workdayMap,
+                                            )),
+                                  );
+                                },
+                                child: Text(
+                                  'Make clockout',
+                                  style: TextStyle(
+                                    color: HexColor('EA6012'),
+                                    letterSpacing: 1,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ]
+          ],
+
+
+          ///
+          ///
+          
+
+
+           if (workdayMap != null &&
+              workdayMap!['has_clocked_in'] == false && workdayMap!['has_clocked_out'] == false) ...[
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 39),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'You don’t have clock in or clock out today.',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white),
+                  ),
+                )),
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'You must decide whether to close the process or perform your clock process',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.04,
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 30, right: 30),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/alerta.png',
+                    width: 180,
+                  )),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.10,
+            ),
+            if (_user != null) ...[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      margin:const EdgeInsets.only(left: 20, top: 10),
+                      alignment: Alignment.topLeft,
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        //width: MediaQuery.of(context).size.width * 0.70,
+                        child: isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : ElevatedButton(
+                                onPressed: _submit,
+                                child: Text(
+                                  'End process',
+                                  style: TextStyle(
+                                    color: HexColor('EA6012'),
+                                    letterSpacing: 1,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      margin: EdgeInsets.only(right: 20, top: 10),
+                      alignment: Alignment.topRight,
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        //width: MediaQuery.of(context).size.width * 0.70,
+                        child: isLoading
+                            ? null
+                            : ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ListClockOut(
+                                              user: widget.user,
+                                              workday: widget.workday,
+                                              work: widget.work,
+                                              contract: widget.contract,
+                                              wk: workdayMap,
+                                            )),
+                                  );
+                                },
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: HexColor('EA6012'),
+                                    letterSpacing: 1,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ]
           ]
+          
+
+        
+
+
+          ///
+
+
+
         ],
       ),
     )));

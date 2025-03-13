@@ -15,9 +15,10 @@ import '../../../model/user.dart';
 import 'package:http/http.dart' as http;
 import '../../../providers/crew.dart';
 import '../../widgets.dart';
+import 'cam_scan_in.dart';
 
 // ignore: must_be_immutable
-class DetailCrew extends StatefulWidget {
+class DetailCrewIn extends StatefulWidget {
   final User? user;
   final int? workday;
   final String? lat;
@@ -26,7 +27,7 @@ class DetailCrew extends StatefulWidget {
   Map<String, dynamic>? datas;
   Map<String, dynamic>? crew;
 
-  DetailCrew(
+  DetailCrewIn(
       {required this.user,
       this.workday,
       this.lat,
@@ -36,11 +37,11 @@ class DetailCrew extends StatefulWidget {
       this.crew});
 
   @override
-  _DetailCrewState createState() =>
-      _DetailCrewState(user, workday, lat, long, contract, datas, crew);
+  _DetailCrewInState createState() =>
+      _DetailCrewInState(user, workday, lat, long, contract, datas, crew);
 }
 
-class _DetailCrewState extends State<DetailCrew> {
+class _DetailCrewInState extends State<DetailCrewIn> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   User? user;
@@ -55,7 +56,7 @@ class _DetailCrewState extends State<DetailCrew> {
   User? us;
   Map<String, dynamic>? crew;
 
-  _DetailCrewState(this.user, this.workday, this.lat, this.long, this.contract,
+  _DetailCrewInState(this.user, this.workday, this.lat, this.long, this.contract,
       this.datas, this.crew);
   Geolocator geolocator = Geolocator();
 
@@ -182,20 +183,12 @@ class _DetailCrewState extends State<DetailCrew> {
     setState(() {
       isLoading = true;
     });
-    await getCrew();
-    if (crewCurrent!['clock_in_end'] == null) {
-      type = "IN";
-    } else {
-      type = "OUT";
-    }
 
-    print('se va a pv');
-    print(type);
 
     try {
       Provider.of<CrewProvider>(context, listen: false)
-          .addClockIn(widget.user!.id, _locationMessage, widget.workday, null,
-              type, crewCurrent)
+          .addClockInIn(widget.user!.id, _locationMessage, widget.workday, null,
+              'IN', crewCurrent)
           .then((response) {
         setState(() {
           isLoading = false;
@@ -206,7 +199,7 @@ class _DetailCrewState extends State<DetailCrew> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => QRSCANCREW(
+                builder: (context) => QRSCANCREWIN(
                       workday: widget.workday,
                       contract: widget.contract,
                       crew: widget.crew,

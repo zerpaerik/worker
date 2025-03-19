@@ -20,6 +20,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../workers/index_g.dart';
 import 'crew/cam_scan_in.dart';
 import 'crew/init.dart';
+import 'crew/init_out_crew.dart';
 import 'crew/list.dart';
 import 'crew/update_init_crew_out.dart';
 import 'crewsheets/detail.dart';
@@ -49,10 +50,9 @@ class _ContractListState extends State<ContractList> {
   var rows = [];
   List results = [];
   String query = '';
-    Map<String, dynamic>? crewCurrent;
-      Map<String, dynamic>? workday_on;
-
-
+  Map<String, dynamic>? crewCurrent;
+  Map<String, dynamic>? workday_on;
+  bool isLoading = false;
 
   getToken() async {
     SharedPreferences token = await SharedPreferences.getInstance();
@@ -89,6 +89,45 @@ class _ContractListState extends State<ContractList> {
     return "Sucess";
   }
 
+  Future<dynamic> endIn(crew) async {
+    print('llego a pv');
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      Provider.of<CrewProvider>(context, listen: false)
+          .endIn(
+        crew,
+      )
+          .then((response) async {
+        print('response fin chekin');
+        print(response);
+        setState(() {
+          isLoading = false;
+        });
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OutListCrewReport(
+                    // shift: widget.shift,
+                    workday: crewCurrent!['id'],
+                    crew: crewCurrent,
+                    contract: widget.location,
+                  )),
+        );
+
+        /*  Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ContractList(location: widget.location),
+              ));*/
+      });
+    } catch (error) {}
+  }
+
   Future<dynamic> getCrewSheets() async {
     String token = await getToken();
     int locations = widget.location!['id'];
@@ -110,7 +149,7 @@ class _ContractListState extends State<ContractList> {
     });
   }
 
-    Future<String> getCrew() async {
+  Future<String> getCrew() async {
     String token = await getToken();
     setState(() {});
     var res = await http.get(
@@ -278,6 +317,142 @@ class _ContractListState extends State<ContractList> {
                         )),
                   ),
                 ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+            ],
+          );
+        });
+  }
+
+  void _showFinishCheckin(String title, report) {
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        context: context,
+        builder: (ctx) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                height: 50,
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 10, right: 10),
+                child: const Text(
+                    'To start the check-out process, you need to finalize the check-in process first.',
+                    style: TextStyle(
+                      // fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 10, right: 10),
+                child: Text(
+                  'Would you like to finalize check-in now?',
+                  style: TextStyle(
+                    color: HexColor('EA6012'),
+                    // fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(
+                height: 25,
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                        //margin: EdgeInsets.only(left: 20),
+                        alignment: Alignment.center,
+                        //height: MediaQuery.of(context).size.width * 0.1,
+                        width: MediaQuery.of(context).size.width * 0.50,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 1.0),
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          child: OutlinedButton(
+                            //onPressed: () => select("English"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                  width: 5.0, color: HexColor('EA6012')),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                            ),
+                            child: Text(
+                              'No',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                  color: HexColor('EA6012')),
+                            ),
+                          ),
+                        )),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Container(
+                            //margin: EdgeInsets.only(left: 20),
+                            alignment: Alignment.center,
+                            //height: MediaQuery.of(context).size.width * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.50,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 1.0),
+                              width: MediaQuery.of(context).size.width * 0.35,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  endIn(crewCurrent!['id']);
+                                  //changeReport(report);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(
+                                      width: 5.0, color: HexColor('EA6012')),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                ),
+                                child: Text(
+                                  'Yes',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17,
+                                      color: HexColor('EA6012')),
+                                ),
+                              ),
+                            )),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 10, right: 10),
+                child: Text(
+                  'You can still check users in afterward.',
+                  style: TextStyle(
+                    color: HexColor('EA6012'),
+                    // fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
               SizedBox(
                 height: 20,
@@ -496,7 +671,6 @@ class _ContractListState extends State<ContractList> {
     getWorkers();
   }
 
-  
   getWorkdayOn(int id) async {
     final sql = '''SELECT * FROM ${DatabaseCreator.todoTable6}
     WHERE ${DatabaseCreator.id} = ?''';
@@ -511,7 +685,6 @@ class _ContractListState extends State<ContractList> {
 
     return workday_on;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -557,7 +730,7 @@ class _ContractListState extends State<ContractList> {
                       alignment: Alignment.topRight,
                       margin: EdgeInsets.only(right: 20),
                       width: MediaQuery.of(context).size.width * 0.50,
-                      child:/* Container(
+                      child: /* Container(
                         child: ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor:
@@ -580,7 +753,8 @@ class _ContractListState extends State<ContractList> {
                                 color: Colors.white),
                           ),
                         ),
-                      )*/Text(''),
+                      )*/
+                          Text(''),
                     ),
                   )
                 ],
@@ -702,619 +876,676 @@ class _ContractListState extends State<ContractList> {
                           )
                         : isDataR == 'Y'
                             ? MediaQuery.removePadding(
-                                    removeTop: true,
-                                    context: context,
-                                    child:
-                            
-                            ListView(
-                              children: [
-                                SizedBox(height: 5,),
-                              Container(
-                                  height:
-                                    MediaQuery.of(context).size.height * 0.12,
-                                    child: GestureDetector(
-                                            onTap: () {
-                                            
-                                            },
-                                            child:Card(
-                                                    margin: EdgeInsets.only(
-                                                        left: 20, right: 20),
-                                                    color: Colors.white,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            side: BorderSide(
-                                                                color: HexColor(
-                                                                    'EA6012'),
-                                                                width: 1),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0)),
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                                  if (crewCurrent != null && crewCurrent!['location'] == null || crewCurrent != null &&
-              crewCurrent!['location'] != null &&
-              crewCurrent!['has_report'] == true) ...[
-                                const SizedBox(height: 14,),
-                                GestureDetector(
-                                  onTap: ()	{
-                                      Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => InitCrewReport(
-                                                contract: widget.location,
-                                              )),
-                                    );
-                                  },
-                                  child: Text('Add new crew +', style: TextStyle(color: HexColor(
-                                                                    'EA6012'), fontWeight: FontWeight.bold, fontSize: 16)),),
-                               const SizedBox(height: 5,),
-                               GestureDetector(
-                                onTap:(){ Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => InitCrewReport(
-                                                contract: widget.location,
-                                              )),
-                                    );},
-                                child: Text('Click here to register your new work crew'),)                                     
-],
-                                                                  if (crewCurrent != null &&
-              crewCurrent!['location'] != null &&
-              crewCurrent!['has_report'] == false) ...[
-                SizedBox(height: 7,),
-                Text('Crew in progress', style: TextStyle(color: HexColor(
-                                                                    'EA6012'), fontWeight: FontWeight.bold, fontSize: 14),),
-                                                                    
-                                                        SizedBox(
-                                                          height: MediaQuery.of(
-                                                                      context)
+                                removeTop: true,
+                                context: context,
+                                child: ListView(
+                                  children: [
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.12,
+                                        child: GestureDetector(
+                                          onTap: () {},
+                                          child: Card(
+                                              margin: EdgeInsets.only(
+                                                  left: 20, right: 20),
+                                              color: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: HexColor('EA6012'),
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0)),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  if (crewCurrent != null &&
+                                                          crewCurrent![
+                                                                  'location'] ==
+                                                              null ||
+                                                      crewCurrent != null &&
+                                                          crewCurrent![
+                                                                  'location'] !=
+                                                              null &&
+                                                          crewCurrent![
+                                                                  'has_report'] ==
+                                                              true) ...[
+                                                    const SizedBox(
+                                                      height: 14,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  InitCrewReport(
+                                                                    contract: widget
+                                                                        .location,
+                                                                  )),
+                                                        );
+                                                      },
+                                                      child: Text(
+                                                          'Add new crew +',
+                                                          style: TextStyle(
+                                                              color: HexColor(
+                                                                  'EA6012'),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 16)),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  InitCrewReport(
+                                                                    contract: widget
+                                                                        .location,
+                                                                  )),
+                                                        );
+                                                      },
+                                                      child: Text(
+                                                          'Click here to register your new work crew'),
+                                                    )
+                                                  ],
+                                                  if (crewCurrent != null &&
+                                                      crewCurrent![
+                                                              'location'] !=
+                                                          null &&
+                                                      crewCurrent![
+                                                              'has_report'] ==
+                                                          false) ...[
+                                                    SizedBox(
+                                                      height: 7,
+                                                    ),
+                                                    Text(
+                                                      'Crew in progress',
+                                                      style: TextStyle(
+                                                          color: HexColor(
+                                                              'EA6012'),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14),
+                                                    ),
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
                                                                   .size
                                                                   .height *
                                                               0.04,
-                                                        ),
-                                                      
-                                                     
-                                                        Row(
-                                                          children: <Widget>[
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Container(
-                                                                color: HexColor(
-                                                                    'F1F1F2'),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.1,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.33,
-                                                                child:
-                                                                    TextButton(
-                                                                        child: Text('Check-in',
-                                                                            style: TextStyle(
-                                                                                fontSize: 14,
-                                                                                color: Colors.green,
-                                                                                fontWeight: FontWeight.bold)),
-                                                                        onPressed: () async {
-
-                                                                             await getWorkdayOn(1);
-
-                   
-                        DateTime now = DateTime.now();
-                        print('ult clock');
-                        print(workday_on);
-                        print(workday_on!['ult_clock']);
-
-                        DateTime init = workday_on!['ult_clock'].toString().isNotEmpty ?
-                            DateTime.parse(workday_on!['ult_clock'].toString()): now;
-                        print(now);
-                        print(init);
-                        print(now.difference(init).toString());
-                        int type = 1;
-
-                        if (crewCurrent != null &&
-                            crewCurrent!['clock_in_end'] == null) {
-                          type = 1;
-                        } else {
-                          type = 2;
-                        }
-
-                        if (now.difference(init) > Duration(minutes: 1)) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UpdateInitCrewIn(
-                                      contract: widget.location,
-                            workday: crewCurrent!['id'],
-                                      typeC: type,
-                                    )),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => QRSCANCREWIN(
-                                      crew: crewCurrent,
-                                      workday: crewCurrent!['id'],
-                                      contract: widget.location,
-                                    )),
-                          );
-                        }
-
-
-
-
-                                                                        
-                                                                        }),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Container(
-                                                                color: HexColor(
-                                                                    'F1F1F2'),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.1,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.33,
-                                                                child:
-                                                                    TextButton(
-                                                                  child: Text(
-                                                                      'List',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              14,
-                                                                          color: HexColor(
-                                                                              'EA6012'),
-                                                                          fontWeight:
-                                                                              FontWeight.bold)),
-                                                                  onPressed:
-                                                                      () {
-                                                                            Navigator.push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                                builder: (context) => ListCrew(
-                                                                                    crew: crewCurrent,
-                                                                                    workday: crewCurrent!['id'],
-                                                                                                contract: widget.location,
-                                                                                    shift: crewCurrent!['shift'])),
-                                                                          );
-                                                                                                                        
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Container(
-                                                                color: HexColor(
-                                                                    'F1F1F2'),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.1,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.33,
-                                                                child:
-                                                                    TextButton(
-                                                                  child: Text('Check-out',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              14,
-                                                                          color: Colors.red,
-                                                                          fontWeight: FontWeight.bold)),
-                                                                  onPressed:
-                                                                      () async {
-
-                                                                              await getWorkdayOn(1);
-                        DateTime now = DateTime.now();
-                        DateTime init =
-                            DateTime.parse(workday_on!['ult_clock'].toString());
-                        print(now);
-                        print(init);
-                        print(now.difference(init).toString());
-                        int type = 1;
-
-                        if (crewCurrent != null &&
-                            crewCurrent!['clock_in_end'] == null) {
-                          type = 1;
-                        } else {
-                          type = 2;
-                        }
-
-                        if (now.difference(init) > Duration(minutes: 1)) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UpdateInitCrewOut(
-                                      contract: widget.location,
-                            workday: crewCurrent!['id'],
-                                      typeC: type,
-                                    )),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => QRSCANCREWOUT(
-                                      crew: crewCurrent,
-                                      workday: crewCurrent!['id'],
-                                      contract: widget.location,
-                                    )),
-                          );
-                        }
-
-
-                                                                  
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),],
-           
-
-                                                      ],
-                                                    )),
-                                               
-                                          
-                                          
-                                          )
-
-                              ),
-                               Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.55,
-                                child: MediaQuery.removePadding(
-                                    removeTop: true,
-                                    context: context,
-                                    child: ListView.builder(
-                                        itemCount: datar.length,
-                                        itemBuilder: (context, index) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              print(datar[index]);
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetailCrewsheet(
-                                                            project:
-                                                                datar[index],
-                                                            report: datar[index]
-                                                                ['id'])),
-                                              );
-                                            },
-                                            child: Column(
-                                              children: <Widget>[
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Card(
-                                                    margin: EdgeInsets.only(
-                                                        left: 20, right: 20),
-                                                    color: Colors.white,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            side: BorderSide(
-                                                                color: HexColor(
-                                                                    'EA6012'),
-                                                                width: 1),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0)),
-                                                    child: Column(
+                                                    ),
+                                                    Row(
                                                       children: <Widget>[
-                                                        SizedBox(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              0.01,
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: Container(
+                                                            color: HexColor(
+                                                                'F1F1F2'),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.1,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.33,
+                                                            child: TextButton(
+                                                                child: Text(
+                                                                    'Check-in',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: Colors
+                                                                            .green,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold)),
+                                                                onPressed:
+                                                                    () async {
+                                                                  await getWorkdayOn(
+                                                                      1);
+
+                                                                  DateTime now =
+                                                                      DateTime
+                                                                          .now();
+                                                                  print(
+                                                                      'ult clock');
+                                                                  print(
+                                                                      workday_on);
+                                                                  print(workday_on![
+                                                                      'ult_clock']);
+
+                                                                  DateTime init = workday_on![
+                                                                              'ult_clock']
+                                                                          .toString()
+                                                                          .isNotEmpty
+                                                                      ? DateTime
+                                                                          .parse(
+                                                                              workday_on!['ult_clock'].toString())
+                                                                      : now;
+                                                                  print(now);
+                                                                  print(init);
+                                                                  print(now
+                                                                      .difference(
+                                                                          init)
+                                                                      .toString());
+                                                                  int type = 1;
+
+                                                                  if (crewCurrent !=
+                                                                          null &&
+                                                                      crewCurrent![
+                                                                              'clock_in_end'] ==
+                                                                          null) {
+                                                                    type = 1;
+                                                                  } else {
+                                                                    type = 2;
+                                                                  }
+
+                                                                  if (now.difference(
+                                                                          init) >
+                                                                      Duration(
+                                                                          minutes:
+                                                                              1)) {
+                                                                    Navigator
+                                                                        .push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              UpdateInitCrewIn(
+                                                                                contract: widget.location,
+                                                                                workday: crewCurrent!['id'],
+                                                                                typeC: type,
+                                                                              )),
+                                                                    );
+                                                                  } else {
+                                                                    Navigator
+                                                                        .push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              QRSCANCREWIN(
+                                                                                crew: crewCurrent,
+                                                                                workday: crewCurrent!['id'],
+                                                                                contract: widget.location,
+                                                                              )),
+                                                                    );
+                                                                  }
+                                                                }),
+                                                          ),
                                                         ),
-                                                        Row(
-                                                          children: <Widget>[
-                                                            Expanded(
-                                                                flex: 2,
-                                                                child:
-                                                                    Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .topLeft,
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.67,
-                                                                  child: Column(
-                                                                    children: <Widget>[
-                                                                      Row(
-                                                                        children: [
-                                                                          Container(
-                                                                            margin:
-                                                                                EdgeInsets.only(left: 15),
-                                                                            child:
-                                                                                Text('ID# ', style: TextStyle(fontSize: 14, color: HexColor('3E3E3E'), fontWeight: FontWeight.bold)),
-                                                                          ),
-                                                                          Container(
-                                                                            child:
-                                                                                Text(datar[index]['id'].toString()),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          Container(
-                                                                            margin:
-                                                                                EdgeInsets.only(left: 15),
-                                                                            child:
-                                                                                Text(l10n.date + ': ', style: TextStyle(fontSize: 14, color: HexColor('3E3E3E'), fontWeight: FontWeight.bold)),
-                                                                          ),
-                                                                          Container(
-                                                                            child:
-                                                                                Text(DateFormat("MMMM d yyyy").format(DateTime.parse(datar[index]['workday_entry_time'])), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: HexColor('EA6012'))),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          Container(
-                                                                            margin:
-                                                                                EdgeInsets.only(left: 15),
-                                                                            child:
-                                                                                Text(l10n.workers + ': ', style: TextStyle(fontSize: 14, color: HexColor('3E3E3E'), fontWeight: FontWeight.bold)),
-                                                                          ),
-                                                                          Container(
-                                                                            child:
-                                                                                Text(datar[index]['workers_count'].toString()),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          Container(
-                                                                            margin:
-                                                                                EdgeInsets.only(left: 15),
-                                                                            child: Text(
-                                                                                datar[index]['status'].toString() == '1'
-                                                                                    ? l10n.wr_21
-                                                                                    : datar[index]['status'].toString() == '2'
-                                                                                        ? l10n.wr_22
-                                                                                        : datar[index]['status'].toString() == '3'
-                                                                                            ? l10n.wr_222
-                                                                                            : l10n.rejected,
-                                                                                style: TextStyle(
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    fontSize: 13,
-                                                                                    color: datar[index]['status'].toString() == '1'
-                                                                                        ? HexColor('EA6012')
-                                                                                        : datar[index]['status'].toString() == '2'
-                                                                                            ? Colors.blue
-                                                                                            : datar[index]['status'].toString() == '3'
-                                                                                                ? Colors.green
-                                                                                                : Colors.red)),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                            Expanded(
-                                                                flex: 1,
-                                                                child:
-                                                                    Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .topCenter,
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.33,
-                                                                  child: Column(
-                                                                    children: <Widget>[
-                                                                      Text(
-                                                                          l10n
-                                                                              .hours,
-                                                                          style: TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: HexColor('3E3E3E'))),
-                                                                      Text(
-                                                                          datar[index]['worked_hours']
-                                                                              .toString(),
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              fontSize: 30,
-                                                                              color: HexColor('EA6012'))),
-                                                                      Text('',
-                                                                          style: TextStyle(
-                                                                              fontSize: 11,
-                                                                              color: HexColor('3E3E3E')))
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                          ],
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: Container(
+                                                            color: HexColor(
+                                                                'F1F1F2'),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.1,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.33,
+                                                            child: TextButton(
+                                                              child: Text(
+                                                                  'List',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: HexColor(
+                                                                          'EA6012'),
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold)),
+                                                              onPressed: () {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => ListCrew(
+                                                                          crew:
+                                                                              crewCurrent,
+                                                                          workday: crewCurrent![
+                                                                              'id'],
+                                                                          contract: widget
+                                                                              .location,
+                                                                          shift:
+                                                                              crewCurrent!['shift'])),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
                                                         ),
-                                                        /*  SizedBox(
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: Container(
+                                                            color: HexColor(
+                                                                'F1F1F2'),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.1,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.33,
+                                                            child: TextButton(
+                                                              child: Text(
+                                                                  'Check-out',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Colors
+                                                                          .red,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold)),
+                                                              onPressed:
+                                                                  () async {
+                                                                await getWorkdayOn(
+                                                                    1);
+
+                                                                if (crewCurrent !=
+                                                                        null &&
+                                                                    crewCurrent![
+                                                                            'clock_in_end'] ==
+                                                                        null) {
+                                                                  print(
+                                                                      'no ha finalizado checkin');
+                                                                  _showFinishCheckin(
+                                                                      '', '');
+                                                                } else if (crewCurrent !=
+                                                                        null &&
+                                                                    crewCurrent![
+                                                                            'clock_in_end'] !=
+                                                                        null &&
+                                                                    crewCurrent![
+                                                                            'clock_out_start'] ==
+                                                                        null) {
+                                                                  print(
+                                                                      'para iniciar checkout');
+
+                                                                  Navigator
+                                                                      .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            OutListCrewReport(
+                                                                              // shift: widget.shift,
+                                                                              workday: crewCurrent!['id'],
+                                                                              crew: crewCurrent,
+                                                                              contract: widget.location,
+                                                                            )),
+                                                                  );
+                                                                } else {
+                                                                  DateTime now =
+                                                                      DateTime
+                                                                          .now();
+                                                                  DateTime
+                                                                      init =
+                                                                      DateTime.parse(
+                                                                          workday_on!['ult_clock']
+                                                                              .toString());
+                                                                  print(now);
+                                                                  print(init);
+                                                                  print(now
+                                                                      .difference(
+                                                                          init)
+                                                                      .toString());
+                                                                  int type = 1;
+
+                                                                  if (crewCurrent !=
+                                                                          null &&
+                                                                      crewCurrent![
+                                                                              'clock_in_end'] ==
+                                                                          null) {
+                                                                    type = 1;
+                                                                  } else {
+                                                                    type = 2;
+                                                                  }
+
+                                                                  if (now.difference(
+                                                                          init) >
+                                                                      Duration(
+                                                                          minutes:
+                                                                              1)) {
+                                                                    Navigator
+                                                                        .push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              UpdateInitCrewOut(
+                                                                                contract: widget.location,
+                                                                                workday: crewCurrent!['id'],
+                                                                                typeC: type,
+                                                                              )),
+                                                                    );
+                                                                  } else {
+                                                                    Navigator
+                                                                        .push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              QRSCANCREWOUT(
+                                                                                crew: crewCurrent,
+                                                                                workday: crewCurrent!['id'],
+                                                                                contract: widget.location,
+                                                                              )),
+                                                                    );
+                                                                  }
+                                                                }
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ],
+                                              )),
+                                        )),
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.55,
+                                      child: MediaQuery.removePadding(
+                                          removeTop: true,
+                                          context: context,
+                                          child: ListView.builder(
+                                              itemCount: datar.length,
+                                              itemBuilder: (context, index) {
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    print(datar[index]);
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DetailCrewsheet(
+                                                                  project: datar[
+                                                                      index],
+                                                                  report: datar[
+                                                                          index]
+                                                                      ['id'])),
+                                                    );
+                                                  },
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Card(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 20,
+                                                                  right: 20),
+                                                          color: Colors.white,
+                                                          shape: RoundedRectangleBorder(
+                                                              side: BorderSide(
+                                                                  color: HexColor(
+                                                                      'EA6012'),
+                                                                  width: 1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0)),
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              SizedBox(
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height *
+                                                                    0.01,
+                                                              ),
+                                                              Row(
+                                                                children: <Widget>[
+                                                                  Expanded(
+                                                                      flex: 2,
+                                                                      child:
+                                                                          Container(
+                                                                        alignment:
+                                                                            Alignment.topLeft,
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.67,
+                                                                        child:
+                                                                            Column(
+                                                                          children: <Widget>[
+                                                                            Row(
+                                                                              children: [
+                                                                                Container(
+                                                                                  margin: EdgeInsets.only(left: 15),
+                                                                                  child: Text('ID# ', style: TextStyle(fontSize: 14, color: HexColor('3E3E3E'), fontWeight: FontWeight.bold)),
+                                                                                ),
+                                                                                Container(
+                                                                                  child: Text(datar[index]['id'].toString()),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                Container(
+                                                                                  margin: EdgeInsets.only(left: 15),
+                                                                                  child: Text(l10n.date + ': ', style: TextStyle(fontSize: 14, color: HexColor('3E3E3E'), fontWeight: FontWeight.bold)),
+                                                                                ),
+                                                                                Container(
+                                                                                  child: Text(DateFormat("MMMM d yyyy").format(DateTime.parse(datar[index]['workday_entry_time'])), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: HexColor('EA6012'))),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                Container(
+                                                                                  margin: EdgeInsets.only(left: 15),
+                                                                                  child: Text(l10n.workers + ': ', style: TextStyle(fontSize: 14, color: HexColor('3E3E3E'), fontWeight: FontWeight.bold)),
+                                                                                ),
+                                                                                Container(
+                                                                                  child: Text(datar[index]['workers_count'].toString()),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                Container(
+                                                                                  margin: EdgeInsets.only(left: 15),
+                                                                                  child: Text(
+                                                                                      datar[index]['status'].toString() == '1'
+                                                                                          ? l10n.wr_21
+                                                                                          : datar[index]['status'].toString() == '2'
+                                                                                              ? l10n.wr_22
+                                                                                              : datar[index]['status'].toString() == '3'
+                                                                                                  ? l10n.wr_222
+                                                                                                  : l10n.rejected,
+                                                                                      style: TextStyle(
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          fontSize: 13,
+                                                                                          color: datar[index]['status'].toString() == '1'
+                                                                                              ? HexColor('EA6012')
+                                                                                              : datar[index]['status'].toString() == '2'
+                                                                                                  ? Colors.blue
+                                                                                                  : datar[index]['status'].toString() == '3'
+                                                                                                      ? Colors.green
+                                                                                                      : Colors.red)),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      )),
+                                                                  Expanded(
+                                                                      flex: 1,
+                                                                      child:
+                                                                          Container(
+                                                                        alignment:
+                                                                            Alignment.topCenter,
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.33,
+                                                                        child:
+                                                                            Column(
+                                                                          children: <Widget>[
+                                                                            Text(l10n.hours,
+                                                                                style: TextStyle(fontSize: 14, color: HexColor('3E3E3E'))),
+                                                                            Text(datar[index]['worked_hours'].toString(),
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: HexColor('EA6012'))),
+                                                                            Text('',
+                                                                                style: TextStyle(fontSize: 11, color: HexColor('3E3E3E')))
+                                                                          ],
+                                                                        ),
+                                                                      )),
+                                                                ],
+                                                              ),
+                                                              /*  SizedBox(
                                                           height: MediaQuery.of(
                                                                       context)
                                                                   .size
                                                                   .height *
                                                               0.01,
                                                         ),*/
-                                                        Row(
-                                                          children: <Widget>[
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Container(
-                                                                color: HexColor(
-                                                                    'F1F1F2'),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.1,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.33,
-                                                                child:
-                                                                    TextButton(
+                                                              Row(
+                                                                children: <Widget>[
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child:
+                                                                        Container(
+                                                                      color: HexColor(
+                                                                          'F1F1F2'),
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      height: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.1,
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.33,
+                                                                      child: TextButton(
+                                                                          child: Text(l10n.wr_17, style: TextStyle(fontSize: 16, color: HexColor('EA6012'), fontWeight: FontWeight.bold)),
+                                                                          onPressed: () {
+                                                                            Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(
+                                                                                  builder: (context) => EditCrewReport1(
+                                                                                        project: widget.location,
+                                                                                        report: datar[index],
+                                                                                      )),
+                                                                            );
+                                                                          }),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child:
+                                                                        Container(
+                                                                      color: HexColor(
+                                                                          'F1F1F2'),
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      height: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.1,
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.33,
+                                                                      child:
+                                                                          TextButton(
                                                                         child: Text(
                                                                             l10n
-                                                                                .wr_17,
+                                                                                .wr_18,
                                                                             style: TextStyle(
                                                                                 fontSize: 16,
                                                                                 color: HexColor('EA6012'),
                                                                                 fontWeight: FontWeight.bold)),
-                                                                        onPressed: () {
+                                                                        onPressed:
+                                                                            () {
                                                                           Navigator
                                                                               .push(
                                                                             context,
-                                                                            MaterialPageRoute(
-                                                                                builder: (context) => EditCrewReport1(
-                                                                                      project: widget.location,
-                                                                                      report: datar[index],
-                                                                                    )),
+                                                                            MaterialPageRoute(builder: (context) => DetailCrewsheet(project: datar[index], report: datar[index]['id'])),
                                                                           );
-                                                                        }),
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child:
+                                                                        Container(
+                                                                      color: HexColor(
+                                                                          'F1F1F2'),
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      height: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.1,
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.33,
+                                                                      child:
+                                                                          TextButton(
+                                                                        child: Text(
+                                                                            l10n
+                                                                                .submit,
+                                                                            style: TextStyle(
+                                                                                fontSize: 16,
+                                                                                color: datar[index]['status'].toString() == '1' ? HexColor('EA6012') : Colors.grey,
+                                                                                fontWeight: FontWeight.bold)),
+                                                                        onPressed:
+                                                                            () {
+                                                                          if (datar[index]['status'].toString() ==
+                                                                              '1') {
+                                                                            _showInputDialog(l10n.infor_re,
+                                                                                datar[index]['id']);
+                                                                          }
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Container(
-                                                                color: HexColor(
-                                                                    'F1F1F2'),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.1,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.33,
-                                                                child:
-                                                                    TextButton(
-                                                                  child: Text(
-                                                                      l10n
-                                                                          .wr_18,
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          color: HexColor(
-                                                                              'EA6012'),
-                                                                          fontWeight:
-                                                                              FontWeight.bold)),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator
-                                                                        .push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => DetailCrewsheet(
-                                                                              project: datar[index],
-                                                                              report: datar[index]['id'])),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Container(
-                                                                color: HexColor(
-                                                                    'F1F1F2'),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.1,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.33,
-                                                                child:
-                                                                    TextButton(
-                                                                  child: Text(
-                                                                      l10n
-                                                                          .submit,
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          color: datar[index]['status'].toString() == '1'
-                                                                              ? HexColor('EA6012')
-                                                                              : Colors.grey,
-                                                                          fontWeight: FontWeight.bold)),
-                                                                  onPressed:
-                                                                      () {
-                                                                    if (datar[index]['status']
-                                                                            .toString() ==
-                                                                        '1') {
-                                                                      _showInputDialog(
-                                                                          l10n
-                                                                              .infor_re,
-                                                                          datar[index]
-                                                                              [
-                                                                              'id']);
-                                                                    }
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    )),
-                                                SizedBox(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.01,
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        })),
-                              )
-
-                            ],))
+                                                            ],
+                                                          )),
+                                                      SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.01,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              })),
+                                    )
+                                  ],
+                                ))
                             : Center(
                                 child: Text(l10n.no_register),
                               ),

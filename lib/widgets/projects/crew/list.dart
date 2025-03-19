@@ -432,6 +432,13 @@ class _ListCrewState extends State<ListCrew> {
     } catch (error) {}
   }
 
+  /// Displays a bottom sheet dialog with a form for input.
+  ///
+  /// The dialog contains a title, date and time selectors, and options
+  /// for user confirmation. It allows the user to select a time and
+  /// displays a loading indicator when an action is in progress.
+  ///
+  /// The [title] parameter is displayed at the top of the dialog.
   void _showInputDialog1(String title) {
     final l10n = AppLocalizations.of(context)!;
 

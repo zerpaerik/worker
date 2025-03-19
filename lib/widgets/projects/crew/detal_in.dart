@@ -475,7 +475,7 @@ class _DetailCrewInState extends State<DetailCrewIn> {
               margin: EdgeInsets.only(left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Text('Detalle de chequeo',
+                child: Text('Scan detail',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,

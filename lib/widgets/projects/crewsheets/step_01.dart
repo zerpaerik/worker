@@ -522,7 +522,7 @@ class _NewCresheet01State extends State<NewCresheet01> {
                 ],
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.23,
+                height: MediaQuery.of(context).size.height * 0.18,
               ),
               Container(
                 alignment: Alignment.topRight,
@@ -578,7 +578,7 @@ class _NewCresheet01State extends State<NewCresheet01> {
             ),
             if (selectedRadio1 == 2) ...[
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.30,
+                height: MediaQuery.of(context).size.height * 0.18,
               ),
               Container(
                 alignment: Alignment.topRight,
@@ -611,7 +611,8 @@ class _NewCresheet01State extends State<NewCresheet01> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => NewCresheet4(
+                          builder: (context) => NewCresheet1(
+                                crew: widget.crew,
                                 workday: widget.workday,
                                 contract: dataCrew,
                                 location: widget.location,

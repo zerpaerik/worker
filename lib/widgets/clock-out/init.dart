@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:worker/widgets/clock-out/make_out.dart';
 //import 'package:app_settings/app_settings.dart';
 import 'package:worker/widgets/clock-out/self_clock_ext.dart';
 import '../../local/database_creator.dart';
@@ -13,15 +14,19 @@ import 'package:worker/widgets/clock-out/detail_ext_sc.dart';
 import 'dart:convert';
 import '../../model/user.dart';
 import '../../model/workday.dart';
+import '../../providers/auth.dart';
 import '../../providers/workday.dart';
+import '../clock-in/confirm.dart';
 import '../clock-in/detail.dart';
 import '../global.dart';
 import '../widgets.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
+import 'cam_scan_out.dart';
 import 'cam_scan_out_in.dart';
 import 'init_out.dart';
 import 'list.dart';
+import 'make_in_out.dart';
 
 class InitClockOut extends StatefulWidget {
   User? user;
@@ -69,6 +74,7 @@ class _InitClockOutState extends State<InitClockOut> {
   int? selectedRadio9;
   int? selectedRadio10;
   DateTime? start_time;
+  User? _user;
 
   String? _time = "S/H";
 
@@ -106,6 +112,7 @@ class _InitClockOutState extends State<InitClockOut> {
       workday_on = todo;
       isData = true;
     });
+    print('response workday on');
     print(workday_on);
     return workday_on;
   }
@@ -116,6 +123,16 @@ class _InitClockOutState extends State<InitClockOut> {
         _wd = value;
       });
       getWorkdayOn(1);
+    });
+  }
+
+    void _viewUser() {
+    Provider.of<Auth>(context, listen: false).fetchUser().then((value) {
+      print('response user');
+      print(value);
+      setState(() {
+        _user = value['data'];
+      });
     });
   }
 
@@ -544,7 +561,7 @@ class _InitClockOutState extends State<InitClockOut> {
     try {
       Provider.of<WorkDay>(context, listen: false)
           .selfClockOut(
-              widget.user!.id, widget.wk, widget.wk!['clock_out_init'], geo)
+              _user!.id, widget.wk, widget.wk!['clock_out_init'], geo)
           .then((response) {
         setState(() {
           isLoading = false;
@@ -557,6 +574,7 @@ class _InitClockOutState extends State<InitClockOut> {
                 builder: (context) => ListClockOut(
                     user: user,
                     workday: widget.wk!['workday_id'],
+                    work: widget.work,
                     // work: Workday.fromJson(response['workday']),
                     contract: widget.contract,
                     wk: workday_on)),
@@ -632,6 +650,7 @@ class _InitClockOutState extends State<InitClockOut> {
                             //onPressed: () => select("English"),
                             onPressed: () {
                               Navigator.of(context).pop();
+                            
                             },
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(
@@ -666,8 +685,30 @@ class _InitClockOutState extends State<InitClockOut> {
                                 child: OutlinedButton(
                                   onPressed: () async {
                                     Navigator.of(context).pop();
+                                     Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => QRSCANOUT(
+                                            user: user,
+                                            workday: workday_on!['workday_id'],
+                                            work: widget.work,
+                                            contract: widget.contract,
+                                            wk: workday_on,
+                                          )),
+                                );
+                                    /* Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MakeOut(
+                                                user: user,
+                                                workday: workday_on!['workday_id'],
+                                                contract: widget.contract,
+                                                wk: workday_on,
+                                                work: widget.work,
+                                              )),
+                                    );*/
 
-                                    String codeSanner =
+                                  /*  String codeSanner =
                                         (await BarcodeScanner.scan())
                                             as String; //barcode scnner
                                     setState(() {
@@ -682,7 +723,7 @@ class _InitClockOutState extends State<InitClockOut> {
                                     } else {
                                       bool? scanResult = await scanQRWorkerE(
                                           qrCodeResult!, '---', '---');
-                                    }
+                                    }*/
                                   },
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(
@@ -820,6 +861,8 @@ class _InitClockOutState extends State<InitClockOut> {
 
   @override
   void initState() {
+    _viewUser();
+    getWorkdayOn(1);
     super.initState();
     _viewWorkDay();
     setState(() {
@@ -915,20 +958,21 @@ class _InitClockOutState extends State<InitClockOut> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.04,
           ),
+          
           Container(
-              margin: EdgeInsets.only(left: 30),
-              child: const Align(
+              margin: EdgeInsets.only(left: 30, right: 10),
+              child:  Align(
                 alignment: Alignment.topLeft,
-                child: Text(
+                child: Text( workday_on != null && workday_on!['clock_in_fin'] == '' ? 'To start the check-out process, you need to complete the check-in process first.' :
                   'Clock out',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 38,
+                      fontSize: workday_on != null && workday_on!['clock_in_fin'] == '' ? 25 : 38,
                       color: Colors.white),
                 ),
               )),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.06,
+            height: MediaQuery.of(context).size.height * 0.04,
           ),
           if (!isData!) ...[
             Container(
@@ -938,7 +982,116 @@ class _InitClockOutState extends State<InitClockOut> {
               ),
             )
           ],
-          if (workday_on != null && workday_on!['clock_out_init'] == '') ...[
+
+          if (workday_on != null && workday_on!['clock_in_fin'] == '') ...[
+               Container(
+              margin: EdgeInsets.only(left: 30),
+              child: const Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Would you like to finalize check-in now?',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+              )),
+                SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+
+                Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20, top: 10),
+                    alignment: Alignment.topLeft,
+                    //height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      //width: MediaQuery.of(context).size.width * 0.70,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ConfirmClockIn(
+                                      user: widget.user,
+                                      workday: widget.work?.id,
+                                      work: widget.work,
+                                      contract: widget.contract,
+                                      geo: "12.92828 45.340480",
+                                    )),
+                          );
+                        },
+                        child: Text(
+                          'Yes',
+                          style: TextStyle(
+                            color: HexColor('EA6012'),
+                            letterSpacing: 1,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'OpenSans',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 20, top: 10),
+                    alignment: Alignment.topRight,
+                    //height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      //width: MediaQuery.of(context).size.width * 0.70,
+                      child: ElevatedButton(
+                        onPressed: () {
+                                        Navigator.of(context).pop();
+
+                       
+                        },
+                        child: Text(
+                          'No',
+                          style: TextStyle(
+                            color: HexColor('EA6012'),
+                            letterSpacing: 1,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'OpenSans',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+              Container(
+              margin: EdgeInsets.only(left: 30, top: 30),
+              child: const Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'You can still check users in afterward.',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.white),
+                ),
+              )),
+
+
+          ],
+
+
+
+          if (workday_on != null && workday_on!['clock_out_init'] == '' && workday_on!['clock_in_fin'] != '') ...[
             if (workday_on!['has_clockin'].toString() == 'false') ...[
               Container(
                   margin: EdgeInsets.only(left: 30, right: 30, top: 10),
@@ -965,14 +1118,14 @@ class _InitClockOutState extends State<InitClockOut> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => QRSCANINOUT(
+                                builder: (context) => MakeInOut(
                                       user: user,
-                                      workday: workday_on!['id'],
+                                      workday: workday_on!['workday_id'],
                                       // workday: widget.wk!['workday_id'],
                                       contract: widget.contract,
                                       work: widget.work,
                                       wk: workday_on,
-                                      us: user,
+                                      init: true,
                                     )),
                           );
                         },
@@ -1161,7 +1314,7 @@ class _InitClockOutState extends State<InitClockOut> {
               ),
             ],
           ],
-          if (workday_on != null && workday_on!['clock_out_init'] != '') ...[
+          if (workday_on != null && workday_on!['clock_out_init'] != '' && workday_on!['clock_in_fin'] != '') ...[
             if (workday_on!['has_clockin'].toString() == 'false') ...[
               Container(
                   margin: EdgeInsets.only(left: 30, right: 30),
@@ -1258,7 +1411,7 @@ class _InitClockOutState extends State<InitClockOut> {
           ),
           if (workday_on != null &&
               workday_on!['clock_out_init'] == '' &&
-              workday_on!['has_clockin'].toString() == 'true') ...[
+              workday_on!['has_clockin'].toString() == 'true' && workday_on!['clock_in_fin'] != '') ...[
             Container(
               alignment: Alignment.topRight,
               margin: EdgeInsets.only(right: 30),
@@ -1348,7 +1501,18 @@ class _InitClockOutState extends State<InitClockOut> {
                       )
                     : ElevatedButton(
                         onPressed: () async {
-                          _submits();
+                            Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MakeOut(
+                                user: user,
+                                workday: workday_on!['workday_id'],
+                                contract: widget.contract,
+                                wk: workday_on,
+                                work: widget.work,
+                              )),
+                    );
+                          //_submits();
                         },
                         child: Text(
                           l10n.clockout_6,

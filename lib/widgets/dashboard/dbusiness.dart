@@ -1,4 +1,4 @@
-import 'dart:async';
+/*import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -27,6 +27,13 @@ class _DashboardBusinessState extends State<DashboardBusiness> {
   Position? userLocation;
   Completer<GoogleMapController>? _controller = Completer();
   GoogleMapController? _ccontroller;
+  //Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  static final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(17.4435, 78.3772),
+    zoom: 4.0,
+  );
+  List<MarkerId> listMarkerIds = [];
+
   final Map<String, Marker> _markers = {};
   bool view = false;
   String contract_name = '';
@@ -44,174 +51,125 @@ class _DashboardBusinessState extends State<DashboardBusiness> {
   bool isFinished = false;
   bool isAll = false;
   List? coordinates = [];
-  bool _isMapLoading = true;
-  final _markerAnimationDuration = const Duration(milliseconds: 500);
 
   void _metricsBusiness(estatus) {
     print('consultando');
     Provider.of<Auth>(context, listen: false)
         .fetchMetricsBusiness(estatus)
         .then((value) {
-
-          print('value metrics');
-          print(value);
       setState(() {
         hours = value;
         clockin_today = hours!['today_clock_ins'];
         yest_today = hours!['yesterday_clock_ins'];
         absent_today = hours!['today_absents'];
         absent_yest = hours!['yesterday_absents'];
-        location_today = hours!['locations_coordinates'].length;
+        location_today = hours!['coordinates'].length;
         hours!['coordinates'] = hours!['coordinates'];
         coordinates = hours!['coordinates'];
         isData = true;
-        _isMapLoading = false;
       });
       print('resp hour coordinates');
       print(hours);
-      if (_ccontroller != null) {
-        _updateMarkers();
+      _onMapCreated(_ccontroller!);
+    });
+  }
+
+  Future<void> _onMapCreated(GoogleMapController _ccontroller) async {
+    setState(() {
+      _markers.clear();
+      print('c00rd map created');
+      if (coordinates!.isNotEmpty) {
+        for (final office in coordinates!) {
+          //  print('office coordinates');
+          //print(office);
+          final marker = Marker(
+            markerId: MarkerId(office['id'].toString()),
+            position: LatLng(office['lat'], office['lon']),
+            onTap: () {
+              print('tocando marker');
+              print(office);
+              setState(() {
+                //  location_today = 1;
+                clockin_today = office['clocked_ins'] ?? 0;
+                yest_today = 0;
+                contract_name = office['contract_name'];
+                address = office['address'];
+                assigned = office['number_of_workers'];
+              });
+            },
+            infoWindow: InfoWindow(
+              title: office['contract_name'],
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailProject(
+                            project: {
+                              'contract_name': office['contract_name'],
+                              'customer': office['customer'],
+                              'first_address': office['address'],
+                              'current_workday_status':
+                                  office['workday_status'],
+                              'id': office['id'],
+                            },
+                          )),
+                );
+              },
+            ),
+          );
+          _markers[office['contract_name']] = marker;
+        }
+      } else {
+        print('no hay coord que renderizar');
+        final marker = Marker(
+          markerId: MarkerId('1'),
+          position: LatLng(userLocation!.latitude, userLocation!.longitude),
+          onTap: () {
+            setState(() {});
+          },
+          icon: BitmapDescriptor.defaultMarker,
+          infoWindow: InfoWindow(
+            title: '',
+            onTap: () {},
+          ),
+        );
       }
     });
-  }
-
-  Future<void> _onMapCreated(GoogleMapController controller) async {
-    setState(() {
-      _ccontroller = controller;
-    });
-    
-    // Configurar la cámara inicial
-    if (coordinates?.isNotEmpty ?? false) {
-      final firstLocation = coordinates!.first;
-      final cameraPosition = CameraPosition(
-        target: LatLng(firstLocation['lat'], firstLocation['lon']),
-        zoom: 12,
-      );
-      
-      // Animar la cámara suavemente
-      controller.animateCamera(
-        CameraUpdate.newCameraPosition(cameraPosition),
-        //duration: _markerAnimationDuration,
-      );
-    }
-  }
-
-  void _updateMarkers() {
-    if (_ccontroller == null || coordinates == null) return;
-
-    final newMarkers = <Marker>{};
-    
-    for (final office in coordinates!) {
-      final marker = Marker(
-        markerId: MarkerId(office['id'].toString()),
-        position: LatLng(office['lat'], office['lon']),
-        onTap: () {
-          setState(() {
-            clockin_today = office['clocked_ins'] ?? 0;
-            yest_today = 0;
-            contract_name = office['contract_name'];
-            address = office['address'];
-            assigned = office['number_of_workers'];
-          });
-        },
-        icon: BitmapDescriptor.defaultMarkerWithHue(
-          BitmapDescriptor.hueBlue,
-        ),
-        infoWindow: InfoWindow(
-          title: office['contract_name'],
-          snippet: office['address'],
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailProject(
-                  project: {
-                    'contract_name': office['contract_name'],
-                    'customer': office['customer'],
-                    'first_address': office['address'],
-                    'current_workday_status': office['workday_status'],
-                    'id': office['id'],
-                  },
-                ),
-              ),
-            );
-          },
-        ),
-      );
-      newMarkers.add(marker);
-    }
-
- setState(() {
-  _markers.clear();
-  _markers.addAll(
-    Map.fromEntries(newMarkers.map((marker) => 
-      MapEntry(marker.markerId.value, marker)
-    ))
-  );
-});
-
-    // Actualizar la vista del mapa
-    if (_ccontroller != null) {
-      setState(() {
-        _markers.clear();
-        _markers.addAll(
-          Map.fromEntries(newMarkers.map((marker) => 
-            MapEntry(marker.markerId.value, marker)
-          ))
-        );
-      });
-}
-   
-    
   }
 
   Future<Position> _getLocation() async {
+    var currentLocation;
     try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        return Future.error('Location services are disabled.');
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          return Future.error('Location permissions are denied');
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-      }
-
-      return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+      currentLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
     } catch (e) {
-      return Future.error('Error getting location: $e');
+      currentLocation = null;
     }
+    return currentLocation;
+  }
+
+  getTodo(int id) async {
+    final sql = '''SELECT * FROM ${DatabaseCreator.todoTable}
+    WHERE ${DatabaseCreator.id} = ?''';
+
+    List<dynamic> params = [id];
+    final data = await db.rawQuery(sql, params);
+
+    final todo = Config.fromJson(data.first);
+    setState(() {
+      config = todo;
+    });
+    return todo;
   }
 
   @override
   void initState() {
-    super.initState();
     _getLocation().then((position) {
-      setState(() {
-        userLocation = position;
-      });
-    }).catchError((error) {
-      print('Error getting location: $error');
+      userLocation = position;
     });
-    
     _metricsBusiness('active');
+    super.initState();
     getTodo(1);
-  }
-
-  @override
-  void dispose() {
-    _ccontroller?.dispose();
-    super.dispose();
   }
 
   @override
@@ -219,8 +177,8 @@ class _DashboardBusinessState extends State<DashboardBusiness> {
     final l10n = AppLocalizations.of(context)!;
 
     return Stack(
-      children: [
-        if (_isMapLoading) ...[
+      children: <Widget>[
+        if (!isData) ...[
           Container(
             margin: const EdgeInsets.only(top: 100),
             child: const Center(
@@ -228,29 +186,30 @@ class _DashboardBusinessState extends State<DashboardBusiness> {
             ),
           )
         ],
-        if (!_isMapLoading && isData && hours != null) ...[
+        if (isData && hours != null && coordinates!.isNotEmpty) ...[
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            child: GoogleMap(
-              onCameraMove: (position) {},
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                  userLocation?.latitude ?? 17.4435,
-                  userLocation?.longitude ?? 78.3772,
+            child: GestureDetector(
+              onTap: () {},
+              child: GoogleMap(
+                onCameraMove: (context) {
+                  //_metricsBusiness();
+                },
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(hours!['coordinates'][0]['lat'] ?? 0,
+                      hours!['coordinates'][0]['lon'] ?? 0),
+                  zoom: 3.0,
                 ),
-                zoom: 12,
+                markers: _markers.values.toSet(),
               ),
-              markers: _markers.values.toSet(),
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: true,
-              compassEnabled: true,
             ),
           ),
           Positioned.fill(
             top: 30,
+            //left: 100,
+            //right: 100,
             child: Container(
                 margin: const EdgeInsets.only(left: 20, right: 20),
                 child: Row(
@@ -473,8 +432,213 @@ class _DashboardBusinessState extends State<DashboardBusiness> {
                   ],
                 )),
           ),
+          /*  Positioned.fill(
+            top: 450,
+            //left: 100,
+            //right: 100,
+            child: Container(
+                margin: EdgeInsets.only(left: 20, right: 20),
+                child: Card(
+                  color: Colors.white.withOpacity(0.9),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 10),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Current week snapshot: - ',
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'Last Update',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(),
+                      Row(
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  alignment: Alignment.topCenter,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.33,
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.30,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.15,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                                child: Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: Colors.green)),
+                                            Container(
+                                                child: Text(
+                                              clockin_today.toString(),
+                                              style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 30,
+                                                      color:
+                                                          HexColor('3E3E3E'))),
+                                            )),
+                                          ],
+                                        ),
+                                        Container(
+                                            child: Text(
+                                          'Workers',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                          ),
+                                        ))
+                                      ],
+                                    ),
+                                  ))),
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  alignment: Alignment.topCenter,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.33,
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.30,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.15,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                                child: Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: Colors.green)),
+                                            Container(
+                                                child: Text(
+                                              absent_today.toString(),
+                                              style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 30,
+                                                      color:
+                                                          HexColor('3E3E3E'))),
+                                            ))
+                                          ],
+                                        ),
+                                        Container(
+                                            child: Text(
+                                          'Workers',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                          ),
+                                        ))
+                                      ],
+                                    ),
+                                  ))),
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  alignment: Alignment.topCenter,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.33,
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.30,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.15,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        if (contract_name != '') ...[
+                                          Container(
+                                            alignment: Alignment.topLeft,
+                                            margin: EdgeInsets.only(
+                                                left: 5, right: 5),
+                                            child: Text(
+                                              contract_name,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12),
+                                            ),
+                                          ),
+                                          Container(
+                                            alignment: Alignment.topLeft,
+                                            margin: EdgeInsets.only(
+                                                left: 5, right: 5),
+                                            child: Text(
+                                              address,
+                                              style: TextStyle(fontSize: 12),
+                                            ),
+                                          ),
+                                        ],
+                                        if (contract_name == '') ...[
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                  child: Icon(
+                                                      Icons.arrow_drop_down,
+                                                      color: Colors.green)),
+                                              Container(
+                                                  child: Text(
+                                                coordinates != null
+                                                    ? coordinates.length
+                                                        .toString()
+                                                    : '0',
+                                                style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 30,
+                                                        color: HexColor(
+                                                            '3E3E3E'))),
+                                              ))
+                                            ],
+                                          ),
+                                          Container(
+                                              child: Text(
+                                            'Locations',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                            ),
+                                          ))
+                                        ],
+                                      ],
+                                    ),
+                                  ))),
+                        ],
+                      )
+                    ],
+                  ),
+                )),
+          )*/
         ],
-        if (!_isMapLoading && isData && hours != null && coordinates!.isEmpty) ...[
+        if (isData && hours != null && coordinates!.isEmpty) ...[
           Center(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -489,25 +653,11 @@ class _DashboardBusinessState extends State<DashboardBusiness> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
-              Text('')
+              Text(l10n.no_locations)
             ],
           ))
         ]
       ],
     );
   }
-
-  getTodo(int id) async {
-    final sql = '''SELECT * FROM ${DatabaseCreator.todoTable}
-    WHERE ${DatabaseCreator.id} = ?''';
-
-    List<dynamic> params = [id];
-    final data = await db.rawQuery(sql, params);
-
-    final todo = Config.fromJson(data.first);
-    setState(() {
-      config = todo;
-    });
-    return todo;
-  }
-}
+}*/

@@ -42,8 +42,7 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
   List categorys = [];
   var selectedValue;
   int? worker_category;
-    Map<String, dynamic>? crewCurrent;
-
+  Map<String, dynamic>? crewCurrent;
 
   _QRSCANCREWState(this.workday, this.contract, this.crew);
   bool Done_Button = false;
@@ -55,47 +54,82 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
   String? _scanBarcode = 'Unknown';
   Barcode? result;
 
+  Future<void> resumeCamera() async {
+    try {
+      if (Platform.isAndroid) {
+        await controller?.pauseCamera();
+      }
+      await controller?.resumeCamera();
+      
+      setState(() {
+        scanning = false;
+        qrText = "";
+        Done_Button = false;
+      });
+    } catch (e) {
+      print('Error al reanudar la cámara: $e');
+    }
+  }
+
   Future<String?> getToken() async {
     SharedPreferences token = await SharedPreferences.getInstance();
     String? stringValue = token.getString('stringValue');
     return stringValue;
   }
 
-  void _showErrorDialog(String message) {
+  Future<void> _showErrorDialog(String message) async {
     print(message);
-    showDialog(
+    if (controller != null) {
+      await controller!.pauseCamera();
+    }
+    setState(() {
+      scanning = false;
+      qrText = "";
+      Done_Button = false;
+    });
+    
+    await showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Error'),
-        content: Text(message,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: HexColor('EA6012'))),
-        titleTextStyle: TextStyle(
-            color: HexColor('373737'),
-            fontFamily: 'OpenSansRegular',
-            fontWeight: FontWeight.bold,
-            fontSize: 20),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Ok'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => QRSCANCREW(
-                        workday: widget.workday, contract: widget.contract)),
-              );
-            },
-          )
-        ],
+      barrierDismissible: false,
+      builder: (ctx) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text('Error'),
+          content: Text(message,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: HexColor('EA6012'))),
+          titleTextStyle: TextStyle(
+              color: HexColor('373737'),
+              fontFamily: 'OpenSansRegular',
+              fontWeight: FontWeight.bold,
+              fontSize: 20),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () async {
+                Navigator.of(ctx).pop();
+                if (mounted && controller != null) {
+                  try {
+                    setState(() {
+                      scanning = false;
+                      qrText = "";
+                      Done_Button = false;
+                    });
+                    await resumeCamera();
+                  } catch (e) {
+                    print("Error resuming camera: $e");
+                  }
+                }
+              },
+            )
+          ],
+        ),
       ),
     );
   }
 
-  
   Future<String> getCrew() async {
     String? token = await getToken();
     setState(() {});
@@ -135,7 +169,7 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
       String identification, String lat, String long) async {
     String? token = await getToken();
     String contract = widget.contract!['contract_id'].toString();
-    String type= "";
+    String type = "";
     if (widget.crew!['clock_in_end'] == null) {
       type = "IN";
     } else {
@@ -151,136 +185,109 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
     print(crew);
 
     try {
-         final response = await http.get(
-        Uri.parse(
-            '${ApiWebServer.server_name}/api/v-1/crew/$crew/user/$identification?clock_type=$type'),
-        headers: {"Authorization": "Token $token"});
-    setState(() {});
-    print(response.statusCode);
-    print(response.body);
+      final response = await http.get(
+          Uri.parse(
+              '${ApiWebServer.server_name}/api/v-1/crew/$crew/user/$identification?clock_type=$type'),
+          headers: {"Authorization": "Token $token"});
+      setState(() {});
+      print(response.statusCode);
+      print(response.body);
 
-    var resBody = json.decode(response.body);
-    print('response scan crew');
-    print(response.statusCode);
+      var resBody = json.decode(response.body);
+      print('response scan crew');
+      print(response.statusCode);
 
-    if (response.statusCode == 200 && resBody['first_name'] != null) {
-      print('dio 200 scan list');
-      setState(() {
-        scanning = false;
-      });
-      User _user = User.fromJson(resBody);
-      setState(() {
-        qrText = "";
-        controller?.stopCamera();
-        Done_Button = false;
-      });
+      if (response.statusCode == 200 && resBody['first_name'] != null) {
+        print('dio 200 scan list');
+        setState(() {
+          scanning = false;
+        });
+        User _user = User.fromJson(resBody);
+        setState(() {
+          qrText = "";
+          controller?.stopCamera();
+          Done_Button = false;
+        });
 
-      if(type == "OUT" && resBody['checked_in'] == false){
-        _showErrorDialog('This user has not been Checked in');
-
-      } else {
-          // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => DetailCrew(
-                  datas: resBody,
-                  user: _user,
-                  workday: widget.workday,
-                  lat: lat,
-                  long: long,
-                  contract: widget.contract,
-                  crew: widget.crew,
-                )),
-      );
-
-      }
-
-    } else if (response.statusCode.toString() == '403') {
-      print(resBody['detail']);
-      setState(() {
-        qrText = "";
-        controller?.pauseCamera();
-        Done_Button = false;
-      });
-      _showErrorDialog(resBody['detail']);
-  
-      // ignore: use_build_context_synchronously
-     /* Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => QRSCANCREW(
-                  crew: widget.crew,
-                  workday: widget.workday,
-                  contract: widget.contract)),
-        );*/
-    
-    } else if (response.statusCode == 404) {
-      _showErrorDialog('Error');
-      setState(() {
-        qrText = "";
-        controller?.pauseCamera();
-        Done_Button = false;
-      });
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                ListCrew(workday: widget.workday, contract: widget.contract)),
-      );
-    } else {
-      print('dio error');
-      setState(() {
-        scanning = false;
-      });
-      //The worker has already clocked-in
-      String error = resBody['detail'];
-      print(resBody);
-      if (error == 'worker not belongs to a project') {
+        if (type == "OUT" && resBody['checked_in'] == false) {
+          await _showErrorDialog('This user has not been Checked in');
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailCrew(
+                      datas: resBody,
+                      user: _user,
+                      workday: widget.workday,
+                      lat: lat,
+                      long: long,
+                      contract: widget.contract,
+                      crew: widget.crew,
+                    )),
+          );
+        }
+      } else if (response.statusCode.toString() == '403') {
+        print(resBody['detail']);
         setState(() {
           qrText = "";
           controller?.pauseCamera();
           Done_Button = false;
         });
-      }
-      if (error == 'The worker has already clocked-in') {
-        _showErrorDialog('QR ALREADY SCANNED');
+        await _showErrorDialog(resBody['detail']);
+      } else if (response.statusCode == 404) {
+        await _showErrorDialog('Error');
         setState(() {
           qrText = "";
           controller?.pauseCamera();
           Done_Button = false;
         });
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => QRSCANCREW(
-                  crew: widget.crew,
-                  workday: widget.workday,
-                  contract: widget.contract)),
-        );
-      }
-
-      if (error == 'Not found.') {
-        _showErrorDialog('Not found');
-        setState(() {
-          qrText = "";
-          controller?.pauseCamera();
-          Done_Button = false;
-        });
-        // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) =>
                   ListCrew(workday: widget.workday, contract: widget.contract)),
         );
-      }
-    }
-      
-    } catch (e) {
+      } else {
+        print('dio error');
         setState(() {
+          scanning = false;
+        });
+        String error = resBody['detail'];
+        print(resBody);
+        if (error == 'worker not belongs to a project') {
+          setState(() {
+            qrText = "";
+            controller?.pauseCamera();
+            Done_Button = false;
+          });
+        }
+        if (error == 'The worker has already clocked-in') {
+          await _showErrorDialog('QR ALREADY SCANNED');
+          setState(() {
+            scanning = false;
+            qrText = "";
+            Done_Button = false;
+          });
+          resumeCamera();
+        }
+
+        if (error == 'Not found.') {
+          await _showErrorDialog('Not found');
+          setState(() {
+            qrText = "";
+            controller?.pauseCamera();
+            Done_Button = false;
+          });
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ListCrew(workday: widget.workday, contract: widget.contract)),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() {
         scanning = false;
       });
       setState(() {
@@ -290,13 +297,7 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
       });
       print('error 500');
       print(e);
-      
-      
     }
-
-
-
- 
 
     return true;
   }
@@ -363,116 +364,112 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
     }
   }
 
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    
+    // Asegurarnos de que la cámara esté activa al inicio
+    resumeCamera();
+    
+    controller.scannedDataStream.listen((scanData) async {
+      if (!scanning) {  // Evitar múltiples escaneos simultáneos
+        setState(() {
+          scanning = true;
+          qrText = scanData.code ?? '';
+          result = scanData;
+        });
+        
+        await scanQRWorker(qrText, '1111', '1111');
+        
+        // El estado scanning se reiniciará en el diálogo
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-       // getCrew();
-
-    //this.getSWData();
-  }
-
-  void resumeCamera() {
-    if (Platform.isAndroid) {
-      controller?.pauseCamera();
-    }
-    controller?.resumeCamera();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            l10n.focus_qr,
-            style: TextStyle(color: HexColor('EA6012')),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.close, color: HexColor('EA6012')),
-            onPressed: () async {
-              print('cerramdo camara');
-              setState(() {
-                qrText = "";
-                controller?.stopCamera();
-                Done_Button = false;
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ListCrew(
-                        crew: widget.crew,
-                        workday: widget.workday,
-                        contract: widget.contract)),
-              );
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(
-                  Icons.flash_on,
-                  color: Colors.yellow,
-                ),
-                onPressed: () {
-                  setState(() {
-                    controller?.toggleFlash();
-                  });
-                })
-          ],
-          elevation: 0.0,
-          backgroundColor: Colors.white,
-        ),
-        body: Column(
-          children: <Widget>[
-            if (add) ...[
-              Container(
-                //margin: EdgeInsets.only(left: 5),
-                child: const Align(
-                  alignment: Alignment.topCenter,
-                  child: Text('Agregando a proyecto...',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      )),
-                ),
-              )
-            ],
-            Expanded(
-              flex: 4,
-              child: Container(
-                  child: QRView(
-                key: qrKey,
-                onQRViewCreated: (controller) {
-                  //351109
-                  setState(() {
-                    this.controller = controller;
-                  });
 
-                  resumeCamera();
-                  controller.scannedDataStream.listen((scanData) {
-                    setState(() {
-                      result = scanData;
-                    });
-                    controller.dispose();
-                    print('result code scaner');
-                    scanQRWorker(result!.code!, '1111', '1111');
-                  });
-                },
-                overlayMargin: EdgeInsets.only(left: 10, right: 10),
-                onPermissionSet: (ctrl, p) =>
-                    _onPermissionSet(context, ctrl, p),
-                overlay: QrScannerOverlayShape(
-                  borderColor: HexColor('EA6012'),
-                  borderRadius: 2,
-                  borderLength: 130,
-                  borderWidth: 5,
-                  overlayColor: Colors.black.withOpacity(0.9),
-                ),
-              )),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          l10n.focus_qr,
+          style: TextStyle(color: HexColor('EA6012')),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.close, color: HexColor('EA6012')),
+          onPressed: () {
+            setState(() {
+              qrText = "";
+              controller?.stopCamera();
+              Done_Button = false;
+            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ListCrew(
+                      crew: widget.crew,
+                      workday: widget.workday,
+                      contract: widget.contract)),
+            );
+          },
+        ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(
+                Icons.flash_on,
+                color: Colors.yellow,
+              ),
+              onPressed: () {
+                setState(() {
+                  controller?.toggleFlash();
+                });
+              })
+        ],
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+      ),
+      body: Column(
+        children: <Widget>[
+          if (add) ...[
+            Container(
+              child: const Align(
+                alignment: Alignment.topCenter,
+                child: Text('Agregando a proyecto...',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    )),
+              ),
+            )
           ],
-        ));
+          Expanded(
+            flex: 4,
+            child: Container(
+                child: QRView(
+              key: qrKey,
+              onQRViewCreated: _onQRViewCreated,
+              overlayMargin: EdgeInsets.only(left: 10, right: 10),
+              onPermissionSet: (ctrl, p) =>
+                  _onPermissionSet(context, ctrl, p),
+              overlay: QrScannerOverlayShape(
+                borderColor: HexColor('EA6012'),
+                borderRadius: 2,
+                borderLength: 130,
+                borderWidth: 5,
+                overlayColor: Colors.black.withOpacity(0.9),
+              ),
+            )),
+          ),
+        ],
+      )
+    );
   }
 
   _isFlashOn(String current) {
@@ -481,20 +478,6 @@ class _QRSCANCREWState extends State<QRSCANCREW> {
 
   _isBackCamera(String current) {
     //  return back_camera == current;
-  }
-
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    /*controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        qrText = scanData.toString();
-        controller?.pauseCamera();
-        //Done_Button = true;
-      });
-      scanQRWorker(qrText, '1111', '1111');
-
-      print(qrText);
-    });*/
   }
 
   @override

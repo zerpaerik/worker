@@ -138,11 +138,7 @@ class _QRSCANCREWINState extends State<QRSCANCREWIN> {
     String? token = await getToken();
     String contract = widget.contract!['contract_id'].toString();
     String type= "";
-    if (widget.crew!['clock_in_end'] == null) {
-      type = "IN";
-    } else {
-      type = "OUT";
-    }
+  
 
     setState(() {
       scanning = true;
@@ -174,9 +170,9 @@ class _QRSCANCREWINState extends State<QRSCANCREWIN> {
         Done_Button = false;
       });
 
-  
-          // ignore: use_build_context_synchronously
-      Navigator.push(
+
+
+        Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => DetailCrewIn(
@@ -197,20 +193,21 @@ class _QRSCANCREWINState extends State<QRSCANCREWIN> {
         print(resBody['detail']);
       setState(() {
         qrText = "";
-        controller?.pauseCamera();
+        controller?.stopCamera();
         Done_Button = false;
       });
       _showErrorDialog(resBody['detail']);
     
 
       } else if (response.statusCode == 400) {
+         setState(() {
+          qrText = "";
+          controller?.stopCamera();
+          Done_Button = false;
+        });
+ 
       _showErrorDialog('The worker has already check-in');
-      setState(() {
-        qrText = "";
-        controller?.pauseCamera();
-        Done_Button = false;
-      });
-      // ignore: use_build_context_synchronously
+       
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -220,7 +217,7 @@ class _QRSCANCREWINState extends State<QRSCANCREWIN> {
                   contract: widget.contract)),
         );
     } else {
-      print('dio error');
+      print('dio error aqui');
       setState(() {
         scanning = false;
       });
@@ -230,15 +227,15 @@ class _QRSCANCREWINState extends State<QRSCANCREWIN> {
       if (error == 'worker not belongs to a project') {
         setState(() {
           qrText = "";
-          controller?.pauseCamera();
+          controller?.stopCamera();
           Done_Button = false;
         });
       }
       if (error == 'The worker has already clocked-in') {
         _showErrorDialog('QR ALREADY SCANNED');
-        setState(() {
+          setState(() {
           qrText = "";
-          controller?.pauseCamera();
+          controller?.stopCamera();
           Done_Button = false;
         });
         // ignore: use_build_context_synchronously
@@ -256,7 +253,7 @@ class _QRSCANCREWINState extends State<QRSCANCREWIN> {
         _showErrorDialog('Not found');
         setState(() {
           qrText = "";
-          controller?.pauseCamera();
+          controller?.stopCamera();
           Done_Button = false;
         });
         // ignore: use_build_context_synchronously
@@ -415,19 +412,31 @@ class _QRSCANCREWINState extends State<QRSCANCREWIN> {
                   child: QRView(
                 key: qrKey,
                 onQRViewCreated: (controller) {
-                  //351109
                   setState(() {
                     this.controller = controller;
                   });
 
                   resumeCamera();
-                  controller.scannedDataStream.listen((scanData) {
-                    setState(() {
-                      result = scanData;
-                    });
-                    controller.dispose();
-                    print('result code scaner');
-                    scanQRWorker(result!.code!, '1111', '1111');
+                  controller.scannedDataStream.listen((scanData) async {
+                    if (!scanning) {
+                      setState(() {
+                        scanning = true;
+                        result = scanData;
+                      });
+                      
+                      await scanQRWorker(result!.code!, '1111', '1111');
+                      
+                      // Pequeña pausa para evitar escaneos duplicados
+                      await Future.delayed(Duration(milliseconds: 500));
+                      
+                      setState(() {
+                        scanning = false;
+                        result = null;
+                      });
+                      
+                      // Reanudar la cámara para el siguiente escaneo
+                      controller.resumeCamera();
+                    }
                   });
                 },
                 overlayMargin: EdgeInsets.only(left: 10, right: 10),

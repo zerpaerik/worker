@@ -618,7 +618,7 @@ class _NewCresheet1State extends State<NewCresheet1> {
                 ],
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.23,
+                height: MediaQuery.of(context).size.height * 0.18,
               ),
               Container(
                 alignment: Alignment.topRight,

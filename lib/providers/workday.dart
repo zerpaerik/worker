@@ -166,20 +166,31 @@ class WorkDay with ChangeNotifier {
     }
   }
 
-  Future<dynamic> addWorkerProject(contract, category, worker) async {
+  Future<dynamic> addWorkerProject(contract, category, worker, workday) async {
     print('llego pv wkd');
+    print(workday);
+    print(worker);
     String? token = await getToken();
     DateTime now = DateTime.now().toUtc();
-    workday = await getWorkday(1);
+    //workday = await getWorkday(1);
+    DateTime clockin = DateTime.parse(workday['default_init']);
+    print(clockin);
+
     print(contract);
     final url =
         ApiWebServer.server_name + '/api/v-1/contract/add-user-to-contract';
     try {
       final response = await http.post(Uri.parse(url),
           body: json.encode({
+            'workday': workday['workday_id'],
+            'clock_datetime': clockin.toIso8601String().toString(),
+            'geographical_coordinates': '12.92828 45.340480',
+            'temperature': '00.00',
             'contract': contract,
             'worker_category': category,
-            'user': worker
+            'clock_type': 'IN',
+            'user': worker,
+            'verified': true
             //'temperature': '00.00'
           }),
           headers: {
@@ -520,9 +531,11 @@ class WorkDay with ChangeNotifier {
     print(temp);
 
     clockin = DateTime.parse(wd['default_init']);
+    print('clockin');
+    print(clockin.toIso8601String().toString());
 
-    final url = ApiWebServer.server_name +
-        '/api/v-1/workday/$workday/workday-register/create';
+    final url =
+        '${ApiWebServer.server_name}/api/v-1/workday/$workday/workday-register/create';
     try {
       if (valid_temp == 'true') {
         print('aa');
@@ -587,6 +600,147 @@ class WorkDay with ChangeNotifier {
       }
     } catch (error) {
       print(error);
+      throw error;
+    }
+  }
+
+  Future<dynamic> makeClockIn(worker, time, start, workday, wd, geo) async {
+    print('llego pv make clockin');
+    print(worker);
+    print(time);
+    print(start);
+    print(workday);
+    print(wd);
+    String? token = await getToken();
+    DateTime now = DateTime.now();
+
+    String s_d = time.toString().substring(0, 11) +
+        start.toString().substring(10, 23).replaceAll(" ", "");
+
+    DateTime fec = DateTime.parse(s_d);
+    DateTime clockin = DateTime.parse(wd['clock_in_init']);
+    print('now fecha enviando');
+    print(clockin);
+    print(s_d);
+    print(DateTime.parse(s_d).toIso8601String().toString());
+
+   // return;
+
+    Map<String, dynamic>? datass = {
+      'workday': workday,
+      'worker': worker,
+      'clock_type': 'IN',
+      'clock_datetime': fec.toIso8601String().toString(),
+      'message': 'message',
+      'geographical_coordinates': '12.92828 45.340480',
+      'verified': true,
+    };
+    print('datass');
+    print(datass);
+
+    final url =
+        '${ApiWebServer.server_name}/api/v-1/workday/$workday/workday-register/create';
+    try {
+      print('aa');
+      final response = await http.post(Uri.parse(url),
+          body: json.encode({
+            'workday': workday,
+            'worker': worker,
+            'clock_type': 'IN',
+            'clock_datetime': fec.toIso8601String().toString(),
+            // 'clock_datetime': fec.toIso8601String().toString(),
+            'message': 'message',
+            'geographical_coordinates': '12.92828 45.340480',
+            'verified': true,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': "Token $token"
+          });
+      //final responseData = json.decode(response.body);
+
+      final responseData = json.decode(response.body);
+      print('response make clockin');
+      print(responseData);
+      print(response.statusCode);
+
+      // print(responseData);
+      notifyListeners();
+
+      return response.statusCode.toString();
+    } catch (error) {
+      print('error make clockin');
+      print(error);
+      return '500';
+      throw error;
+    }
+  }
+
+  Future<dynamic> makeClockOut(worker, time, start, workday, wd, geo) async {
+    print('llego pv make clockin');
+    print(worker);
+    print(time);
+    print(start);
+    print(workday);
+    print(wd);
+    String? token = await getToken();
+    DateTime now = DateTime.now();
+
+    String s_d = time.toString().substring(0, 11) +
+        start.toString().substring(10, 23).replaceAll(" ", "");
+
+    DateTime fec = DateTime.parse(s_d);
+    DateTime clockin = DateTime.parse(wd['default_exit']);
+    print('now');
+
+    Map<String, dynamic>? datass = {
+      'workday': workday,
+      'worker': worker,
+      'clock_type': 'OUT',
+      'clock_datetime': fec.toIso8601String().toString(),
+      'message': 'message',
+      'geographical_coordinates': '12.92828 45.340480',
+      'verified': true,
+    };
+    print('datass');
+    print(datass);
+
+    final url =
+        '${ApiWebServer.server_name}/api/v-1/workday/$workday/workday-register/create';
+    try {
+      print('aa');
+      final response = await http.post(Uri.parse(url),
+          body: json.encode({
+            'workday': workday,
+            'worker': worker,
+            'clock_type': 'OUT',
+            'clock_datetime': fec.toIso8601String().toString(),
+            // 'clock_datetime': fec.toIso8601String().toString(),
+            'message': 'message',
+            'geographical_coordinates': '12.92828 45.340480',
+            'verified': true,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': "Token $token"
+          });
+      //final responseData = json.decode(response.body);
+
+      final responseData = json.decode(response.body);
+      print('response make clockin');
+      print(responseData);
+      print(response.statusCode);
+
+      // print(responseData);
+      notifyListeners();
+
+      return response.statusCode.toString();
+    } catch (error) {
+      print('error make clockin');
+      print(error);
+      return '500';
       throw error;
     }
   }
@@ -683,11 +837,14 @@ class WorkDay with ChangeNotifier {
     DateTime now = DateTime.now();
     DateTime clockin;
 
+      print('data de clockout');
+
     print(workday);
     print(worker);
     print(wd);
 
     clockin = DateTime.parse(wd['default_exit'].toString());
+
 
     final url =
         '${ApiWebServer.server_name}/api/v-1/workday/$_workday/workday-register/create';

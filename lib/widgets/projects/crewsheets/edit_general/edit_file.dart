@@ -516,6 +516,10 @@ class _EditCrewFileReport1State extends State<EditCrewFileReport1> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                     style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                       onPressed: _documentPhoto != null
                           ? () {
                               _submit();

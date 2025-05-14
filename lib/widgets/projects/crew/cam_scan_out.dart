@@ -138,11 +138,7 @@ class _QRSCANCREWOUTState extends State<QRSCANCREWOUT> {
     String? token = await getToken();
     String contract = widget.contract!['contract_id'].toString();
     String type= "";
-    if (widget.crew!['clock_in_end'] == null) {
-      type = "IN";
-    } else {
-      type = "OUT";
-    }
+ 
 
     setState(() {
       scanning = true;
@@ -199,7 +195,7 @@ class _QRSCANCREWOUTState extends State<QRSCANCREWOUT> {
       print(resBody['detail']);
       setState(() {
         qrText = "";
-        controller?.pauseCamera();
+        controller?.stopCamera();
         Done_Button = false;
       });
       _showErrorDialog(resBody['detail']);
@@ -214,7 +210,7 @@ class _QRSCANCREWOUTState extends State<QRSCANCREWOUT> {
       if (error == 'worker not belongs to a project') {
         setState(() {
           qrText = "";
-          controller?.pauseCamera();
+          controller?.stopCamera();
           Done_Button = false;
         });
       }
@@ -222,7 +218,7 @@ class _QRSCANCREWOUTState extends State<QRSCANCREWOUT> {
         _showErrorDialog('QR ALREADY SCANNED');
         setState(() {
           qrText = "";
-          controller?.pauseCamera();
+          controller?.stopCamera();
           Done_Button = false;
         });
         // ignore: use_build_context_synchronously
@@ -240,7 +236,7 @@ class _QRSCANCREWOUTState extends State<QRSCANCREWOUT> {
         _showErrorDialog('Not found');
         setState(() {
           qrText = "";
-          controller?.pauseCamera();
+          controller?.stopCamera();
           Done_Button = false;
         });
         // ignore: use_build_context_synchronously

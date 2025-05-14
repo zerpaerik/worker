@@ -89,9 +89,9 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
     );
   }
 
-   void _showErrorDialogg(String message) {
+  Future<void> _showErrorDialogg(String message) async {
     print(message);
-    showDialog(
+    await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('Error'),
@@ -128,44 +128,77 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
     );
   }
 
- Future<void> _showErrorDialog(String message) async {
-  print(message);
-  showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text('Error'),
-      content: Text(message,
-          style: TextStyle(
+  
+
+  Future<void> _showErrorDialog(String message) async {
+    print(message);
+    if (controller != null) {
+      await controller!.pauseCamera();
+    }
+    setState(() {
+      scanning = false;
+      qrText = "";
+      Done_Button = false;
+    });
+    
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text('Error'),
+          content: Text(message,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: HexColor('EA6012'))),
+          titleTextStyle: TextStyle(
+              color: HexColor('373737'),
+              fontFamily: 'OpenSansRegular',
               fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: HexColor('EA6012'))),
-      titleTextStyle: TextStyle(
-          color: HexColor('373737'),
-          fontFamily: 'OpenSansRegular',
-          fontWeight: FontWeight.bold,
-          fontSize: 20),
-      actions: <Widget>[
-        TextButton(
-          child: Text('Ok', style: TextStyle(color: HexColor('EA6012')),),
-          onPressed: () {
-            Navigator.of(ctx).pop();
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => QRSCANOUT(
-                        user: widget.user,
-                        workday: widget.workday,
-                        work: widget.work,
-                        contract: widget.contract,
-                        wk: widget.wk,
-                      )),
-            );
-          },
-        )
-      ],
-    ),
-  );
-}
+              fontSize: 20),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () async {
+                setState(() {
+                  scanning = false; // Restablecer el estado de scanning
+                });
+                Navigator.of(ctx).pop();
+                    Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => QRSCANOUT(
+                    user: widget.user,
+                    workday: widget.workday,
+                    work: widget.work,
+                    contract: widget.contract,
+                    wk: widget.wk,
+                  )),
+        );
+            
+              /*  if (mounted && controller != null) {
+                  try {
+                    await controller!.resumeCamera();
+                    await Future.delayed(Duration(milliseconds: 500));
+                    setState(() {
+                      scanning = true;
+                      qrText = "";
+                    });
+                  } catch (e) {
+                    print("Error resuming camera: $e");
+                  }
+                }*/
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
   Future<bool?> scanQRWorkerOut(
       String? identification, String lat, String long) async {
@@ -204,11 +237,10 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
     print('paso 2');
      setState(() {
           qrText = "";
-          controller?.pauseCamera();
           Done_Button = false;
         });
         //Navigator.pop(context);
-        controller?.pauseCamera();
+        //controller?.pauseCamera();
     
   
 
@@ -231,12 +263,19 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
         });
 
         User _user = User.fromJson(resBody);
-        setState(() {
-          qrText = "";
-          controller?.stopCamera();
-          Done_Button = false;
-        });
+       
 
+      setState(() {
+        qrText = "";
+        controller?.stopCamera();
+        Done_Button = false;
+      });
+        
+        // Pausar la cámara antes de navegar
+      /*  if (controller != null) {
+          await controller!.pauseCamera();
+        }*/
+        
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -262,44 +301,32 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
         _showErrorDialogADD('Error', resBody['worker']);
         setState(() {
           qrText = "";
-          controller?.pauseCamera();
           Done_Button = false;
         });
         //Navigator.pop(context);
-        controller?.pauseCamera();
+        //controller?.pauseCamera();
 
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => ListClockOut(
-                    user: this.widget.user,
-                    workday: this.widget.workday,
-                    contract: this.widget.contract,
-                    work: this.widget.work,
-                    wk: this.widget.wk,
+                    user: widget.user,
+                    workday: widget.workday,
+                    contract: widget.contract,
+                    work: widget.work,
+                    wk: widget.wk,
                   )),
         );
       }
       if (error == 'The worker has already clocked out') {
-        _showErrorDialog('QR ALREADY SCANNED');
+        await _showErrorDialog('QR ALREADY SCANNED');
         setState(() {
-          //  qrText = "";
-          // controller?.pauseCamera();
-          //Done_Button = false;
+          qrText = "";
+          Done_Button = false;
         });
-        //Navigator.pop(context);
-
-        /*Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ListClockOut(
-                    user: this.widget.user,
-                    workday: this.widget.workday,
-                    contract: this.widget.contract,
-                    work: this.widget.work,
-                    wk: this.widget.wk,
-                  )),
-        );*/
+        if (controller != null) {
+          await controller!.resumeCamera();
+        }
       }
       /*else {
         _showErrorDialog('Verifique la información.');
@@ -312,6 +339,16 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
       controller?.pauseCamera();
     }
     controller?.resumeCamera();
+  }
+
+  void _onQRViewCreatedOut(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      setState(() {
+        qrText = scanData as String;
+      });
+      scanQRWorkerOut(qrText, '1111', '1111');
+    });
   }
 
   @override
@@ -330,11 +367,12 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
           onPressed: () {
             setState(() {
               qrText = "";
-              controller?.stopCamera();
+               controller?.stopCamera();
               Done_Button = false;
             });
+             
             //Navigator.pop(context);
-            controller?.pauseCamera();
+            //controller?.pauseCamera();
 
             Navigator.push(
               context,
@@ -372,15 +410,10 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
               key: qrKey,
               onQRViewCreated: (controller) {
                 this.controller = controller;
-
-                //resumeCamera();
                 controller.scannedDataStream.listen((scanData) {
-                  print(('entro a scanned'));
                   setState(() {
                     result = scanData;
                   });
-                  print('result scanner');
-                  controller.dispose();
                   scanQRWorkerOut(result?.code, '1111', '1111');
                 });
               },
@@ -405,20 +438,6 @@ class _QRSCANOUTState extends State<QRSCANOUT> {
 
   _isBackCamera(String current) {
     return back_camera == current;
-  }
-
-  void _onQRViewCreatedOut(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        qrText = scanData as String;
-        controller?.pauseCamera();
-        //Done_Button = true;
-      });
-      scanQRWorkerOut(qrText, '1111', '1111');
-
-      print(qrText);
-    });
   }
 
   @override

@@ -11,6 +11,8 @@ import '../../model/workday.dart';
 import '../widgets.dart';
 import 'finish.dart';
 import 'list.dart';
+import 'make_in_out.dart';
+import 'make_out.dart';
 
 class ConfirmClockOut extends StatefulWidget {
   final User? user;
@@ -252,7 +254,7 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
           ],
           if (workdayMap != null &&
               workdayMap!['has_clocked_in'] == true &&
-              workdayMap!['has_clocked_out'] == false ) ...[
+              workdayMap!['has_clocked_out'] == false) ...[
             Container(
                 margin: EdgeInsets.only(left: 30, right: 39),
                 child: Align(
@@ -292,7 +294,7 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
             if (_user != null) ...[
               Row(
                 children: <Widget>[
-                /*  Expanded(
+                  /*  Expanded(
                     flex: 1,
                     child: Container(
                       margin:const EdgeInsets.only(left: 20, top: 10),
@@ -339,7 +341,7 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => QRSCANOUT(
+                                        builder: (context) => MakeOut(
                                               user: widget.user,
                                               workday: widget.workday,
                                               work: widget.work,
@@ -367,14 +369,12 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
             ]
           ],
 
-
           ///
           ///
-          
 
-
-           if (workdayMap != null &&
-              workdayMap!['has_clocked_in'] == false && workdayMap!['has_clocked_out'] == false) ...[
+          if (workdayMap != null &&
+              workdayMap!['has_clocked_in'] == false &&
+              workdayMap!['has_clocked_out'] == false) ...[
             Container(
                 margin: EdgeInsets.only(left: 30, right: 39),
                 child: Align(
@@ -417,7 +417,7 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                      margin:const EdgeInsets.only(left: 20, top: 10),
+                      margin: const EdgeInsets.only(left: 20, top: 10),
                       alignment: Alignment.topLeft,
                       //height: MediaQuery.of(context).size.width * 0.1,
                       width: MediaQuery.of(context).size.width * 0.50,
@@ -461,17 +461,18 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ListClockOut(
+                                        builder: (context) => MakeInOut(
                                               user: widget.user,
                                               workday: widget.workday,
                                               work: widget.work,
                                               contract: widget.contract,
                                               wk: workdayMap,
+                                              init: false,
                                             )),
                                   );
                                 },
                                 child: Text(
-                                  'Cancel',
+                                  'Make clock in',
                                   style: TextStyle(
                                     color: HexColor('EA6012'),
                                     letterSpacing: 1,
@@ -488,15 +489,8 @@ class _ConfirmClockOutState extends State<ConfirmClockOut> {
               ),
             ]
           ]
-          
-
-        
-
 
           ///
-
-
-
         ],
       ),
     )));

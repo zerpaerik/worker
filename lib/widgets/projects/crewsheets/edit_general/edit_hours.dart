@@ -674,6 +674,10 @@ class _EditCrewReportHState extends State<EditCrewReportH> {
                       child: CircularProgressIndicator(),
                     )
                   : ElevatedButton(
+                     style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('EA6012')),
+                        ),
                       onPressed: hourClock != null &&
                               hourClock1 != null &&
                               start_time != null &&

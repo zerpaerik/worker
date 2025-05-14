@@ -326,7 +326,7 @@ class _QRSCANState extends State<QRSCANINOUT> {
 
     try {
       Provider.of<WorkDay>(context, listen: false)
-          .addWorkerProject(contract, cate, worker)
+          .addWorkerProject(contract, cate, worker, widget.workday)
           .then((response) {
         setState(() {
           add = false;

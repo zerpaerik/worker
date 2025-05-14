@@ -144,7 +144,7 @@ class _ContractListState extends State<ContractList> {
       if (datar.isNotEmpty) {
         isDataR = 'Y';
       } else {
-        isDataR = 'N';
+        isDataR = 'Y';
       }
     });
   }
@@ -1003,7 +1003,7 @@ class _ContractListState extends State<ContractList> {
                                                                     .width *
                                                                 0.33,
                                                             child: TextButton(
-                                                                child: Text(
+                                                                child:const Text(
                                                                     'Check-in',
                                                                     style: TextStyle(
                                                                         fontSize:
@@ -1067,7 +1067,7 @@ class _ContractListState extends State<ContractList> {
                                                                               UpdateInitCrewIn(
                                                                                 contract: widget.location,
                                                                                 workday: crewCurrent!['id'],
-                                                                                typeC: type,
+                                                                                typeC: 1,
                                                                               )),
                                                                     );
                                                                   } else {

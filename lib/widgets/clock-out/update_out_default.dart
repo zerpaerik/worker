@@ -19,6 +19,9 @@ import '../global.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import 'cam_scan_out.dart';
+import 'make_in_scan_out.dart';
+import 'update_out.dart';
+import 'update_out_ou.dart';
 
 class UpdateOut extends StatefulWidget {
   final User? user;
@@ -106,6 +109,7 @@ class _UpdateOutState extends State<UpdateOut> {
       workday_on = todo;
       isData = true;
     });
+    print('workday on respaldo');
     print(workday_on);
     return workday_on;
   }
@@ -327,97 +331,100 @@ class _UpdateOutState extends State<UpdateOut> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.04,
           ),
-          Container(
-              margin: EdgeInsets.only(left: 30, right: 30),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'Update the default clock-out time',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                      color: Colors.white),
+          if (workday_on != null &&
+              workday_on!['has_clockin'].toString() == "true" && workday_on!['has_clockout'].toString() == "true") ...[
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 30),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Update the default clock-out time',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white),
+                  ),
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.06,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.03,
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 30),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.10,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 5, top: 5),
+                            child: Text(
+                              'Exit',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          )
+                        ],
+                      )),
                 ),
-              )),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.06,
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.03,
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Container(
-                    //color: HexColor('009444'),
-                    alignment: Alignment.topLeft,
-                    margin: EdgeInsets.only(left: 30),
-                    //height: MediaQuery.of(context).size.width * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.10,
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(left: 5, top: 5),
-                          child: Text(
-                            'Exit',
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 10),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            DateFormat("MMMM d yyyy")
+                                .format(DateTime.parse(start_time.toString())),
                             style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
-                        )
-                      ],
-                    )),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                    //color: HexColor('009444'),
-                    alignment: Alignment.topLeft,
-                    margin: EdgeInsets.only(left: 10),
-                    //height: MediaQuery.of(context).size.width * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.50,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          DateFormat("MMMM d yyyy")
-                              .format(DateTime.parse(start_time.toString())),
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                        Text(
-                          _time!,
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.white),
-                        ),
-                      ],
-                    )),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                    //color: HexColor('009444'),
-                    alignment: Alignment.topRight,
-                    margin: EdgeInsets.only(left: 30),
-                    //height: MediaQuery.of(context).size.width * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.40,
-                    child: Row(
-                      children: <Widget>[
-                        SizedBox(
-                          width: 35,
-                          child: IconButton(
-                            icon: Icon(Icons.calendar_today),
-                            color: Colors.white,
-                            onPressed: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(1950),
-                                  //DateTime.now() - not to allow to choose before today.
-                                  lastDate: DateTime(2100));
-                              print(pickedDate);
-                              setState(() {
-                                start_time = pickedDate;
-                              });
-                              /*  DatePicker.showDatePicker(context,
+                          Text(
+                            _time!,
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.white),
+                          ),
+                        ],
+                      )),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topRight,
+                      margin: EdgeInsets.only(left: 30),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.40,
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 35,
+                            child: IconButton(
+                              icon: Icon(Icons.calendar_today),
+                              color: Colors.white,
+                              onPressed: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1950),
+                                    //DateTime.now() - not to allow to choose before today.
+                                    lastDate: DateTime(2100));
+                                print(pickedDate);
+                                setState(() {
+                                  start_time = pickedDate;
+                                });
+                                /*  DatePicker.showDatePicker(context,
                                   showTitleActions: true, onConfirm: (start) {
                                 print('confirm start $start');
                                 start_time = start;
@@ -428,36 +435,36 @@ class _UpdateOutState extends State<UpdateOut> {
                                   locale: LocaleType.en);
 
                               setState(() {});*/
-                            },
+                              },
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 35,
-                          child: IconButton(
-                            icon: Icon(Icons.timer),
-                            color: Colors.white,
-                            onPressed: () async {
-                              TimeOfDay? picketTime = await showTimePicker(
-                                initialTime: TimeOfDay.now(),
-                                context: context,
-                              );
-
-                              if (picketTime != null) {
-                                DateTime selectedDateTime = DateTime(
-                                  DateTime.now().year,
-                                  DateTime.now().month,
-                                  DateTime.now().day,
-                                  picketTime.hour,
-                                  picketTime.minute,
+                          SizedBox(
+                            width: 35,
+                            child: IconButton(
+                              icon: Icon(Icons.timer),
+                              color: Colors.white,
+                              onPressed: () async {
+                                TimeOfDay? picketTime = await showTimePicker(
+                                  initialTime: TimeOfDay.now(),
+                                  context: context,
                                 );
-                                String formattedTime = DateFormat('hh:mm aa')
-                                    .format(selectedDateTime);
-                                _time = formattedTime;
-                                setState(() {
-                                  hourClock = selectedDateTime;
-                                }); // You can use the selectedDateTime as needed.
-                              }
-                              /*  DatePicker.showTimePicker(context,
+
+                                if (picketTime != null) {
+                                  DateTime selectedDateTime = DateTime(
+                                    DateTime.now().year,
+                                    DateTime.now().month,
+                                    DateTime.now().day,
+                                    picketTime.hour,
+                                    picketTime.minute,
+                                  );
+                                  String formattedTime = DateFormat('hh:mm aa')
+                                      .format(selectedDateTime);
+                                  _time = formattedTime;
+                                  setState(() {
+                                    hourClock = selectedDateTime;
+                                  }); // You can use the selectedDateTime as needed.
+                                }
+                                /*  DatePicker.showTimePicker(context,
                                   showTitleActions: true, onConfirm: (time) {
                                 print('confirm $time');
                                 hourClock = time;
@@ -469,36 +476,384 @@ class _UpdateOutState extends State<UpdateOut> {
                                   currentTime: DateTime.now(),
                                   locale: LocaleType.en);
                               setState(() {});*/
-                            },
-                          ),
-                        )
-                      ],
-                    )),
-              )
-            ],
-          ),
-          Container(
-            alignment: Alignment.topRight,
-            margin: EdgeInsets.only(right: 30, top: 100),
-            //width: MediaQuery.of(context).size.width * 0.70,
-            child: isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(HexColor('EA6012')),
+                              },
+                            ),
+                          )
+                        ],
+                      )),
+                )
+              ],
+            ),
+            Container(
+              alignment: Alignment.topRight,
+              margin: EdgeInsets.only(right: 30, top: 100),
+              //width: MediaQuery.of(context).size.width * 0.70,
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor('EA6012')),
+                      ),
+                      onPressed: () async {
+                        _editWorkdayDef();
+                      },
+                      child: const Text(
+                        'Modify',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
                     ),
-                    onPressed: () async {
-                      _editWorkdayDef();
-                    },
-                    child: const Text(
-                      'Modify',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+          ],
+            if (workday_on != null &&
+              workday_on!['has_clockin'].toString() == "true" && workday_on!['has_clockout'].toString() == "false") ...[
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 30),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'You dont have a scheduled exit time, what do you want to do?',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white),
+                  ),
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.06,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.03,
+            ),
+           /* Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 30),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.10,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 5, top: 5),
+                            child: Text(
+                              'Exit',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          )
+                        ],
+                      )),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 10),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            DateFormat("MMMM d yyyy")
+                                .format(DateTime.parse(start_time.toString())),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          Text(
+                            _time!,
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.white),
+                          ),
+                        ],
+                      )),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      //color: HexColor('009444'),
+                      alignment: Alignment.topRight,
+                      margin: EdgeInsets.only(left: 30),
+                      //height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.40,
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 35,
+                            child: IconButton(
+                              icon: Icon(Icons.calendar_today),
+                              color: Colors.white,
+                              onPressed: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1950),
+                                    //DateTime.now() - not to allow to choose before today.
+                                    lastDate: DateTime(2100));
+                                print(pickedDate);
+                                setState(() {
+                                  start_time = pickedDate;
+                                });
+                                /*  DatePicker.showDatePicker(context,
+                                  showTitleActions: true, onConfirm: (start) {
+                                print('confirm start $start');
+                                start_time = start;
+
+                                setState(() {});
+                              },
+                                  currentTime: DateTime.now(),
+                                  locale: LocaleType.en);
+
+                              setState(() {});*/
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 35,
+                            child: IconButton(
+                              icon: Icon(Icons.timer),
+                              color: Colors.white,
+                              onPressed: () async {
+                                TimeOfDay? picketTime = await showTimePicker(
+                                  initialTime: TimeOfDay.now(),
+                                  context: context,
+                                );
+
+                                if (picketTime != null) {
+                                  DateTime selectedDateTime = DateTime(
+                                    DateTime.now().year,
+                                    DateTime.now().month,
+                                    DateTime.now().day,
+                                    picketTime.hour,
+                                    picketTime.minute,
+                                  );
+                                  String formattedTime = DateFormat('hh:mm aa')
+                                      .format(selectedDateTime);
+                                  _time = formattedTime;
+                                  setState(() {
+                                    hourClock = selectedDateTime;
+                                  }); // You can use the selectedDateTime as needed.
+                                }
+                                /*  DatePicker.showTimePicker(context,
+                                  showTitleActions: true, onConfirm: (time) {
+                                print('confirm $time');
+                                hourClock = time;
+                                String formattedTime =
+                                    DateFormat('hh:mm aa').format(time);
+                                _time = formattedTime;
+                                setState(() {});
+                              },
+                                  currentTime: DateTime.now(),
+                                  locale: LocaleType.en);
+                              setState(() {});*/
+                              },
+                            ),
+                          )
+                        ],
+                      )),
+                )
+              ],
+            ),*/
+              Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20, top: 10),
+                    alignment: Alignment.topLeft,
+                    //height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      //width: MediaQuery.of(context).size.width * 0.70,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UpdateOutFin(
+                                      user: widget.user,
+                                      workday: widget.workday,
+                                      work: widget.work,
+                                      contract: widget.contract,
+                                      wk: workday_on,
+                                      dif: '',
+                                    )),
+                          );
+                        },
+                        child: Text(
+                          'Update exit time',
+                          style: TextStyle(
+                            color: HexColor('EA6012'),
+                            letterSpacing: 1,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'OpenSans',
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-          ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 20, top: 10),
+                    alignment: Alignment.topRight,
+                    //height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      //width: MediaQuery.of(context).size.width * 0.70,
+                      child: ElevatedButton(
+                        onPressed: () {
+                           
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UpdateOutO(
+                                      user: widget.user,
+                                      workday: widget.workday,
+                                      work: widget.work,
+                                      contract: widget.contract,
+                                      wk: workday_on,
+                                      dif: '',
+                                    )),
+                          );
+                        },
+                        child: Text(
+                          'Make clockout',
+                          style: TextStyle(
+                            color: HexColor('EA6012'),
+                            letterSpacing: 1,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'OpenSans',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+           
+          ],
+          if (workday_on != null &&
+              workday_on!['has_clockin'].toString() == "false") ...[
+            Container(
+                margin: EdgeInsets.only(left: 30, right: 30),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'You havent clocked in today, what do you want to do?',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white),
+                  ),
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.06,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.10,
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 10, top: 10),
+                    alignment: Alignment.topLeft,
+                    //height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      //width: MediaQuery.of(context).size.width * 0.70,
+                      child: isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UpdateOutFin(
+                                            user: user,
+                                            workday: widget.workday,
+                                            work: widget.work,
+                                            contract: widget.contract,
+                                            wk: workday_on,
+                                            dif: "",
+                                          )),
+                                );
+                              },
+                              child: Text(
+                                'Update time',
+                                style: TextStyle(
+                                  color: HexColor('EA6012'),
+                                  letterSpacing: 1,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'OpenSans',
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 10, top: 10),
+                    alignment: Alignment.topRight,
+                    //height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      //width: MediaQuery.of(context).size.width * 0.70,
+                      child: isLoading
+                          ? null
+                          : ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MakeInOutScan(
+                                            user: user,
+                                            workday: widget.workday,
+                                            work: widget.work,
+                                            contract: widget.contract,
+                                            wk: workday_on,
+                                            init: false,
+                                          )),
+                                );
+                              },
+                              child: Text(
+                                'Make clockin',
+                                style: TextStyle(
+                                  color: HexColor('EA6012'),
+                                  letterSpacing: 1,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'OpenSans',
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ]
         ],
       ),
     )));

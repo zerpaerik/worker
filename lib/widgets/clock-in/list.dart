@@ -828,7 +828,7 @@ class _ListClockInState extends State<ListClockIn> {
             'Accept': 'application/json',
             'Authorization': "Token" + " " + "$token"
           });
-
+      print('response exit project');
       print(response.statusCode);
       setState(() {
         exitproject = false;

@@ -281,8 +281,8 @@ class _NewWorkdayReport1State extends State<NewWorkdayReport1> {
                           Icons.arrow_back,
                           color: HexColor('EA6012'),
                         ),
-                        onPressed: () {
-                          _delete();
+                        onPressed: ()async{
+                          await _delete();
                           Navigator.of(context).pop();
                         },
                       ),

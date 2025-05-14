@@ -56,8 +56,8 @@ class _DetailCrewOutState extends State<DetailCrewOut> {
   User? us;
   Map<String, dynamic>? crew;
 
-  _DetailCrewOutState(this.user, this.workday, this.lat, this.long, this.contract,
-      this.datas, this.crew);
+  _DetailCrewOutState(this.user, this.workday, this.lat, this.long,
+      this.contract, this.datas, this.crew);
   Geolocator geolocator = Geolocator();
 
   Position? userLocation;
@@ -183,12 +183,13 @@ class _DetailCrewOutState extends State<DetailCrewOut> {
     setState(() {
       isLoading = true;
     });
-  
+
+    await getCrew();
 
     try {
       Provider.of<CrewProvider>(context, listen: false)
-          .addClockInOut(widget.user!.id, _locationMessage, widget.workday, null,
-              'OUT', crewCurrent)
+          .addClockInOut(widget.user!.id, _locationMessage, widget.workday,
+              null, 'OUT', crewCurrent)
           .then((response) {
         setState(() {
           isLoading = false;

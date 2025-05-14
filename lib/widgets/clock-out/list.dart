@@ -109,6 +109,7 @@ class _ListClockOutState extends State<ListClockOut> {
     setState(() {
       workday_on = todo;
     });
+    print('workday on response');
     print(workday_on);
     return workday_on;
   }
@@ -351,7 +352,8 @@ class _ListClockOutState extends State<ListClockOut> {
 
   Future<String> getSWData() async {
     String token = await getToken();
-    int? wk = widget.workday;
+    await getWorkdayOn(1);
+    int? wk = workday_on!['workday_id'];
     setState(() {
       loading = true;
     });
@@ -568,6 +570,7 @@ class _ListClockOutState extends State<ListClockOut> {
 
   @override
   void initState() {
+    getWorkdayOn(1);
     _viewContract();
     super.initState();
     getSWData();
@@ -575,7 +578,6 @@ class _ListClockOutState extends State<ListClockOut> {
     getSWData1E();
     getSWDataE();
     getTodo(1);
-    getWorkdayOn(1);
     _getLocation().then((position) {
       userLocation = position;
     });

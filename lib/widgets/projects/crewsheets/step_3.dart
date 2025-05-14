@@ -414,7 +414,7 @@ class _NewCresheet3State extends State<NewCresheet3> {
                 ],
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.23,
+                height: MediaQuery.of(context).size.height * 0.18,
               ),
               Container(
                 alignment: Alignment.topRight,
@@ -472,7 +472,7 @@ class _NewCresheet3State extends State<NewCresheet3> {
             ),
             if (selectedRadio1 == 2) ...[
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.30,
+                height: MediaQuery.of(context).size.height * 0.18,
               ),
               Container(
                 alignment: Alignment.topRight,

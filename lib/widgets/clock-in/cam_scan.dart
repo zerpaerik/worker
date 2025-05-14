@@ -13,6 +13,7 @@ import 'package:worker/providers/workday.dart';
 
 import '../global.dart';
 import 'detail.dart';
+import 'detail_add.dart';
 import 'list.dart';
 
 class QRSCAN extends StatefulWidget {
@@ -57,15 +58,16 @@ class _QRSCANState extends State<QRSCAN> {
     return stringValue;
   }
 
-  void _showErrorDialogADD(String message, int worker) {
+  Future<void> _showErrorDialogADD(String message, int worker) {
     print(message);
-    showDialog(
+    return showDialog(
       context: context,
+      barrierDismissible: false, // El usuario debe presionar el botón para continuar
       builder: (ctx) => AlertDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(message,
+            Text('',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -78,19 +80,15 @@ class _QRSCANState extends State<QRSCAN> {
                   )),
             ),
             Container(
-              // margin: EdgeInsets.only(left: 5, right: 5),
               child: FormField(
                 builder: (state) {
                   return Theme(
-                      data: Theme.of(context).copyWith(
-                          //canvasColor: HexColor('F8AF04'),
-                          ),
+                      data: Theme.of(context).copyWith(),
                       child: DropdownButton(
                         isExpanded: true,
                         iconEnabledColor: HexColor('EA6012'),
                         hint: Text(
                           'Select',
-                          // style: TextStyle(color: Colors.white),
                         ),
                         underline: Container(
                           height: 1,
@@ -100,17 +98,14 @@ class _QRSCANState extends State<QRSCAN> {
                           return DropdownMenuItem(
                             child: Text(
                               item['name'],
-                              //style: TextStyle(color: Colors.white),
                             ),
                             value: item,
                           );
                         }).toList(),
                         value: selectedValue,
                         onChanged: (value) => setState(() {
-                          print('value');
-                          print(value);
                           selectedValue = value;
-                          //  worker_category = value['id'];
+                          worker_category = selectedValue['id'];
                           state.didChange(value);
                         }),
                       ));
@@ -128,52 +123,85 @@ class _QRSCANState extends State<QRSCAN> {
               child: Text('Add project'),
               onPressed: () {
                 Navigator.of(ctx).pop();
+                // Reiniciar el estado del escáner
+                setState(() {
+                  scanning = false;
+                  qrText = "";
+                  Done_Button = false;
+                });
                 addProyect(worker, worker_category);
-
-                //Navigator.of(ctx).pop();
-                //_submitOffer(worker);
+                // Reanudar la cámara
+                resumeCamera();
               })
         ],
       ),
     );
   }
 
-  void _showErrorDialog(String message) {
+  Future<void> _showErrorDialog(String message) async {
     print(message);
-    showDialog(
+    if (controller != null) {
+      await controller!.pauseCamera();
+    }
+    setState(() {
+      scanning = false;
+      qrText = "";
+      Done_Button = false;
+    });
+    
+    await showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Error'),
-        content: Text(message,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: HexColor('EA6012'))),
-        titleTextStyle: TextStyle(
-            color: HexColor('373737'),
-            fontFamily: 'OpenSansRegular',
-            fontWeight: FontWeight.bold,
-            fontSize: 20),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Continue'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => QRSCAN(
-                          user: widget.user,
-                          workday: widget.workday,
-                          work: widget.work,
-                          contract: widget.contract,
-                          wk: widget.wk,
-                          us: widget.user,
-                        )),
-              );
-            },
-          )
-        ],
+      barrierDismissible: false,
+      builder: (ctx) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text('Error'),
+          content: Text(message,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: HexColor('EA6012'))),
+          titleTextStyle: TextStyle(
+              color: HexColor('373737'),
+              fontFamily: 'OpenSansRegular',
+              fontWeight: FontWeight.bold,
+              fontSize: 20),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () async {
+                setState(() {
+                  scanning = false; // Restablecer el estado de scanning
+                });
+                Navigator.of(ctx).pop();
+                Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => QRSCAN(
+                  workday: widget.workday,
+                  contract: widget.contract,
+                  wk: widget.wk,
+                  work: widget.work,
+                  us: widget.us,
+                  user: widget.user,
+                )),
+      );
+              /*  if (mounted && controller != null) {
+                  try {
+                    await controller!.resumeCamera();
+                    await Future.delayed(Duration(milliseconds: 500));
+                    setState(() {
+                      scanning = true;
+                      qrText = "";
+                    });
+                  } catch (e) {
+                    print("Error resuming camera: $e");
+                  }
+                }*/
+              },
+            )
+          ],
+        ),
       ),
     );
   }
@@ -214,20 +242,12 @@ class _QRSCANState extends State<QRSCAN> {
     print('hay respuesta');
 
     if (response.statusCode == 200 && resBody['first_name'] != null) {
-      print('dio 200 scan list');
-
-      print('va a detallaae');
-
       User _user = User.fromJson(resBody);
-
-      print('va a detalleccccc');
-
       setState(() {
         qrText = "";
         controller?.stopCamera();
         Done_Button = false;
       });
-      print('va a detalle');
       // ignore: use_build_context_synchronously
       Navigator.push(
         context,
@@ -245,65 +265,37 @@ class _QRSCANState extends State<QRSCAN> {
                 )),
       );
     } else {
-      print('dio error');
+      print('dio error aqui');
       setState(() {
         scanning = false;
       });
-      setState(() {
-        qrText = "";
-        controller?.pauseCamera();
-        Done_Button = false;
-      });
-      //The worker has already clocked-in
-      String error = resBody['detail'];
+      
+      print('Response body:');
       print(resBody);
-      if (error == 'worker not belongs to a project') {
-        _showErrorDialogADD('Error', resBody['worker']);
-        setState(() {
-          qrText = "";
-          controller?.stopCamera();
-          Done_Button = false;
-        });
-      }
-      if (error == 'The worker has already clocked-in') {
-        _showErrorDialog('QR ALREADY SCANNED');
-        setState(() {
-          //  qrText = "";
-          // controller?.stopCamera();
-          // Done_Button = false;
-        });
-        /* Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ListClockIn(
-                    user: widget.user,
-                    workday: widget.workday,
-                    contract: widget.contract,
-                    work: widget.work,
-                    wk: widget.wk,
-                  )),
-        );*/
-      }
 
-      if (error == 'Not found.') {
-        _showErrorDialog('Not found');
+      // Primero manejamos el caso de QR ya escaneado
+      if (resBody['code']?.toString() == "already clock in" || 
+          resBody['detail'] == 'The worker has already clocked-in') {
+        
+        await _showErrorDialog('QR ALREADY SCANNED');
+        
         setState(() {
           qrText = "";
-          controller?.stopCamera();
           Done_Button = false;
         });
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ListClockIn(
-                    user: widget.user,
-                    workday: widget.workday,
-                    contract: widget.contract,
-                    work: widget.work,
-                    wk: widget.wk,
-                  )),
-        );
+        
+        return false; // Retornamos false para indicar que hubo un error
+      }
+      
+      // Luego manejamos otros casos de error
+      String error = resBody['detail'] ?? '';
+      
+      if (error == 'worker not belongs to a project') {
+        _showErrorDialogADD('The worker is not in the contract', resBody['worker']);
+        return false; // Retornamos false para indicar error
+      } else if (error == 'Not found.') {
+        _showErrorDialog('Not found');
+        return false; // Retornamos false para indicar error
       }
     }
     return null;
@@ -312,6 +304,7 @@ class _QRSCANState extends State<QRSCAN> {
   Future<dynamic> addProyect(int worker, cate) async {
     print('llego a add proyecto');
     print(worker);
+    print(cate);
     String? token = await getToken();
     String contract = widget.contract!['contract_id'].toString();
 
@@ -321,7 +314,7 @@ class _QRSCANState extends State<QRSCAN> {
 
     try {
       Provider.of<WorkDay>(context, listen: false)
-          .addWorkerProject(contract, cate, worker)
+          .addWorkerProject(contract, cate, worker, widget.wk)
           .then((response) {
         setState(() {
           add = false;
@@ -338,17 +331,31 @@ class _QRSCANState extends State<QRSCAN> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => DetailClockIn(
+                builder: (context) => DetailClockInAdd(
                       user: _user,
                       workday: widget.workday,
-                      lat: 'lat',
-                      long: 'long',
+                      lat: '111',
+                      long: '111',
+                      contract: widget.contract,
+                      wk: widget.wk,
+                      work: widget.work,
+                      us: widget.us,
+                      datas: response['data'],
+                    )),
+          );
+
+          /*  Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => QRSCAN(
+                      user: _user,
+                      workday: widget.workday,
                       contract: widget.contract,
                       wk: widget.wk,
                       work: widget.work,
                       us: widget.us,
                     )),
-          );
+          );*/
         } else if (response['status'] == '400') {
           setState(() {
             qrText = "";
@@ -421,11 +428,41 @@ class _QRSCANState extends State<QRSCAN> {
     );
   }
 
-  void resumeCamera() {
-    if (Platform.isAndroid) {
-      controller?.pauseCamera();
+  void resumeCamera() async {
+    try {
+      if (Platform.isAndroid) {
+        await controller?.pauseCamera();
+      }
+      await controller?.resumeCamera();
+      
+      setState(() {
+        scanning = false;
+        qrText = "";
+        Done_Button = false;
+      });
+    } catch (e) {
+      print('Error al reanudar la cámara: $e');
     }
-    controller?.resumeCamera();
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    
+    // Asegurarnos de que la cámara esté activa al inicio
+    resumeCamera();
+    
+    controller.scannedDataStream.listen((scanData) async {
+      if (!scanning) {  // Evitar múltiples escaneos simultáneos
+        setState(() {
+          scanning = true;
+          qrText = scanData.code ?? '';
+        });
+        
+        await scanQRWorker(qrText, '1111', '1111');
+        
+        // El estado scanning se reiniciará en el diálogo
+      }
+    });
   }
 
   @override
@@ -503,21 +540,7 @@ class _QRSCANState extends State<QRSCAN> {
               child: Container(
                   child: QRView(
                 key: qrKey,
-                onQRViewCreated: (controller) {
-                  this.controller = controller;
-                  print('entro aq');
-
-                  //resumeCamera();
-                  controller.scannedDataStream.listen((scanData) {
-                    print(('entro a scanned'));
-                    setState(() {
-                      result = scanData;
-                    });
-                    print('result scanner');
-                    controller.dispose();
-                    scanQRWorker(result?.code, '1111', '1111');
-                  });
-                },
+                onQRViewCreated: _onQRViewCreated,
                 overlayMargin: const EdgeInsets.only(left: 10, right: 10),
                 overlay: QrScannerOverlayShape(
                   borderColor: HexColor('EA6012'),
@@ -530,20 +553,6 @@ class _QRSCANState extends State<QRSCAN> {
             ),
           ],
         ));
-  }
-
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        qrText = scanData as String;
-        controller.pauseCamera();
-        //Done_Button = true;
-      });
-      scanQRWorker(qrText, '1111', '1111');
-
-      print(qrText);
-    });
   }
 
   @override

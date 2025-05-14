@@ -124,18 +124,11 @@ class _ListCrewState extends State<ListCrew> {
     return workday_on;
   }
 
-
-   
-
   Future<String?> getToken() async {
     SharedPreferences token = await SharedPreferences.getInstance();
     String? stringValue = token.getString('stringValue');
     return stringValue;
   }
-
-  
-
- 
 
   Future<bool> scanQRWorker(
       String identification, String lat, String long) async {
@@ -220,7 +213,6 @@ class _ListCrewState extends State<ListCrew> {
     return true;
   }
 
-  
   Future<dynamic> getSWData() async {
     int? wd = widget.workday;
     setState(() {
@@ -328,7 +320,7 @@ class _ListCrewState extends State<ListCrew> {
     } catch (error) {}
   }
 
-    static showSnackBarMessage(BuildContext? context, String message,
+  static showSnackBarMessage(BuildContext? context, String message,
       {int messageDuration = 3,
       int? type,
       bool? isFloating,
@@ -352,46 +344,35 @@ class _ListCrewState extends State<ListCrew> {
 
     if (data != null && data!.any((item) => item['check_out'] == null)) {
       showSnackBarMessage(context, 'There are still users not Checked Out');
-      
     } else {
-      
-    print('llego a pv');
-    print(data);
+      print('llego a pv');
+      print(data);
 
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      Provider.of<CrewProvider>(context, listen: false)
-          .endOut(
-        widget.crew!['id'],
-      )
-          .then((response) async {
-        setState(() {
-          isLoading = false;
-        });
-        showDialog('El checkout fue finalizado con exito....');
-
-        await getCrew();
-        print('response end crew in');
-        print(response);
-        setState(() {
-          isLoading = false;
-        });
+      setState(() {
+        isLoading = true;
       });
-    } catch (error) {}
 
+      try {
+        Provider.of<CrewProvider>(context, listen: false)
+            .endOut(
+          widget.crew!['id'],
+        )
+            .then((response) async {
+          setState(() {
+            isLoading = false;
+          });
+          showDialog('El checkout fue finalizado con exito....');
+
+          await getCrew();
+          print('response end crew in');
+          print(response);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      } catch (error) {}
     }
-
-
-
   }
-
-  
-
-
-  
 
   Future<dynamic> editCrew() async {
     print('llego a pv');
@@ -1035,12 +1016,12 @@ class _ListCrewState extends State<ListCrew> {
                     ),
           if (data!.isEmpty) ...[
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.30,
+              height: MediaQuery.of(context).size.height * 0.20,
             ),
           ],
           if (data!.isNotEmpty) ...[
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.05,
+              height: MediaQuery.of(context).size.height * 0.02,
             ),
           ],
           if (crewCurrent != null && crewCurrent!['clock_in_end'] == null) ...[
@@ -1109,7 +1090,7 @@ class _ListCrewState extends State<ListCrew> {
               crewCurrent!['clock_out_end'] == null) ...[
             Container(
               alignment: Alignment.topRight,
-              margin:const EdgeInsets.only(right: 20),
+              margin: const EdgeInsets.only(right: 20),
               // margin: EdgeInsets.only(left:15),
               child: isLoading
                   ? const Center(
@@ -1123,7 +1104,7 @@ class _ListCrewState extends State<ListCrew> {
                       onPressed: () async {
                         endOut();
                       },
-                      child:const Text(
+                      child: const Text(
                         'Finalizar Check-out',
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),

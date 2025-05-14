@@ -8,32 +8,29 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:worker/local/database_creator.dart';
 import 'package:worker/model/config.dart';
-import 'package:worker/widgets/clock-in/update_init.dart';
 
 import '../../model/user.dart';
 import '../../model/workday.dart';
 
+import '../../providers/auth.dart';
 import '../../providers/workday.dart';
+import '../clock-in/init.dart';
 import '../widgets.dart';
 import '../global.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
-import 'cam_scan.dart';
-import 'confirm.dart';
-import 'init.dart';
-import 'list.dart';
-import 'make_in.dart';
-import 'make_in_scan.dart';
-import 'update_init_in.dart';
+import 'cam_scan_out.dart';
+import 'make_in_scan_out.dart';
+import 'update_out.dart';
 
-class UpdateInit extends StatefulWidget {
+class UpdateOutO extends StatefulWidget {
   final User? user;
   final int? workday;
   Map<String, dynamic>? contract;
   final Workday? work;
   Map<String, dynamic>? wk;
   String? dif;
-  UpdateInit(
+  UpdateOutO(
       {required this.user,
       required this.workday,
       this.contract,
@@ -42,11 +39,11 @@ class UpdateInit extends StatefulWidget {
       this.dif});
 
   @override
-  _UpdateInitState createState() =>
-      _UpdateInitState(user!, workday!, contract!, work!, wk!, dif!);
+  _UpdateOutOState createState() =>
+      _UpdateOutOState(user!, workday!, contract!, work!, wk!, dif!);
 }
 
-class _UpdateInitState extends State<UpdateInit> {
+class _UpdateOutOState extends State<UpdateOutO> {
   Map<String, dynamic> contract;
   User user;
   int workday;
@@ -54,7 +51,7 @@ class _UpdateInitState extends State<UpdateInit> {
   Map<String, dynamic> wk;
   String dif;
 
-  _UpdateInitState(
+  _UpdateOutOState(
       this.user, this.workday, this.contract, this.work, this.wk, this.dif);
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -62,9 +59,11 @@ class _UpdateInitState extends State<UpdateInit> {
   bool isLoading = false;
   Map<String, dynamic>? data;
   Map<String, dynamic>? workday_on;
-  bool? isData = false;
+  bool isData = false;
+    User? _user;
 
-  Geolocator? geolocator = Geolocator();
+
+  Geolocator geolocator = Geolocator();
 
   Position? userLocation;
   String? geo;
@@ -112,9 +111,19 @@ class _UpdateInitState extends State<UpdateInit> {
       workday_on = todo;
       isData = true;
     });
-    print('rrpp workday on');
+    print('workday on respaldo');
     print(workday_on);
     return workday_on;
+  }
+
+   void _viewUser() {
+    Provider.of<Auth>(context, listen: false).fetchUser().then((value) {
+      print('response user');
+      print(value);
+      setState(() {
+        _user = value['data'];
+      });
+    });
   }
 
   getContract(int id) async {
@@ -145,16 +154,39 @@ class _UpdateInitState extends State<UpdateInit> {
     return todo;
   }
 
-  Future<Position> _getLocation() async {
-    var currentLocation;
+   Future<String> _makeClockOut() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      currentLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
-    } catch (e) {
-      currentLocation = null;
+      final response = await Provider.of<WorkDay>(context, listen: false)
+          .addClockOut(
+              _user!.id,
+              hourClock,
+              '12.92828 45.340480',
+              workday_on,);
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (response == 1) {
+        print('cloqueado con exito');
+        return '1';
+      } else {
+        print('error en clock');
+        return '0';
+      }
+    } catch (error) {
+      print('Error en makeClockout: $error');
+      return '0';
     }
-    return currentLocation;
   }
+
+
+
+
 
   void _showErrorDialog(String message) {
     print(message);
@@ -203,70 +235,6 @@ class _UpdateInitState extends State<UpdateInit> {
     });
   }
 
-  Future<String> getSWData() async {
-    String token = await getToken();
-    setState(() {});
-    var res = await http.get(
-        Uri.parse('${ApiWebServer.server_name}/api/v-1/contract/current'),
-        headers: {"Authorization": "Token $token"});
-    var resBody = json.decode(res.body);
-
-    setState(() {
-      data = resBody;
-    });
-
-    return "Sucess";
-  }
-
-  Future<void> _submit() async {
-    String contract = widget.contract!['contract_id'].toString();
-    setState(() {
-      isLoading = true;
-    });
-    _getLocation().then((position) {
-      userLocation = position;
-    });
-    if (userLocation != null) {
-      geo = '${userLocation!.latitude} ${userLocation!.longitude}';
-    } else {
-      geo = '--- ---';
-    }
-    try {
-      Provider.of<WorkDay>(context, listen: false)
-          .addWorkday(
-              contract,
-              geo,
-              temp,
-              contractDetail!['contract_temp'].toString(),
-              start_time,
-              hourClock,
-              true)
-          .then((response) {
-        setState(() {
-          isLoading = false;
-        });
-        //getWorkdayOn(1);
-        if (response['status'] == '201') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ListClockIn(
-                      user: user,
-                      workday: response['workday']['id'],
-                      contract: widget.contract,
-                      work: Workday.fromJson(response['workday']),
-                      wk: workday_on,
-                    )),
-          );
-        } else if (response['status'] == '400') {
-          _showErrorDialog('Check in already');
-        } else {
-          _showErrorDialog('Error');
-        }
-      });
-    } catch (error) {}
-  }
-
   Future<void> _editWorkdayDef() async {
     String contract = widget.contract!['contract_id'].toString();
     setState(() {
@@ -275,52 +243,55 @@ class _UpdateInitState extends State<UpdateInit> {
 
     try {
       Provider.of<WorkDay>(context, listen: false)
-          .editWorkdayIn(
-        workday,
-        start_time,
-        hourClock,
-      )
-          .then((response) {
+          .editWorkdayOut(workday, start_time, hourClock)
+          .then((response) async {
         setState(() {
           isLoading = false;
         });
         //getWorkdayOn(1);
         if (response['status'] == '200') {
-          Navigator.push(
+
+          final clockInResult = await _makeClockOut();
+
+
+             // ignore: unrelated_type_equality_checks
+            if (clockInResult == '1') {
+          // Mostrar mensaje de éxito
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Clock-out completed successfully!'),
+              backgroundColor: HexColor('EA6012'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Esperar a que se muestre el mensaje antes de navegar
+          await Future.delayed(Duration(seconds: 2));
+
+            Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => QRSCAN(
+                builder: (context) => QRSCANOUT(
                       user: user,
                       workday: widget.workday,
                       work: widget.work,
                       contract: widget.contract,
                       wk: workday_on,
-                      us: widget.user,
                     )),
           );
-          /* Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ConfirmClockIn(
-                      user: user,
-                      workday: widget.workday,
-                      work: widget.work,
-                      contract: widget.contract,
-                    )),
-          );*/
-          /*  Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ListClockIn(
-                      user: user,
-                      workday: response['workday']['id'],
-                      contract: this.widget.contract,
-                      work: Workday.fromJson(response['workday']),
-                      wk: workday_on,
-                    )),
-          );*/
+        } else {
+          _showErrorDialog('Error al realizar el clock-out');
+        }
+
+
+
+
+
+
+
+       
         } else if (response['status'] == '400') {
-          _showErrorDialog('Check in already');
+          _showErrorDialog('Error');
         } else {
           _showErrorDialog('Error');
         }
@@ -330,14 +301,9 @@ class _UpdateInitState extends State<UpdateInit> {
 
   @override
   void initState() {
-    getWorkdayOn(1);
     _viewWorkDay();
     getContract(1);
-    getSWData();
-    // _checkGps();
-    _getLocation().then((position) {
-      userLocation = position;
-    });
+        _viewUser();
     super.initState();
     setState(() {
       start_time = DateTime.parse(DateTime.now().toString());
@@ -430,14 +396,12 @@ class _UpdateInitState extends State<UpdateInit> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.04,
           ),
-          if (workday_on != null &&
-              workday_on!['has_clockin'].toString() == 'true') ...[
             Container(
                 margin: EdgeInsets.only(left: 30, right: 30),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    'Update the default clock-in time',
+                    'Update the default clock-out time and register',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 30,
@@ -465,7 +429,7 @@ class _UpdateInitState extends State<UpdateInit> {
                           Container(
                             margin: EdgeInsets.only(left: 5, top: 5),
                             child: Text(
-                              l10n.wr_4,
+                              'Exit',
                               style:
                                   TextStyle(fontSize: 16, color: Colors.white),
                             ),
@@ -491,7 +455,8 @@ class _UpdateInitState extends State<UpdateInit> {
                           ),
                           Text(
                             _time!,
-                            style: TextStyle(fontSize: 16, color: Colors.white),
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.white),
                           ),
                         ],
                       )),
@@ -522,8 +487,7 @@ class _UpdateInitState extends State<UpdateInit> {
                                 setState(() {
                                   start_time = pickedDate;
                                 });
-
-                                /* DatePicker.showDatePicker(context,
+                                /*  DatePicker.showDatePicker(context,
                                   showTitleActions: true, onConfirm: (start) {
                                 print('confirm start $start');
                                 start_time = start;
@@ -605,118 +569,9 @@ class _UpdateInitState extends State<UpdateInit> {
                       ),
                     ),
             ),
-          ],
-          if (workday_on != null &&
-              workday_on!['has_clockin'].toString() == 'false') ...[
-            Container(
-                margin: EdgeInsets.only(left: 30, right: 30),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'You dont have a scheduled entry time, what do you want to do?',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        color: Colors.white),
-                  ),
-                )),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.12,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 20, top: 10),
-                    alignment: Alignment.topLeft,
-                    //height: MediaQuery.of(context).size.width * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.50,
-                    child: Container(
-                      alignment: Alignment.topCenter,
-                      //width: MediaQuery.of(context).size.width * 0.70,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UpdateInitU(
-                                      user: widget.user,
-                                      workday: widget.workday,
-                                      work: widget.work,
-                                      contract: widget.contract,
-                                      wk: workday_on,
-                                      dif: '',
-                                    )),
-                          );
-                        },
-                        child: Text(
-                          'Update start time',
-                          style: TextStyle(
-                            color: HexColor('EA6012'),
-                            letterSpacing: 1,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'OpenSans',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.only(right: 20, top: 10),
-                    alignment: Alignment.topRight,
-                    //height: MediaQuery.of(context).size.width * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.50,
-                    child: Container(
-                      alignment: Alignment.topCenter,
-                      //width: MediaQuery.of(context).size.width * 0.70,
-                      child: ElevatedButton(
-                        onPressed: () {
-                               Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UpdateInitUIn(
-                                      user: widget.user,
-                                      workday: widget.workday,
-                                      work: widget.work,
-                                      contract: widget.contract,
-                                      wk: workday_on,
-                                      dif: '',
-                                    )),
-                          );
-                         /* Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MakeInScan(
-                                      user: widget.user,
-                                      workday: widget.workday,
-                                      work: widget.work,
-                                      contract: widget.contract,
-                                      wk: workday_on,
-                                    )),
-                          );*/
-                        },
-                        child: Text(
-                          'Make clockin',
-                          style: TextStyle(
-                            color: HexColor('EA6012'),
-                            letterSpacing: 1,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'OpenSans',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+          
+            
+    
         ],
       ),
     )));

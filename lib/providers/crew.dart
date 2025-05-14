@@ -167,30 +167,57 @@ class CrewProvider with ChangeNotifier {
     final url = ApiWebServer.server_name + '/api/v-1/crew/$crew/update';
 
     try {
-      final response = await http.patch(Uri.parse(url),
-          body: json.encode({
-            'default_entry_time': fec.toIso8601String().toString(),
-            //'clock_out_start': hour.toIso8601String(),
-            //'temperature': '00.00'
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': "Token $token"
-          });
-      final responseData = json.decode(response.body);
-      print(response.statusCode);
+      if (type == 1) {
+        final response = await http.patch(Uri.parse(url),
+            body: json.encode({
+              'default_entry_time': fec.toIso8601String().toString(),
+              //'clock_out_start': hour.toIso8601String(),
+              //'temperature': '00.00'
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': "Token $token"
+            });
+        final responseData = json.decode(response.body);
+        print(response.statusCode);
 
-      await RepositoryServiceTodo.updateUltClock(
-          1, DateTime.now().toIso8601String().toString());
+        await RepositoryServiceTodo.updateUltClock(
+            1, DateTime.now().toIso8601String().toString());
 
-      Map<String, dynamic> success = {
-        "workday": responseData,
-        "status": response.statusCode.toString()
-      };
-      print(success);
+        Map<String, dynamic> success = {
+          "workday": responseData,
+          "status": response.statusCode.toString()
+        };
+        print(success);
 
-      return success;
+        return success;
+      } else {
+        final response = await http.patch(Uri.parse(url),
+            body: json.encode({
+              'default_exit_time': fec.toIso8601String().toString(),
+              //'clock_out_start': hour.toIso8601String(),
+              //'temperature': '00.00'
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': "Token $token"
+            });
+        final responseData = json.decode(response.body);
+        print(response.statusCode);
+
+        await RepositoryServiceTodo.updateUltClock(
+            1, DateTime.now().toIso8601String().toString());
+
+        Map<String, dynamic> success = {
+          "workday": responseData,
+          "status": response.statusCode.toString()
+        };
+        print(success);
+
+        return success;
+      }
     } catch (error) {
       print(error);
       throw error;
@@ -465,8 +492,7 @@ class CrewProvider with ChangeNotifier {
             'crew': wd,
             'worker_accepted': worker,
             'clock_type': 'IN',
-            'clock_datetime': type ==
-                DateTime.parse(crew['default_entry_time'].toString())
+            'clock_datetime':DateTime.parse(crew['default_entry_time'].toString())
                     .toIso8601String(),
             'geographical_coordinates': '111 1111',
             'project_category': null
@@ -478,7 +504,7 @@ class CrewProvider with ChangeNotifier {
           });
       //final responseData = json.decode(response.body);
       final responseData = json.decode(response.body);
-      print('response checkin list');
+      print('response checkin list contract');
       print(responseData);
       print(response.statusCode);
       // print(responseData);

@@ -266,17 +266,17 @@ class _MenuLateralState extends State<MenuLateral> {
 
   @override
   void initState() {
-    this.getToken();
-    this.getSupervisor();
+    getToken();
+    getSupervisor();
     _getVersion();
     super.initState();
     getTodo(1);
     getContract(1);
     getWorkdayOn(1);
     getTravel();
-    this.getM();
-    this.getSWData();
-    this._viewWorkDay();
+    getM();
+    getSWData();
+    _viewWorkDay();
   }
 
   @override
